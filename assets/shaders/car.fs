@@ -8,14 +8,16 @@ uniform sampler2D depthMap;
 uniform sampler2D auxiliaryMap;
 uniform sampler2D emissionMap;
 uniform vec2 screenAnchor;
+uniform float pixelsPerMetre;
+uniform float spritePixels;
 uniform vec2 carOrigin;
 uniform float carDepth;
 uniform int lightCount;
 uniform int streetCount;
-uniform vec3 lightPosition[24];
-uniform vec3 lightColour[24];
-uniform float lightPower[24];
-uniform float lightRadius[24];
+uniform vec3 lightPosition[32];
+uniform vec3 lightColour[32];
+uniform float lightPower[32];
+uniform float lightRadius[32];
 uniform float headlights;
 uniform float taillights;
 uniform float braking;
@@ -27,14 +29,14 @@ vec3 emission(vec2 uv){
 }
 bool occluded(vec3 p,vec3 lamp){
  vec3 delta=lamp-p;
- vec2 uv0=fragTexCoord,duv=vec2(delta.x,-delta.y)*26./128.;
+ vec2 uv0=fragTexCoord,duv=vec2(delta.x,-delta.y)*pixelsPerMetre/spritePixels;
  float enter=0.,leave=1.;
  for(int axis=0;axis<2;axis++){
   if(abs(duv[axis])<.000001){if(uv0[axis]<0.||uv0[axis]>1.)return false;}
   else{float a=-uv0[axis]/duv[axis],b=(1.-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
  }
  if(leave<=enter)return false;
- float count=ceil(clamp(length(duv)*(leave-enter)*128.*1.25,4.,40.));
+ float count=ceil(clamp(length(duv)*(leave-enter)*spritePixels*1.25,4.,40.));
  for(int k=0;k<40;k++){
   if(float(k)>=count)break;
   float t=mix(enter,leave,(float(k)+.5)/count);
@@ -56,7 +58,7 @@ void main(){
   vec3 glow=vec3(0);
   for(int i=0;i<8;i++){
    float angle=float(i)*.785398;
-   vec2 dir=vec2(cos(angle),sin(angle))/128.0;
+   vec2 dir=vec2(cos(angle),sin(angle))/spritePixels;
    glow+=emission(fragTexCoord+dir*1.6)*.06+emission(fragTexCoord+dir*3.0)*.025;
   }
   float alpha=clamp(max(glow.r,max(glow.g,glow.b)),0.,.45);
@@ -65,10 +67,10 @@ void main(){
  vec4 n=texture(normalMap,fragTexCoord),d=texture(depthMap,fragTexCoord),a=texture(auxiliaryMap,fragTexCoord);
  vec2 xy=vec2(unpack16(n.r,n.g),unpack16(n.b,a.r))*2.0-1.0;
  vec3 normal=normalize(vec3(xy,sqrt(max(0.,1.-dot(xy,xy)))));
- vec2 pixel=carOrigin+fragTexCoord*128.0;
- vec3 p=vec3((pixel.x-screenAnchor.x)/26.,(screenAnchor.y-pixel.y)/26.,(unpack16(d.r,d.g)-.5)*5.2+carDepth);
+ vec2 pixel=carOrigin+fragTexCoord*spritePixels;
+ vec3 p=vec3((pixel.x-screenAnchor.x)/pixelsPerMetre,(screenAnchor.y-pixel.y)/pixelsPerMetre,(unpack16(d.r,d.g)-.5)*5.2+carDepth);
  vec3 diffuse=vec3(0),specular=vec3(0);
- for(int i=0;i<24;i++){
+ for(int i=0;i<32;i++){
   if(i>=lightCount)break;
   vec3 delta=lightPosition[i]-p;float distance2=dot(delta,delta);
   float att=max(0.,1.-distance2/(lightRadius[i]*lightRadius[i]));att*=att;

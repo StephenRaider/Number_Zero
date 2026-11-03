@@ -4,6 +4,26 @@
 #include <stdexcept>
 static void Require(bool condition,const char *message){if(!condition)throw std::runtime_error(message);}
 int main(){try{
+ // Wide/tall and odd pixel sizes fill the window without distorting the scene.
+ for(auto size:{std::pair<int,int>{1280,720},{2560,1080},{3840,1080},{960,900},{1365,767},{800,450}}){
+  auto view=nz::MakeViewport(size.first,size.second);
+  Require(view.width>=640&&view.height>=360&&view.scale>=1,"Viewport clips garage controls");
+  Require(view.width*view.scale>=size.first&&view.width*view.scale-size.first<view.scale,"Viewport leaves horizontal borders");
+  Require(view.height*view.scale>=size.second&&view.height*view.scale-size.second<view.scale,"Viewport leaves vertical borders");
+  // Select all street lamps for the actual zoomed/padded viewport across spawn boundaries.
+  float lo=1e9f,hi=-1e9f;
+  for(float x:{-128.f,(float)view.width+128})for(float y:{-128.f,(float)view.height+128}){
+   auto ground=nz::NortheastGround((x-view.width*.28f)/19.5f,(view.height*.78f-y)/19.5f);lo=std::min(lo,ground.first);hi=std::max(hi,ground.first);
+  }
+  for(int tick=0;tick<100;tick++){
+   int count=2;for(int side:{-1,1}){auto range=nz::StreetRange(tick*.137,lo,hi,side);count+=range.second-range.first+1;}
+   Require(count<=32,"Wide viewport exhausts light capacity");
+  }
+ }
+ auto wide=nz::MakeViewport(2560,1080);Require(wide.width>640&&wide.height==360,"Ultrawide fails to reveal more highway");
+ auto orbitA=nz::GarageKeyLight(0),orbitB=nz::GarageKeyLight((float)(nz::Pi/.55)),orbitFull=nz::GarageKeyLight((float)(2*nz::Pi/.55));
+ Require(orbitA[0]*orbitB[0]<0&&std::abs(orbitA[0]-orbitFull[0])<.001,"Garage light fails to orbit");
+ for(int i=0;i<100;i++){auto light=nz::GarageKeyLight(i*.25f);Require(std::abs(light[1]*nz::CameraCos+light[2]*nz::CameraSin-3.2f)<.001,"Garage light height drifts");}
  // Projection must advance northeast while positive steering remains screen-right.
  auto forward=nz::NortheastCamera(1,0,0),right=nz::NortheastCamera(0,1,0);
  Require(forward[0]>0&&forward[1]>0&&right[0]>0&&right[1]<0,"Driving orientation invalid");

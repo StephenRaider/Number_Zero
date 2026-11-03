@@ -4,7 +4,16 @@
 #include <cmath>
 #include <utility>
 namespace nz {
+struct ViewportLayout {int width,height,scale;};
+inline ViewportLayout MakeViewport(int windowWidth,int windowHeight){
+ int scale=std::max(1,std::min(windowWidth/640,windowHeight/360));
+ return {(windowWidth+scale-1)/scale,(windowHeight+scale-1)/scale,scale};
+}
 constexpr float CameraK=.70710678118f,CameraSin=.5f,CameraCos=.86602540378f;
+inline std::array<float,3> GarageKeyLight(float clock){
+ float angle=clock*.55f,radius=3.8f,height=3.2f;
+ return {radius*std::cos(angle),height*CameraCos+radius*std::sin(angle)*CameraSin,height*CameraSin-radius*std::sin(angle)*CameraCos};
+}
 inline std::array<float,3> NortheastCamera(float s,float l,float z){
  return {(s+l)*CameraK,z*CameraCos+(s-l)*CameraK*CameraSin,(-s+l)*CameraK*CameraCos+z*CameraSin};
 }

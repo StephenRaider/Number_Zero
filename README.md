@@ -34,7 +34,9 @@ Steering is continuous rather than lane snapping. Its response depends on speed,
 car setup and available tyre grip. The car settles after releasing steering.
 Five-speed gear ratios are simulated with automatic shifts for this prototype.
 The game pauses on focus loss. The window can be resized; rendering uses a
-640 x 360 canvas with nearest-neighbour integer scaling where possible.
+dynamic pixel canvas with nearest-neighbour integer scaling. Widescreen reveals
+more highway; taller windows gain vertical space. The garage stays centred.
+Press **F11** to toggle borderless fullscreen.
 
 ## Implemented
 
@@ -123,3 +125,20 @@ Closed-throttle coasting and braking retain an RPM-driven engine bed instead of
 fading toward silence. Throttle changes the loaded tone and intake sound;
 engine pitch still follows actual drivetrain RPM. Audio regressions compare
 loaded/coast levels at 3000, 5000 and 7000 RPM for each car.
+
+## View and instruments
+
+The driving camera uses 19.5 pixels/metre instead of 26, so the car/road are 25%
+smaller with correctly aligned depth/normal-map lighting and shadows. The car
+sits farther back toward the southwest, leaving more road visible ahead.
+Garage previews retain their original size; the studio key light orbits the
+car roughly once every 11.4 seconds.
+
+The bottom-right cluster groups a needle RPM dial with redline markings,
+digital speed, gear, trip distance, throttle/brake bars, lamp/audio status and
+warnings. It anchors to the current viewport when resizing.
+
+Graphics checks support `--ultrawide` (2560x1080), `--superwide` (3840x1080),
+and `--tall` (960x900), combined with `--smoke-test`. Use
+`--resize-smoke-test` to exercise render-target resizing during a drive.
+Captures include logical dimensions in their filenames under `build/qa/`.

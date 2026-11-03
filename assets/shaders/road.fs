@@ -3,6 +3,8 @@ in vec2 fragTexCoord;
 out vec4 finalColor;
 uniform vec2 resolution;
 uniform vec2 screenAnchor;
+uniform float pixelsPerMetre;
+uniform float spritePixels;
 uniform float travelled;
 uniform float garage;
 uniform float playerLateral;
@@ -16,22 +18,22 @@ uniform sampler2D carFront;
 uniform sampler2D carBack;
 uniform int lightCount;
 uniform int streetCount;
-uniform vec3 lightPosition[24];
-uniform vec3 lightColour[24];
-uniform float lightPower[24];
-uniform float lightRadius[24];
+uniform vec3 lightPosition[32];
+uniform vec3 lightColour[32];
+uniform float lightPower[32];
+uniform float lightRadius[32];
 float unpack16(float high,float low){return (round(high*255.)*256.+round(low*255.))/65535.;}
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 bool shadow(vec3 p,vec3 lamp){
  vec3 delta=lamp-p;
- vec2 uv0=(screenAnchor+vec2(p.x,-p.y)*26.-carOrigin)/128.,duv=vec2(delta.x,-delta.y)*26./128.;
+ vec2 uv0=(screenAnchor+vec2(p.x,-p.y)*pixelsPerMetre-carOrigin)/spritePixels,duv=vec2(delta.x,-delta.y)*pixelsPerMetre/spritePixels;
  float enter=0.,leave=1.;
  for(int axis=0;axis<2;axis++){
   if(abs(duv[axis])<.000001){if(uv0[axis]<0.||uv0[axis]>1.)return false;}
   else{float a=-uv0[axis]/duv[axis],b=(1.-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
  }
  if(leave<=enter)return false;
- float count=ceil(clamp(length(duv)*(leave-enter)*128.*1.25,4.,64.));
+ float count=ceil(clamp(length(duv)*(leave-enter)*spritePixels*1.25,4.,64.));
  for(int k=0;k<64;k++){
   if(float(k)>=count)break;
   float t=mix(enter,leave,(float(k)+.5)/count);
@@ -49,7 +51,7 @@ bool shadow(vec3 p,vec3 lamp){
 }
 void main(){
  vec2 pixel=vec2(gl_FragCoord.x,resolution.y-gl_FragCoord.y);
- vec2 camera=vec2((pixel.x-screenAnchor.x)/26.,(screenAnchor.y-pixel.y)/26.);
+ vec2 camera=vec2((pixel.x-screenAnchor.x)/pixelsPerMetre,(screenAnchor.y-pixel.y)/pixelsPerMetre);
  float sum=camera.y/.35355339,difference=camera.x/.70710678;
  float s=garage>.5?(sum-difference)*.5:(difference+sum)*.5;
  float lateral=garage>.5?(sum+difference)*.5:(difference-sum)*.5,absoluteS=s+travelled;
@@ -71,7 +73,7 @@ void main(){
   if(abs(abs(lateral)-7.65)<.18&&mod(absoluteS,5.)<.5)base=vec3(.66,.65,.52);
  }
  vec3 lighting=vec3(.105,.12,.16);
- for(int i=0;i<24;i++){
+ for(int i=0;i<32;i++){
   if(i>=lightCount)break;
   vec3 delta=lightPosition[i]-p;float d2=dot(delta,delta);
   float a=max(0.,1.-d2/(lightRadius[i]*lightRadius[i]));a*=a;
