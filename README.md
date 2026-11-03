@@ -118,3 +118,8 @@ ignored `build/qa/`. `build/NumberZero.exe --audio-smoke-test` (optionally
 `--civic`) exercises the real output callback during a scripted drive.
 Ordinary `--smoke-test` stays silent and needs no output device.
 See `third_party/car_engine_synth/README.md` for provenance and the BOV fix.
+
+Closed-throttle coasting and braking retain an RPM-driven engine bed instead of
+fading toward silence. Throttle changes the loaded tone and intake sound;
+engine pitch still follows actual drivetrain RPM. Audio regressions compare
+loaded/coast levels at 3000, 5000 and 7000 RPM for each car.

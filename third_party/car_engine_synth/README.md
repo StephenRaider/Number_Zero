@@ -12,4 +12,10 @@ Upstream credit and permission (from section 7 of the supplied README):
 Local correction: BOV lift detection now detects the smoothed throttle crossing
 0.35 downwards while boosted. Upstream required the previous sample to exceed
 0.55 and the next sample to be below 0.35, which its 30 ms smoothing prevents.
-The DSP, profiles and parameter values otherwise match the supplied header.
+Additional local tuning: closed-throttle engine presence now follows RPM.
+The upstream pulse-load, overrun and output-level reductions multiplied into a
+near-silent coast. Removed the extra overrun pulse reduction, raised the
+RPM-dependent closed-load/body/output floors and retained more high-RPM exhaust
+bandwidth. Full-throttle settings and profile parameter values are unchanged;
+true throttle still reaches turbo, BOV, VTEC and overrun logic. This is sound
+design for the prototype, not a calibrated real-car acoustic measurement.

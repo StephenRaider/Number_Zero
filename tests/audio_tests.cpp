@@ -6,9 +6,24 @@
 static void Require(bool ok,const char *message){if(!ok)throw std::runtime_error(message);}
 static double Energy(const std::vector<float> &samples){double e=0;for(float s:samples)e+=s*s;return e/samples.size();}
 static void Valid(const std::vector<float> &samples){for(float s:samples)Require(std::isfinite(s)&&std::abs(s)<=.85f,"Invalid or clipped synth sample");}
+static double SteadyRms(int car,float rpm,float throttle){
+ nz::EngineSound sound;std::vector<float> block(441);double energy=0;
+ for(int chunk=0;chunk<300;chunk++){
+  sound.Render(block.data(),(unsigned)block.size(),{rpm,throttle,car,true,false});Valid(block);
+  if(chunk>=200)energy+=Energy(block);
+ }
+ return std::sqrt(energy/100);
+}
 int main(){try{
  std::filesystem::create_directories("build/qa");
  for(int car=0;car<2;car++){
+  double idle=SteadyRms(car,(float)nz::Cars[car].idle,0);
+  for(float rpm:{3000.f,5000.f,7000.f}){
+   double loaded=SteadyRms(car,rpm,1),coast=SteadyRms(car,rpm,0),ratio=coast/loaded;
+   std::printf("Lift-off %s at %.0frpm: loaded %.3f, coast %.3f, ratio %.2f\n",nz::Cars[car].id,rpm,loaded,coast,ratio);
+   Require(ratio>.25&&ratio<.95,"Lift-off volume collapses or loses load contrast");
+   Require(coast>idle*1.25,"High RPM coast sounds like quiet idle");
+  }
   nz::Vehicle v;v.rpm=car?8000:6000;v.throttle=.8;v.shiftTime=.2;
   auto c=nz::DrivingSound(v,car,true,false,false);
   Require(c.throttle==0,"Shift did not lift audio throttle");

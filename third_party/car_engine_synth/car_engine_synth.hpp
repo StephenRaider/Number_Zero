@@ -139,12 +139,17 @@ public:
         phase_ += (rpmS_ / 120.0f) * dt;
         if (phase_ >= 1.0) phase_ -= 1.0;
         const int idx = std::min(3, (int)(phase_ * 4.0));
-        const float load = 0.22f + 0.78f * thr_;
+        // Retain an RPM-driven exhaust/mechanical bed when the wheels drive the engine.
+        // Throttle still controls load colour, intake, VTEC and turbo independently.
+        float presence = std::clamp((rpmS_ - p_.idleRpm) / 2000.0f, 0.0f, 1.0f);
+        presence = presence * presence * (3.0f - 2.0f * presence);
+        const float closedLoad = 0.38f + 0.30f * presence;
+        const float load = closedLoad + (1.0f - closedLoad) * thr_;
         if (idx != lastIdx_) {
             lastIdx_ = idx;
             const bool overrun = thr_ < 0.06f && rpmS_ > 1500;   // closed throttle: only air pumping
             float amp = p_.firingGain[idx] * (1.0f + p_.jitter * noise()) * load;
-            if (overrun) amp *= 0.35f;
+            // Do not attenuate the RPM bed again on overrun; load already shapes it.
             if (cut) amp *= 0.06f;
             const float len = p_.pulseMs * (1.0f - 0.35f * p_.vtecBright * vtecMix_ * (p_.vtec ? 1.0f : 0.0f));
             tauFast_ = len * 1e-3f;
@@ -174,7 +179,8 @@ public:
             y += v1 * p_.formantGain[k] * (k >= 2 ? 1.0f + p_.vtecBright * vtecMix_ : 1.0f);
         }
         // tail-pipe lowpass opens with throttle*revs
-        const float fc = p_.lowpassClosed + (p_.lowpassOpen - p_.lowpassClosed) * thr_ * std::min(1.0f, rev);
+        const float opening = 0.30f * presence + (1.0f - 0.30f * presence) * thr_;
+        const float fc = p_.lowpassClosed + (p_.lowpassOpen - p_.lowpassClosed) * opening * std::min(1.0f, rev);
         const float a = 1 - std::exp(-kTwoPi * fc * dt);
         lp1_ += (x - lp1_) * a;
         lp2_ += (lp1_ - lp2_) * a;
@@ -183,7 +189,7 @@ public:
         bd1_ += (x - bd1_) * kb;
         bd2_ += (bd1_ - bd2_) * kb;
 
-        float sig = 0.6f * y + 0.6f * lp2_ + p_.bodyGain * (0.4f + 0.8f * thr_) * (1.15f - 0.6f * rev) * bd2_;
+        float sig = 0.6f * y + 0.6f * lp2_ + p_.bodyGain * (0.65f + 0.15f * presence + (0.55f - 0.15f * presence) * thr_) * (1.15f - 0.6f * rev) * bd2_;
 
         // ---- intake roar: noise through a band-pass, breathing at firing rate, louder with load and revs
         const float n = noise();
@@ -212,7 +218,7 @@ public:
         sig += popSig * 0.5f;
 
         // ---- saturation: dirtier the harder it is driven (asymmetric -> even harmonics)
-        const float level = (0.28f + 0.72f * thr_) * (0.45f + 0.55f * std::min(1.0f, rev * 1.15f));
+        const float level = (0.42f + 0.06f * presence + (0.58f - 0.06f * presence) * thr_) * (0.45f + 0.55f * std::min(1.0f, rev * 1.15f));
         const float k = 1.2f + 1.8f * thr_;
         float s = (std::tanh(k * sig * 1.6f * level + 0.3f) - std::tanh(0.3f)) / k;
         dcOut_ = s - dcIn_ + 0.9985f * dcOut_;
