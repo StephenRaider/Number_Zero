@@ -6,11 +6,9 @@ straight four-lane highway at night.
 
 ## Play on this machine
 
-Run `build/NumberZero.exe`, or build and launch with:
-
-```powershell
-.\build.ps1 -Run
-```
+Run `build/NumberZero.exe` after building. Convenience scripts such as
+`build.ps1` and `Play.ps1` may be present on this machine, but are local-only
+and intentionally excluded from Git alongside `AGENTS.md`.
 
 The executable finds the committed assets relative to its location. It needs no
 Blender, Python, browser, network connection or audio device.
@@ -57,19 +55,34 @@ standard-size wheel library has not been implemented.
 ## Build and verify
 
 The Windows x64 Raylib 5.5 static library and headers are included under
-`third_party/raylib`, with their license. `build.ps1` first uses the sibling
-`../toolchain/w64devkit/bin/g++.exe`, then falls back to `g++` on PATH.
-Use a Windows x64 MinGW-w64 C++17 compiler with this library.
+`third_party/raylib`, with their license. Use a Windows x64 MinGW-w64 C++17
+compiler; the `g++` commands below must refer to that x64 toolchain.
 
-```powershell
-.\build.ps1 -Test
-.\build\NumberZero.exe --smoke-test
-.\build\NumberZero.exe --smoke-test --civic
+Create a `build` directory, then compile from the repository root:
+
+```text
+g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -Ithird_party/raylib/include src/main.cpp -o build/NumberZero.exe -Lthird_party/raylib/lib -lraylib -lopengl32 -lgdi32 -lwinmm -static-libgcc -static-libstdc++
 ```
 
-`-Test` builds and runs deterministic drivetrain/handling tests. Graphics smoke
-tests create a hidden native window, run a scripted drive and brake sequence,
-and export garage/driving/braking frames to ignored `build/qa/`.
+Build and run the offline checks:
+
+```text
+g++ -std=c++17 -O2 -Wall -Wextra -Isrc tests/vehicle_tests.cpp -o build/vehicle_tests.exe
+g++ -std=c++17 -O2 -Wall -Wextra -Isrc tests/audio_tests.cpp -o build/audio_tests.exe
+g++ -std=c++17 -O2 -Wall -Wextra -Isrc tests/trail_tests.cpp -o build/trail_tests.exe
+./build/vehicle_tests.exe
+./build/audio_tests.exe
+./build/trail_tests.exe
+```
+
+Graphics smoke tests create a hidden native window, run a scripted drive and
+brake sequence, and export captures under ignored `build/qa/`:
+
+```text
+./build/NumberZero.exe --smoke-test
+./build/NumberZero.exe --smoke-test --civic
+```
+
 See `docs/PERFORMANCE.md` for stock references, assumptions and measured model
 results. These results are simulation estimates, not factory performance claims.
 
@@ -116,7 +129,7 @@ focus fades the engine out. Audio runs on a dedicated device callback with
 atomic input snapshots, so rendering stalls do not starve a frame-polled stream.
 If no output device is available, the prototype continues with audio disabled.
 
-`build.ps1 -Test` includes offline sound checks and writes diagnostic WAVs under
+The offline audio checks write diagnostic WAVs under
 ignored `build/qa/`. `build/NumberZero.exe --audio-smoke-test` (optionally
 `--civic`) exercises the real output callback during a scripted drive.
 Ordinary `--smoke-test` stays silent and needs no output device.

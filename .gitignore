@@ -37,3 +37,7 @@ Thumbs.db
 *.blend[0-9]
 *.glb
 *.zip
+
+# Local-only launch/build helpers and agent workspace notes
+*.ps1
+AGENTS.md
