@@ -17,8 +17,9 @@ static void DrawTrails(const nz::TailHistory &history,const Environment &env,con
   for(int side=0;side<2;side++){
    auto a=history.samples[i-1].point[side],b=history.samples[i].point[side];
    auto first=Project(env.anchor,a.x-(float)v.distance,a.y,a.z),last=Project(env.anchor,b.x-(float)v.distance,b.y,b.z);
-   DrawLineEx(first,last,3.5f,RGBA(255,22,5,(int)(fade*strength*18)));
-   DrawLineEx(first,last,1.f,RGBA(255,52,20,(int)(fade*strength*110)));
+   DrawLineEx(first,last,6.f,RGBA(255,22,5,(int)(fade*strength*28)));
+   DrawLineEx(first,last,3.4f,RGBA(255,35,10,(int)(fade*strength*64)));
+   DrawLineEx(first,last,2.f,RGBA(255,52,20,(int)(fade*strength*185)));
   }
  }
  EndBlendMode();
