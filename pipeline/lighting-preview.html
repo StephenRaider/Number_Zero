@@ -1,0 +1,78 @@
+<div id="car-light-preview">
+  <div class="viz-controls">
+    <label class="form-label">Car<select class="form-select" data-control="car" aria-label="Car"><option value="silvia">Nissan Silvia S13</option><option value="civic">Honda Civic Type R EK9</option></select></label>
+    <label class="form-label">View<select class="form-select" data-control="view" aria-label="View"><option value="front">Front</option><option value="back">Rear</option></select></label>
+  </div>
+  <div class="viz-row" role="group" aria-label="Cleanup comparison">
+    <button class="btn" data-compare="before" aria-pressed="false">Before</button>
+    <button class="btn" data-compare="after" aria-pressed="true">After</button>
+    <label class="form-check"><input class="form-check-input" data-control="wheels" type="checkbox" checked><span class="form-check-label">Smooth wheel edges</span></label>
+    <label class="form-check"><input class="form-check-input" data-control="details" type="checkbox" checked><span class="form-check-label">Detailed headlights</span></label>
+  </div>
+  <canvas width="176" height="156" role="img" aria-label="Isometric car with adjustable lighting, highlights and depth shadows"></canvas>
+  <div class="viz-controls">
+    <label class="form-label">Light angle <output data-value="angle"></output><input class="form-range" data-control="angle" aria-label="Light angle" type="range" min="0" max="360" value="220" step="1"></label>
+    <label class="form-label">Light height <output data-value="height"></output><input class="form-range" data-control="height" aria-label="Light height" type="range" min="0.4" max="6" value="3" step="0.1"></label>
+    <label class="form-label">Intensity <output data-value="power"></output><input class="form-range" data-control="power" aria-label="Intensity" type="range" min="0" max="3" value="1.5" step="0.05"></label>
+    <label class="form-label">Light colour<input class="form-control form-control-color" data-control="colour" type="color" value="#ffe4bd"></label>
+  </div>
+  <div class="viz-row">
+    <label class="form-check"><input class="form-check-input" data-control="lit" type="checkbox" checked><span class="form-check-label">Lighting</span></label>
+    <label class="form-check"><input class="form-check-input" data-control="shadows" type="checkbox" checked><span class="form-check-label">Depth shadows</span></label>
+    <label class="form-check"><input class="form-check-input" data-control="lamps" type="checkbox" checked><span class="form-check-label">Car lights</span></label>
+    <label class="form-check"><input class="form-check-input" data-control="hazards" type="checkbox" checked><span class="form-check-label">Hazards</span></label>
+  </div>
+  <span class="sr-only" data-status aria-live="polite"></span>
+</div>
+<style>
+#car-light-preview {display:grid;gap:calc(var(--font-size-base)*.75)}
+#car-light-preview canvas {width:100%;max-width:560px;height:auto;image-rendering:pixelated;justify-self:center}
+</style>
+<script>
+(()=>{
+  const root=document.getElementById('car-light-preview');
+  const DATA=__PREVIEW_DATA__;
+  const IMAGE_DATA=__PREVIEW_IMAGES__;
+  const cv=root.querySelector('canvas'),ctx=cv.getContext('2d');
+  const controls=Object.fromEntries([...root.querySelectorAll('[data-control]')].map(e=>[e.dataset.control,e]));
+  let map=null,request=0;
+  let cleanup='after';
+  const saved=window.openai?.widgetState?.modelContent;
+  function restore(s){if(!s)return;if(s.cleanup==='before'||s.cleanup==='after')cleanup=s.cleanup;for(const [k,v] of Object.entries(s))if(controls[k]){if(controls[k].type==='checkbox')controls[k].checked=!!v;else controls[k].value=String(v);}syncCompare();}
+  restore(saved);
+  const state=()=>({...Object.fromEntries(Object.entries(controls).map(([k,e])=>[k,e.type==='checkbox'?e.checked:e.value])),cleanup});
+  function syncCompare(){root.querySelectorAll('[data-compare]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.compare===cleanup));controls.wheels.disabled=cleanup==='before';}
+  function loadImage(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.drawImage(im,0,0);resolve(x.getImageData(0,0,128,128).data);};im.onerror=reject;im.src=IMAGE_DATA[src];});}
+  async function load(){syncCompare();const id=++request,s=state(),set=s.details?DATA[s.car][s.view].detailed:DATA[s.car][s.view],entry=set[cleanup==='after'&&s.wheels?'wheels':cleanup];const [a,n,p,q,e]=await Promise.all(['albedo','normal','pack','pack2','emit'].map(k=>loadImage(entry[k])));if(id!==request)return;const normal=new Float32Array(128*128*3),depth=new Float32Array(128*128),far=new Float32Array(128*128);
+    for(let i=0;i<128*128;i++){const j=i*4,k=i*3;normal[k]=(n[j]*256+n[j+1])/65535*2-1;normal[k+1]=(n[j+2]*256+q[j])/65535*2-1;normal[k+2]=Math.sqrt(Math.max(0,1-normal[k]**2-normal[k+1]**2));depth[i]=((p[j]*256+p[j+1])/65535-.5)*5.2;far[i]=((q[j+1]*256+q[j+2])/65535-.5)*5.2;}
+    map={a,n:normal,p,e,d:depth,f:far};draw();root.querySelector('[data-status]').textContent=controls.car.selectedOptions[0].text+' '+controls.view.selectedOptions[0].text+' view';
+  }
+  function themeRGB(name){const sample=document.createElement('span');sample.style.color='var('+name+')';root.append(sample);const c=getComputedStyle(sample).color;sample.remove();const tmp=document.createElement('canvas');tmp.width=tmp.height=1;const t=tmp.getContext('2d');t.fillStyle=c;t.fillRect(0,0,1,1);return t.getImageData(0,0,1,1).data;}
+  function draw(){if(!map)return;const s=state(),ang=Number(s.angle)*Math.PI/180,h=Number(s.height),power=Number(s.power),lx=Math.cos(ang)*3,ly=Math.sin(ang)*1.5+h*.866,lz=-Math.sin(ang)*2.598+h*.5;
+    root.querySelector('[data-value="angle"]').textContent=s.angle+'°';root.querySelector('[data-value="height"]').textContent=h.toFixed(1)+' m';root.querySelector('[data-value="power"]').textContent=power.toFixed(2);
+    const blink=s.hazards&&(matchMedia('(prefers-reduced-motion: reduce)').matches||Math.floor(performance.now()/400)%2===0);
+    const rgb=[1,3,5].map(i=>parseInt(s.colour.slice(i,i+2),16)/255),bg=themeRGB('--muted'),grid=themeRGB('--border');
+    const out=ctx.createImageData(176,156),dst=out.data,scale=26,padX=24,padY=5;
+    const block=(x,y,w,dx,dy,dw)=>{if(!s.shadows)return false;const steps=Math.min(80,Math.ceil(Math.hypot(dx,dy)*scale));for(let k=2;k<steps;k++){const t=k/steps,sx=Math.floor(x+dx*t*scale),sy=Math.floor(y-dy*t*scale);if(sx<0||sx>=128||sy<0||sy>=128)continue;const i=sy*128+sx;if(map.a[i*4+3]<128)continue;const zw=w+dw*t;if(zw<map.d[i]-.035&&zw>map.f[i]-.025)return true;}return false;};
+    for(let v=0;v<156;v++)for(let u=0;u<176;u++){
+      const x=u-padX,y=v-padY,i=y*128+x,j=i*4,k=i*3,di=(v*176+u)*4,car=x>=0&&x<128&&y>=0&&y<128&&map.a[j+3]>127;
+      const px=(x+.5-64)/scale,py=(79-y-.5)/scale,w=car?map.d[i]:-py*1.7320508,dx=lx-px,dy=ly-py,dw=lz-w,len=Math.hypot(dx,dy,dw),fall=1/(1+len*len*.07),shadow=s.lit&&block(x,y,w,dx,dy,dw);
+      let nx=0,ny=.866,nz=.5;if(car){nx=map.n[k];ny=map.n[k+1];nz=map.n[k+2];}
+      const diff=Math.max(0,(nx*dx+ny*dy+nz*dw)/len),quant=diff*7,baseBand=Math.floor(quant),t=Math.max(0,Math.min(1,(quant-baseBand-.35)/.30)),band=cleanup==='before'?Math.round(quant)/7:(baseBand+t*t*(3-2*t))/7,light=power*fall*band*(shadow?.15:1),hx=dx/len,hy=dy/len,hz=dw/len+1,hl=Math.hypot(hx,hy,hz),spec=car?Math.pow(Math.max(0,(nx*hx+ny*hy+nz*hz)/hl),45)*(map.p[j+2]/255)*power*(shadow?0:1):0;
+      const sum=-py/(Math.SQRT1_2*.5),dif=px/Math.SQRT1_2,gx=(sum+dif)/2,gy=(sum-dif)/2,onGrid=Math.abs(gx-Math.round(gx))<.025||Math.abs(gy-Math.round(gy))<.025;
+      for(let c=0;c<3;c++){
+        const base=car?map.a[j+c]:(onGrid?grid[c]:bg[c]);
+        let value=s.lit?Math.pow(Math.pow(base/255,2.2)*(.16+light*rgb[c])+spec*rgb[c],1/2.2)*255:base;
+        if(car&&s.lamps&&s.lit){const front=map.e[j]/255,rear=map.e[j+1]/255,ind=blink?map.e[j+2]/255:0;value+=front*[210,185,125][c]+rear*[210,12,8][c]+ind*[255,145,0][c];}
+        dst[di+c]=Math.min(255,value);
+      }dst[di+3]=255;
+    }ctx.putImageData(out,0,0);
+  }
+  for(const [key,e] of Object.entries(controls))e.addEventListener('input',()=>{if(key==='car'||key==='view'||key==='wheels'||key==='details')load();else draw();window.openai?.setWidgetState({modelContent:state()}).catch(()=>{});});
+  root.querySelectorAll('[data-compare]').forEach(b=>b.addEventListener('click',()=>{cleanup=b.dataset.compare;syncCompare();load();window.openai?.setWidgetState({modelContent:state()}).catch(()=>{});}));
+  window.addEventListener('openai:set_globals',e=>{restore(e.detail?.globals?.widgetState?.modelContent);load();});
+  new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:true,attributeFilter:['class','style','data-theme']});
+  const blinkTimer=setInterval(()=>{if(!root.isConnected){clearInterval(blinkTimer);return;}if(controls.hazards.checked&&controls.lamps.checked&&controls.lit.checked)draw();},400);
+  load();
+})();
+</script>

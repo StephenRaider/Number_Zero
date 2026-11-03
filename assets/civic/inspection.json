@@ -1,0 +1,7274 @@
+{
+  "bounds": [
+    [
+      -0.00986810028553009,
+      0.00986810028553009
+    ],
+    [
+      -0.021272890269756317,
+      0.020515574142336845
+    ],
+    [
+      -0.00018923194147646427,
+      0.01335137989372015
+    ]
+  ],
+  "materials": [
+    {
+      "name": "hM_Badge_Max1",
+      "objects": 7,
+      "bounds": [
+        [
+          -0.0085,
+          0.0085
+        ],
+        [
+          -0.0197,
+          0.0196
+        ],
+        [
+          0.0023,
+          0.0126
+        ]
+      ]
+    },
+    {
+      "name": "hM_CarPaint_Max1",
+      "objects": 16,
+      "bounds": [
+        [
+          -0.0099,
+          0.0099
+        ],
+        [
+          -0.0213,
+          0.0205
+        ],
+        [
+          0.0014,
+          0.0134
+        ]
+      ]
+    },
+    {
+      "name": "hM_Chassis_Max1",
+      "objects": 5,
+      "bounds": [
+        [
+          -0.0085,
+          0.0085
+        ],
+        [
+          -0.0207,
+          0.0203
+        ],
+        [
+          0.0009,
+          0.0085
+        ]
+      ]
+    },
+    {
+      "name": "hM_Engine_Max1",
+      "objects": 3,
+      "bounds": [
+        [
+          -0.0072,
+          0.0072
+        ],
+        [
+          -0.02,
+          0.0194
+        ],
+        [
+          0.0037,
+          0.0129
+        ]
+      ]
+    },
+    {
+      "name": "hM_Glass_WindowFront_Low1",
+      "objects": 7,
+      "bounds": [
+        [
+          -0.0076,
+          0.0076
+        ],
+        [
+          -0.0087,
+          0.0195
+        ],
+        [
+          0.0083,
+          0.0126
+        ]
+      ]
+    },
+    {
+      "name": "hM_Glass_WindowSurroundFront_Low1",
+      "objects": 4,
+      "bounds": [
+        [
+          -0.0078,
+          0.0078
+        ],
+        [
+          -0.0095,
+          0.019
+        ],
+        [
+          0.0082,
+          0.013
+        ]
+      ]
+    },
+    {
+      "name": "hM_GlassOpaque_Mirror_Max1",
+      "objects": 2,
+      "bounds": [
+        [
+          -0.0097,
+          0.0097
+        ],
+        [
+          -0.0049,
+          -0.0043
+        ],
+        [
+          0.0086,
+          0.0096
+        ]
+      ]
+    },
+    {
+      "name": "hM_GrilleA_Max1",
+      "objects": 1,
+      "bounds": [
+        [
+          -0.0027,
+          0.0027
+        ],
+        [
+          -0.0201,
+          -0.0196
+        ],
+        [
+          0.0052,
+          0.0057
+        ]
+      ]
+    },
+    {
+      "name": "hM_Interior_Max1",
+      "objects": 4,
+      "bounds": [
+        [
+          -0.0085,
+          0.0085
+        ],
+        [
+          -0.0092,
+          0.0188
+        ],
+        [
+          0.0015,
+          0.0131
+        ]
+      ]
+    },
+    {
+      "name": "hM_InteriorTiled_Common_Max1",
+      "objects": 1,
+      "bounds": [
+        [
+          -0.0048,
+          0.0021
+        ],
+        [
+          -0.0062,
+          -0.0037
+        ],
+        [
+          0.0064,
+          0.0085
+        ]
+      ]
+    },
+    {
+      "name": "hM_InteriorTiledSimple_Max1",
+      "objects": 1,
+      "bounds": [
+        [
+          -0.005,
+          -0.0016
+        ],
+        [
+          -0.0036,
+          -0.0021
+        ],
+        [
+          0.0065,
+          0.009
+        ]
+      ]
+    },
+    {
+      "name": "hM_LightBucket_Max1",
+      "objects": 7,
+      "bounds": [
+        [
+          -0.0084,
+          0.0084
+        ],
+        [
+          -0.0198,
+          0.0195
+        ],
+        [
+          0.005,
+          0.0122
+        ]
+      ]
+    },
+    {
+      "name": "hM_LightGlass_Orange_Low1",
+      "objects": 2,
+      "bounds": [
+        [
+          -0.0085,
+          0.0085
+        ],
+        [
+          -0.0095,
+          -0.0086
+        ],
+        [
+          0.0058,
+          0.0061
+        ]
+      ]
+    },
+    {
+      "name": "hM_LightGlassNormal_Clear_Low1",
+      "objects": 4,
+      "bounds": [
+        [
+          -0.0078,
+          0.0078
+        ],
+        [
+          -0.0198,
+          0.0192
+        ],
+        [
+          0.005,
+          0.0076
+        ]
+      ]
+    },
+    {
+      "name": "hM_LightGlassNormal_Orange_Low1",
+      "objects": 2,
+      "bounds": [
+        [
+          -0.0079,
+          0.0079
+        ],
+        [
+          0.0177,
+          0.019
+        ],
+        [
+          0.0069,
+          0.0076
+        ]
+      ]
+    },
+    {
+      "name": "hM_LightGlassNormal_Red_Low1",
+      "objects": 2,
+      "bounds": [
+        [
+          -0.008,
+          0.008
+        ],
+        [
+          0.0175,
+          0.0192
+        ],
+        [
+          0.0061,
+          0.0093
+        ]
+      ]
+    },
+    {
+      "name": "hM_Opaque_ChromeSmooth_Max1",
+      "objects": 1,
+      "bounds": [
+        [
+          -0.0009,
+          0.0011
+        ],
+        [
+          -0.0025,
+          -0.0017
+        ],
+        [
+          0.0113,
+          0.0119
+        ]
+      ]
+    },
+    {
+      "name": "hM_Opaque_ChromeSmooth_Max_002",
+      "objects": 1,
+      "bounds": [
+        [
+          -0.0053,
+          -0.0052
+        ],
+        [
+          -0.0006,
+          -0.0002
+        ],
+        [
+          0.0126,
+          0.0128
+        ]
+      ]
+    },
+    {
+      "name": "hM_Opaque_NickelRough_Max1",
+      "objects": 1,
+      "bounds": [
+        [
+          -0.0043,
+          -0.0032
+        ],
+        [
+          0.0178,
+          0.0202
+        ],
+        [
+          0.0017,
+          0.0026
+        ]
+      ]
+    },
+    {
+      "name": "hM_Opaque_NickelSmooth_Max1",
+      "objects": 1,
+      "bounds": [
+        [
+          -0.0052,
+          -0.0027
+        ],
+        [
+          0.0163,
+          0.0203
+        ],
+        [
+          0.0015,
+          0.0032
+        ]
+      ]
+    },
+    {
+      "name": "hM_Opaque_PlasticRoughBlack_Max1",
+      "objects": 20,
+      "bounds": [
+        [
+          -0.0097,
+          0.0097
+        ],
+        [
+          -0.0207,
+          0.0198
+        ],
+        [
+          0.0015,
+          0.0126
+        ]
+      ]
+    },
+    {
+      "name": "hM_Opaque_PlasticSmoothBlack_Max1",
+      "objects": 9,
+      "bounds": [
+        [
+          -0.0084,
+          0.0084
+        ],
+        [
+          -0.0208,
+          0.0192
+        ],
+        [
+          0.0023,
+          0.0132
+        ]
+      ]
+    },
+    {
+      "name": "hM_Rim_Main_Max1",
+      "objects": 8,
+      "bounds": [
+        [
+          -0.0089,
+          0.0089
+        ],
+        [
+          -0.0149,
+          0.0158
+        ],
+        [
+          0.0005,
+          0.005
+        ]
+      ]
+    },
+    {
+      "name": "hM_Rim_NoTint_Max1",
+      "objects": 4,
+      "bounds": [
+        [
+          -0.0088,
+          0.0088
+        ],
+        [
+          -0.0146,
+          0.0155
+        ],
+        [
+          0.0021,
+          0.0034
+        ]
+      ]
+    },
+    {
+      "name": "hM_RimBadge_Max1",
+      "objects": 4,
+      "bounds": [
+        [
+          -0.0086,
+          0.0086
+        ],
+        [
+          -0.013,
+          0.0138
+        ],
+        [
+          0.0025,
+          0.0031
+        ]
+      ]
+    },
+    {
+      "name": "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia",
+      "objects": 124,
+      "bounds": [
+        [
+          -0.0089,
+          0.0089
+        ],
+        [
+          -0.0157,
+          0.0165
+        ],
+        [
+          -0.0002,
+          0.0057
+        ]
+      ]
+    },
+    {
+      "name": "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material",
+      "objects": 182,
+      "bounds": [
+        [
+          -0.0081,
+          0.008
+        ],
+        [
+          -0.0145,
+          0.0151
+        ],
+        [
+          0.0015,
+          0.0038
+        ]
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "name": "h:Boot_Glass4_Mesh_001_M_Opaque_PlasticRoughBlack_Max_h:M_Opaqu",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.0,
+        0.01617742469534278,
+        0.010927750263363123
+      ],
+      "size": [
+        0.01269495952874422,
+        0.005325079895555973,
+        0.0027583809569478035
+      ]
+    },
+    {
+      "name": "h:Boot_Glass4_Mesh_001_M_Opaque_PlasticRoughBlack_Max1_h:M_Glas",
+      "materials": [
+        "hM_Glass_WindowSurroundFront_Low1"
+      ],
+      "center": [
+        0.0,
+        0.015593940857797861,
+        0.01125604985281825
+      ],
+      "size": [
+        0.013385619968175888,
+        0.006853210739791393,
+        0.0035626208409667015
+      ]
+    },
+    {
+      "name": "h:Boot_Glass4_Mesh_001_M_Opaque_PlasticRoughBlack_Max2_h:M_Glas",
+      "materials": [
+        "hM_Glass_WindowFront_Low1"
+      ],
+      "center": [
+        0.0,
+        0.01617742469534278,
+        0.010927750263363123
+      ],
+      "size": [
+        0.01269495952874422,
+        0.005325079895555973,
+        0.0027583809569478035
+      ]
+    },
+    {
+      "name": "h:Chassis7_Mesh_M_Opaque_PlasticSmoothBlack_Max_h:M_Opaque_Plas",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        9.778887033462524e-09,
+        0.0006111133843660355,
+        0.010138359386473894
+      ],
+      "size": [
+        0.015645059756934643,
+        0.022671883925795555,
+        0.0060355206951498985
+      ]
+    },
+    {
+      "name": "h:Chassis7_Mesh_M_Opaque_PlasticSmoothBlack_Max_h:M_Badge_Max1_",
+      "materials": [
+        "hM_Badge_Max1"
+      ],
+      "center": [
+        9.778887033462524e-09,
+        -0.012170848436653614,
+        0.007494654506444931
+      ],
+      "size": [
+        0.01317673921585083,
+        0.007756141945719719,
+        0.0014788899570703506
+      ]
+    },
+    {
+      "name": "h:Chassis7_Mesh_M_Opaque_PlasticSmoothBlack_Max_h:M_Engine_Max1",
+      "materials": [
+        "hM_Engine_Max1"
+      ],
+      "center": [
+        -7.0051755756139755e-06,
+        -0.00027174782007932663,
+        0.008326074574142694
+      ],
+      "size": [
+        0.014380029868334532,
+        0.03940116800367832,
+        0.009168251417577267
+      ]
+    },
+    {
+      "name": "h:Chassis7_Mesh_M_Opaque_PlasticSmoothBlack_Max_h:M_CarPaint_Ma",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        1.0244548320770264e-08,
+        -0.00015387684106826782,
+        0.008793654385954142
+      ],
+      "size": [
+        0.014543939381837845,
+        0.03951118513941765,
+        0.009115451015532017
+      ]
+    },
+    {
+      "name": "h:Chassis7_Mesh_M_Opaque_PlasticSmoothBlack_Max_h:M_Chassis_Max",
+      "materials": [
+        "hM_Chassis_Max1"
+      ],
+      "center": [
+        1.0011717677116394e-08,
+        -0.0016300482675433159,
+        0.0039768740243744105
+      ],
+      "size": [
+        0.01558359945192933,
+        0.03748352639377117,
+        0.006089231057558209
+      ]
+    },
+    {
+      "name": "h:Chassis7_Mesh_M_Opaque_PlasticSmoothBlack_Max_h:M_Opaque_",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        9.685475379228592e-05,
+        -0.00030691828578710556,
+        0.007107664830982685
+      ],
+      "size": [
+        0.015754349529743195,
+        0.038952747359871864,
+        0.004472650587558746
+      ]
+    },
+    {
+      "name": "h:DoorL_Glass4_Mesh_003_M_Opaque_PlasticRoughBlack_Max_h:M_Opaq",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.00655942945741117,
+        0.00018954789265990257,
+        0.01043892977759242
+      ],
+      "size": [
+        0.0020995200611650944,
+        0.010126851499080658,
+        0.004344959743320942
+      ]
+    },
+    {
+      "name": "h:DoorL_Glass4_Mesh_003_M_Opaque_PlasticRoughBlack_Max1_h:M_Gla",
+      "materials": [
+        "hM_Glass_WindowFront_Low1"
+      ],
+      "center": [
+        0.00655942945741117,
+        0.00018954789265990257,
+        0.01043892977759242
+      ],
+      "size": [
+        0.0020995200611650944,
+        0.010126851499080658,
+        0.004344959743320942
+      ]
+    },
+    {
+      "name": "h:DoorL4_Mesh_002_M_Badge_Max_h:M_Badge_Max1_0",
+      "materials": [
+        "hM_Badge_Max1"
+      ],
+      "center": [
+        0.008513374719768763,
+        0.003878378658555448,
+        0.007245759479701519
+      ],
+      "size": [
+        1.7491169273853302e-05,
+        0.00011771009303629398,
+        0.00011884048581123352
+      ]
+    },
+    {
+      "name": "h:DoorL4_Mesh_002_M_Badge_Max1_h:M_Interior_Max1_0",
+      "materials": [
+        "hM_Interior_Max1"
+      ],
+      "center": [
+        0.007011050125584006,
+        -0.0008480020333081484,
+        0.007475389400497079
+      ],
+      "size": [
+        0.003051160369068384,
+        0.013430012855678797,
+        0.010502481367439032
+      ]
+    },
+    {
+      "name": "h:DoorL4_Mesh_002_M_Badge_Max2_h:M_Opaque_PlasticSmoothBlack_Ma",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        0.006653604796156287,
+        0.0004533131141215563,
+        0.010454894974827766
+      ],
+      "size": [
+        0.002336269710212946,
+        0.010827382560819387,
+        0.0045434702187776566
+      ]
+    },
+    {
+      "name": "h:DoorL4_Mesh_002_M_Badge_Max3_h:M_CarPaint_Max1_0",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        0.008131419774144888,
+        -0.001041887328028679,
+        0.0054388043936342
+      ],
+      "size": [
+        0.0009374404326081276,
+        0.013042242266237736,
+        0.006429311353713274
+      ]
+    },
+    {
+      "name": "h:DoorR_Glass4_Mesh_005_M_Opaque_PlasticRoughBlack_Max_h:M_Opaq",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -0.006559439701959491,
+        0.00018955301493406296,
+        0.01043892977759242
+      ],
+      "size": [
+        0.0020995200611650944,
+        0.010126841254532337,
+        0.004344959743320942
+      ]
+    },
+    {
+      "name": "h:DoorR_Glass4_Mesh_005_M_Opaque_PlasticRoughBlack_Max1_h:M_Gla",
+      "materials": [
+        "hM_Glass_WindowFront_Low1"
+      ],
+      "center": [
+        -0.006559439701959491,
+        0.00018955301493406296,
+        0.01043892977759242
+      ],
+      "size": [
+        0.0020995200611650944,
+        0.010126841254532337,
+        0.004344959743320942
+      ]
+    },
+    {
+      "name": "h:DoorR4_Mesh_004_M_Badge_Max_h:M_Badge_Max1_0",
+      "materials": [
+        "hM_Badge_Max1"
+      ],
+      "center": [
+        -0.008513374719768763,
+        0.0038783736526966095,
+        0.007245764601975679
+      ],
+      "size": [
+        1.7491169273853302e-05,
+        0.0001177201047539711,
+        0.00011885073035955429
+      ]
+    },
+    {
+      "name": "h:DoorR4_Mesh_004_M_Badge_Max1_h:M_Interior_Max1_0",
+      "materials": [
+        "hM_Interior_Max1"
+      ],
+      "center": [
+        -0.007011050125584006,
+        -0.0008492970373481512,
+        0.007475389400497079
+      ],
+      "size": [
+        0.003051160369068384,
+        0.013432602863758802,
+        0.010502481367439032
+      ]
+    },
+    {
+      "name": "h:DoorR4_Mesh_004_M_Badge_Max2_h:M_Opaque_PlasticSmoothBlack_Ma",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        -0.006653609918430448,
+        0.00045331823639571667,
+        0.010454900097101927
+      ],
+      "size": [
+        0.0023362799547612667,
+        0.010827372316271067,
+        0.004543459974229336
+      ]
+    },
+    {
+      "name": "h:DoorR4_Mesh_004_M_Badge_Max3_h:M_CarPaint_Max1_0",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        -0.008131429553031921,
+        -0.0010407574009150267,
+        0.0054388043936342
+      ],
+      "size": [
+        0.000937439501285553,
+        0.013049682136625051,
+        0.006429311353713274
+      ]
+    },
+    {
+      "name": "h:Glass6_Mesh_006_M_Opaque_PlasticRoughBlack_Max_h:M_Opaque_Pla",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -5.122274160385132e-09,
+        0.0021807136945426464,
+        0.010495489463210106
+      ],
+      "size": [
+        0.015285690315067768,
+        0.0217400835826993,
+        0.003966839984059334
+      ]
+    },
+    {
+      "name": "h:Glass6_Mesh_006_M_Opaque_PlasticRoughBlack_Max1_h:M_Glass_Win",
+      "materials": [
+        "hM_Glass_WindowFront_Low1"
+      ],
+      "center": [
+        -0.006714795250445604,
+        0.009480964625254273,
+        0.010753044858574867
+      ],
+      "size": [
+        0.0018561100587248802,
+        0.007139581721276045,
+        0.00343530997633934
+      ]
+    },
+    {
+      "name": "h:Glass6_Mesh_006_M_Opaque_PlasticRoughBlack_Max2_h:M_Glass_Win",
+      "materials": [
+        "hM_Glass_WindowSurroundFront_Low1"
+      ],
+      "center": [
+        5.122274160385132e-09,
+        -0.00540645292494446,
+        0.010373800061643124
+      ],
+      "size": [
+        0.014250729233026505,
+        0.008109851507470012,
+        0.004398040473461151
+      ]
+    },
+    {
+      "name": "h:Glass6_Mesh_006_M_Opaque_PlasticRoughBlack_Max3_h:M_Glass_Win",
+      "materials": [
+        "hM_Glass_WindowSurroundFront_Low1"
+      ],
+      "center": [
+        -0.006682814797386527,
+        0.00946072512306273,
+        0.01069442043080926
+      ],
+      "size": [
+        0.0022368296049535275,
+        0.008065102156251669,
+        0.004061260260641575
+      ]
+    },
+    {
+      "name": "h:Glass6_Mesh_006_M_Opaque_PlasticRoughBlack_Max4_h:M_Glass_Win",
+      "materials": [
+        "hM_Glass_WindowFront_Low1"
+      ],
+      "center": [
+        0.006714794784784317,
+        0.009480964625254273,
+        0.010753044858574867
+      ],
+      "size": [
+        0.0018560905009508133,
+        0.007139581721276045,
+        0.00343530997633934
+      ]
+    },
+    {
+      "name": "h:Glass6_Mesh_006_M_Opaque_PlasticRoughBlack_Max5_h:M_Glass_Win",
+      "materials": [
+        "hM_Glass_WindowFront_Low1"
+      ],
+      "center": [
+        -1.0244548320770264e-08,
+        -0.0051400677766650915,
+        0.010495489463210106
+      ],
+      "size": [
+        0.01366428006440401,
+        0.007098520640283823,
+        0.003966839984059334
+      ]
+    },
+    {
+      "name": "h:Glass6_Mesh_006_M_Opaque_PlasticRoughBlack_Max6_h:M_Glass_Win",
+      "materials": [
+        "hM_Glass_WindowSurroundFront_Low1"
+      ],
+      "center": [
+        0.006682814797386527,
+        0.00946072512306273,
+        0.01069442043080926
+      ],
+      "size": [
+        0.0022368100471794605,
+        0.008065102156251669,
+        0.004061260260641575
+      ]
+    },
+    {
+      "name": "h:SteeringWheel5_Mesh_008_M_Interior_Max_h:M_Interior_Max1_0",
+      "materials": [
+        "hM_Interior_Max1"
+      ],
+      "center": [
+        -0.003299824835266918,
+        -0.0033259126357734203,
+        0.008076389785856009
+      ],
+      "size": [
+        0.0035724296467378736,
+        0.0025128303095698357,
+        0.0031573204323649406
+      ]
+    },
+    {
+      "name": "h:SteeringWheel5_Mesh_008_M_Interior_Max1_h:M_InteriorTiledSimp",
+      "materials": [
+        "hM_InteriorTiledSimple_Max1"
+      ],
+      "center": [
+        -0.003299819945823401,
+        -0.0028272224590182304,
+        0.0077354698441922665
+      ],
+      "size": [
+        0.003404060029424727,
+        0.0015154499560594559,
+        0.002450660802423954
+      ]
+    },
+    {
+      "name": "h:Interior5_Mesh_007_M_Interior_Max_h:M_Interior_Max1_0",
+      "materials": [
+        "hM_Interior_Max1"
+      ],
+      "center": [
+        0.0,
+        0.004789953585714102,
+        0.007320049277041107
+      ],
+      "size": [
+        0.017072679474949837,
+        0.028071903623640537,
+        0.011582281324081123
+      ]
+    },
+    {
+      "name": "h:Interior5_Mesh_007_M_Interior_Max1_h:M_InteriorTiled_Common_M",
+      "materials": [
+        "hM_InteriorTiled_Common_Max1"
+      ],
+      "center": [
+        -0.001343209994956851,
+        -0.004930922761559486,
+        0.007465904578566551
+      ],
+      "size": [
+        0.006871980149298906,
+        0.00254261028021574,
+        0.0020599309355020523
+      ]
+    },
+    {
+      "name": "h:Interior5_Mesh_007_M_Interior_Max2_h:M_Opaque_ChromeSmooth_Ma",
+      "materials": [
+        "hM_Opaque_ChromeSmooth_Max1"
+      ],
+      "center": [
+        6.260501686483622e-05,
+        -0.0021060623694211245,
+        0.011580245103687048
+      ],
+      "size": [
+        0.0020158099941909313,
+        0.0008002100512385368,
+        0.0005952892825007439
+      ]
+    },
+    {
+      "name": "h:Boot6_Mesh_009_M_Badge_Max_001_h:M_Badge_Max1_0",
+      "materials": [
+        "hM_Badge_Max1"
+      ],
+      "center": [
+        -0.0023993849608814344,
+        0.01945407595485449,
+        0.007940444629639387
+      ],
+      "size": [
+        0.005497749923961237,
+        0.0003390815109014511,
+        0.0026763295754790306
+      ]
+    },
+    {
+      "name": "h:Boot6_Mesh_009_M_Badge_Max_002_h:M_Engine_Max1_0",
+      "materials": [
+        "hM_Engine_Max1"
+      ],
+      "center": [
+        1.0011717677116394e-08,
+        0.013996170833706856,
+        0.010947070084512234
+      ],
+      "size": [
+        0.012865759897977114,
+        0.0017770901322364807,
+        0.0007059797644615173
+      ]
+    },
+    {
+      "name": "h:Boot6_Mesh_009_M_Badge_Max_003_h:M_LightBucket_Max1_0",
+      "materials": [
+        "hM_LightBucket_Max1"
+      ],
+      "center": [
+        5.005858838558197e-09,
+        0.016752731055021286,
+        0.010256439913064241
+      ],
+      "size": [
+        0.003655690001323819,
+        0.005572210997343063,
+        0.003872501663863659
+      ]
+    },
+    {
+      "name": "h:Boot6_Mesh_009_M_Badge_Max_004_h:M_Opaque_PlasticRoughBlack_M",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        5.005858838558197e-09,
+        0.0166385006159544,
+        0.009536595083773136
+      ],
+      "size": [
+        0.0032438698690384626,
+        0.005662549287080765,
+        0.0055586304515600204
+      ]
+    },
+    {
+      "name": "h:Boot6_Mesh_009_M_Badge_Max_005_h:M_Opaque_PlasticSmoothBlack_",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        -1.0244548320770264e-08,
+        0.015551620163023472,
+        0.011202604975551367
+      ],
+      "size": [
+        0.013764259405434132,
+        0.007272070273756981,
+        0.003834531642496586
+      ]
+    },
+    {
+      "name": "h:Boot6_Mesh_009_M_Badge_Max_006_h:M_Glass_WindowFront_Low1_0",
+      "materials": [
+        "hM_Glass_WindowFront_Low1"
+      ],
+      "center": [
+        5.005858838558197e-09,
+        0.01938948594033718,
+        0.008337439969182014
+      ],
+      "size": [
+        0.003655690001323819,
+        0.0002987012267112732,
+        8.776038885116577e-05
+      ]
+    },
+    {
+      "name": "h:Boot6_Mesh_009_M_Badge_Max_007_h:M_CarPaint_Max1_0",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        -1.0244548320770264e-08,
+        0.015749215614050627,
+        0.009465944953262806
+      ],
+      "size": [
+        0.013764259405434132,
+        0.007914421148598194,
+        0.007217170670628548
+      ]
+    },
+    {
+      "name": "h:Boot6_Mesh_009_M_Badge_Max_008_h:M_Opaque_PlasticRoughBlack_M",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -5.005858838558197e-09,
+        0.019328905269503593,
+        0.0075066848658025265
+      ],
+      "size": [
+        0.0030480099376291037,
+        0.0003918781876564026,
+        0.0014988100156188011
+      ]
+    },
+    {
+      "name": "h:BumperChassisF6_Mesh_010_M_Chassis_Max_001_h:M_Chassis_Max1_0",
+      "materials": [
+        "hM_Chassis_Max1"
+      ],
+      "center": [
+        0.0,
+        -0.01792867947369814,
+        0.0033258339972235262
+      ],
+      "size": [
+        0.016774458810687065,
+        0.00564257986843586,
+        0.0039264707593247294
+      ]
+    },
+    {
+      "name": "h:BumperChassisR6_Mesh_011_M_Chassis_Max_002_h:M_Chassis_Max1_0",
+      "materials": [
+        "hM_Chassis_Max1"
+      ],
+      "center": [
+        0.0,
+        0.017489945515990257,
+        0.004135768860578537
+      ],
+      "size": [
+        0.01702773943543434,
+        0.00555419921875,
+        0.0040491800755262375
+      ]
+    },
+    {
+      "name": "h:BumperF6_Mesh_012_M_CarPaint_Max_002_h:M_CarPaint_Max1_0",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        0.0,
+        -0.018190144561231136,
+        0.00366716377902776
+      ],
+      "size": [
+        0.016848720610141754,
+        0.006165491417050362,
+        0.004618890350684524
+      ]
+    },
+    {
+      "name": "h:BumperF6_Mesh_012_M_CarPaint_Max_003_h:M_Opaque_PlasticRoughB",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.0,
+        -0.017928690649569035,
+        0.0037411237717606127
+      ],
+      "size": [
+        0.016774458810687065,
+        0.005642583593726158,
+        0.004470970365218818
+      ]
+    },
+    {
+      "name": "h:BumperF6_Mesh_012_M_CarPaint_Max_004_h:M_Opaque_PlasticSmooth",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        0.0,
+        -0.019768165424466133,
+        0.002966968808323145
+      ],
+      "size": [
+        0.009909759275615215,
+        0.002048630267381668,
+        0.0013131201267242432
+      ]
+    },
+    {
+      "name": "h:BumperF6_Mesh_012_M_CarPaint_Max_005_h:M_GrilleA_Max1_0",
+      "materials": [
+        "hM_GrilleA_Max1"
+      ],
+      "center": [
+        0.0,
+        -0.01986696571111679,
+        0.005472139455378056
+      ],
+      "size": [
+        0.0054598599672317505,
+        0.0005261898040771484,
+        0.0005419403314590454
+      ]
+    },
+    {
+      "name": "h:BumperR6_Mesh_013_M_Opaque_PlasticRoughBlack_Max_003_h:M_Opaq",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -5.122274160385132e-09,
+        0.01751200668513775,
+        0.004135764203965664
+      ],
+      "size": [
+        0.01702772919088602,
+        0.004576120525598526,
+        0.004049170762300491
+      ]
+    },
+    {
+      "name": "h:BumperR6_Mesh_013_M_Opaque_PlasticRoughBlack_Max_004_h:M_Badg",
+      "materials": [
+        "hM_Badge_Max1"
+      ],
+      "center": [
+        -1.9499566406011581e-07,
+        0.019498640671372414,
+        0.002391088753938675
+      ],
+      "size": [
+        0.004914330085739493,
+        0.00020191073417663574,
+        0.00010582013055682182
+      ]
+    },
+    {
+      "name": "h:BumperR6_Mesh_013_M_Opaque_PlasticRoughBlack_Max_005_h:M_CarP",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        -5.122274160385132e-09,
+        0.017869760282337666,
+        0.00412390916608274
+      ],
+      "size": [
+        0.017135710455477238,
+        0.00529162771999836,
+        0.0040728808380663395
+      ]
+    },
+    {
+      "name": "h:Exhausts6_Mesh_014_M_Opaque_NickelRough_Max_h:M_Opaque_Nickel",
+      "materials": [
+        "hM_Opaque_NickelRough_Max1"
+      ],
+      "center": [
+        -0.0037651548627763987,
+        0.01899760589003563,
+        0.002150288666598499
+      ],
+      "size": [
+        0.0011360100470483303,
+        0.0024302415549755096,
+        0.0008106001187115908
+      ]
+    },
+    {
+      "name": "h:Exhausts6_Mesh_014_M_Opaque_NickelRough_Max1_h:M_Opaque_Nicke",
+      "materials": [
+        "hM_Opaque_NickelSmooth_Max1"
+      ],
+      "center": [
+        -0.003939455025829375,
+        0.018257390707731247,
+        0.0023720237077213824
+      ],
+      "size": [
+        0.0024304704274982214,
+        0.003992430865764618,
+        0.0017486902652308345
+      ]
+    },
+    {
+      "name": "h:FenderFL6_Mesh_015_M_Light_Max_001_h:M_LightBucket_Max1_0",
+      "materials": [
+        "hM_LightBucket_Max1"
+      ],
+      "center": [
+        0.008402229752391577,
+        -0.009023097809404135,
+        0.00595701951533556
+      ],
+      "size": [
+        6.125960499048233e-05,
+        0.0008752802386879921,
+        0.0003018006682395935
+      ]
+    },
+    {
+      "name": "h:FenderFL6_Mesh_015_M_Light_Max_002_h:M_Opaque_PlasticSmoothBl",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        0.008387455251067877,
+        -0.009023243095725775,
+        0.005957159213721752
+      ],
+      "size": [
+        0.0001105302944779396,
+        0.000919329933822155,
+        0.00034411996603012085
+      ]
+    },
+    {
+      "name": "h:FenderFL6_Mesh_015_M_Light_Max_003_h:M_Opaque_PlasticRoughBla",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.007582394871860743,
+        -0.012100054416805506,
+        0.0053576393984258175
+      ],
+      "size": [
+        0.0018142899498343468,
+        0.01000825222581625,
+        0.006326721049845219
+      ]
+    },
+    {
+      "name": "h:FenderFL6_Mesh_015_M_Light_Max_004_h:M_LightGlass_Orange_Low1",
+      "materials": [
+        "hM_LightGlass_Orange_Low1"
+      ],
+      "center": [
+        0.008427334949374199,
+        -0.009023097809404135,
+        0.00595701951533556
+      ],
+      "size": [
+        0.00011146999895572662,
+        0.0008752802386879921,
+        0.0003018006682395935
+      ]
+    },
+    {
+      "name": "h:FenderFL6_Mesh_015_M_Light_Max_005_h:M_CarPaint_Max1_0",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        0.007614434696733952,
+        -0.012100054416805506,
+        0.0053576393984258175
+      ],
+      "size": [
+        0.0018783695995807648,
+        0.01000825222581625,
+        0.006326721049845219
+      ]
+    },
+    {
+      "name": "h:FenderFR6_Mesh_016_M_Light_Max_002_h:M_LightBucket_Max1_0",
+      "materials": [
+        "hM_LightBucket_Max1"
+      ],
+      "center": [
+        -0.008402224630117416,
+        -0.009023082908242941,
+        0.005957029294222593
+      ],
+      "size": [
+        6.12698495388031e-05,
+        0.0008752895519137383,
+        0.00030182022601366043
+      ]
+    },
+    {
+      "name": "h:FenderFR6_Mesh_016_M_Light_Max_003_h:M_Opaque_PlasticSmoothBl",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        -0.008387449663132429,
+        -0.009023237973451614,
+        0.005957159213721752
+      ],
+      "size": [
+        0.00011050049215555191,
+        0.0009193401783704758,
+        0.00034411996603012085
+      ]
+    },
+    {
+      "name": "h:FenderFR6_Mesh_016_M_Light_Max_004_h:M_Opaque_PlasticRoughBla",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -0.007582409773021936,
+        -0.012100059306249022,
+        0.005357649410143495
+      ],
+      "size": [
+        0.001814299263060093,
+        0.010008242446929216,
+        0.006326721515506506
+      ]
+    },
+    {
+      "name": "h:FenderFR6_Mesh_016_M_Light_Max_005_h:M_LightGlass_Orange_Low1",
+      "materials": [
+        "hM_LightGlass_Orange_Low1"
+      ],
+      "center": [
+        -0.008427334949374199,
+        -0.009023082908242941,
+        0.005957029294222593
+      ],
+      "size": [
+        0.00011149048805236816,
+        0.0008752895519137383,
+        0.00030182022601366043
+      ]
+    },
+    {
+      "name": "h:FenderFR6_Mesh_016_M_Light_Max_006_h:M_CarPaint_Max1_0",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        -0.007614439819008112,
+        -0.012100059306249022,
+        0.005357649410143495
+      ],
+      "size": [
+        0.001878359355032444,
+        0.010008242446929216,
+        0.006326721515506506
+      ]
+    },
+    {
+      "name": "h:FendersChassisF6_Mesh_017_M_Chassis_Max_003_h:M_Chassis_Max1_",
+      "materials": [
+        "hM_Chassis_Max1"
+      ],
+      "center": [
+        -5.122274160385132e-09,
+        -0.012100054416805506,
+        0.004997319367248565
+      ],
+      "size": [
+        0.016979108564555645,
+        0.01000825222581625,
+        0.007047381601296365
+      ]
+    },
+    {
+      "name": "h:FendersR6_Mesh_018_M_Badge_Max_003_h:M_Badge_Max1_0",
+      "materials": [
+        "hM_Badge_Max1"
+      ],
+      "center": [
+        3.3103860914707184e-06,
+        0.0043415038380771875,
+        0.008209639112465084
+      ],
+      "size": [
+        0.01707817893475294,
+        0.010655762162059546,
+        0.00884846062399447
+      ]
+    },
+    {
+      "name": "h:FendersR6_Mesh_018_M_Badge_Max_004_h:M_CarPaint_Max1_0",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        1.0244548320770264e-08,
+        0.005267758620902896,
+        0.007689179736189544
+      ],
+      "size": [
+        0.017240799963474274,
+        0.02513403305783868,
+        0.010837922105565667
+      ]
+    },
+    {
+      "name": "h:FendersR6_Mesh_018_M_Badge_Max_005_h:M_Opaque_PlasticSmoothBl",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        -0.005345489829778671,
+        -0.0006167871470097452,
+        0.012592115439474583
+      ],
+      "size": [
+        0.00040647946298122406,
+        0.0008687402005307376,
+        0.0004872698336839676
+      ]
+    },
+    {
+      "name": "h:FendersR6_Mesh_018_M_Badge_Max_006_h:M_Opaque_ChromeSmooth_Ma",
+      "materials": [
+        "hM_Opaque_ChromeSmooth_Max_002"
+      ],
+      "center": [
+        -0.005250605056062341,
+        -0.0003978121094405651,
+        0.012675144709646702
+      ],
+      "size": [
+        0.000144170131534338,
+        0.00033359008375555277,
+        0.0002485699951648712
+      ]
+    },
+    {
+      "name": "h:HeadLightL6_Mesh_019_M_Opaque_PlasticRoughBlack_Max_006_h:M_O",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.005916269961744547,
+        -0.01808440499007702,
+        0.005750914104282856
+      ],
+      "size": [
+        0.0037280796095728874,
+        0.0033977292478084564,
+        0.0017591305077075958
+      ]
+    },
+    {
+      "name": "h:HeadLightL6_Mesh_019_M_Opaque_PlasticRoughBlack_Max_007_h:M_L",
+      "materials": [
+        "hM_LightBucket_Max1"
+      ],
+      "center": [
+        0.005916269961744547,
+        -0.017989840358495712,
+        0.005822609178721905
+      ],
+      "size": [
+        0.0037280796095728874,
+        0.0035868585109710693,
+        0.0016157403588294983
+      ]
+    },
+    {
+      "name": "h:HeadLightL6_Mesh_019_M_Opaque_PlasticRoughBlack_Max_008_h:M_L",
+      "materials": [
+        "hM_LightGlassNormal_Clear_Low1"
+      ],
+      "center": [
+        0.0059314148966223,
+        -0.018085765652358532,
+        0.005822609178721905
+      ],
+      "size": [
+        0.003758369479328394,
+        0.003400450572371483,
+        0.0016157403588294983
+      ]
+    },
+    {
+      "name": "h:HeadLightR6_Mesh_020_M_Opaque_PlasticRoughBlack_Max_006_h:M_O",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -0.005916275084018707,
+        -0.01808439940214157,
+        0.005750919692218304
+      ],
+      "size": [
+        0.003728089854121208,
+        0.003397740423679352,
+        0.0017591603100299835
+      ]
+    },
+    {
+      "name": "h:HeadLightR6_Mesh_020_M_Opaque_PlasticRoughBlack_Max_007_h:M_L",
+      "materials": [
+        "hM_LightBucket_Max1"
+      ],
+      "center": [
+        -0.005916275084018707,
+        -0.01798983011394739,
+        0.005822624545544386
+      ],
+      "size": [
+        0.003728089854121208,
+        0.003586879000067711,
+        0.001615750603377819
+      ]
+    },
+    {
+      "name": "h:HeadLightR6_Mesh_020_M_Opaque_PlasticRoughBlack_Max_008_h:M_L",
+      "materials": [
+        "hM_LightGlassNormal_Clear_Low1"
+      ],
+      "center": [
+        -0.0059314148966223,
+        -0.018085760064423084,
+        0.005822624545544386
+      ],
+      "size": [
+        0.003758369479328394,
+        0.0034004617482423782,
+        0.001615750603377819
+      ]
+    },
+    {
+      "name": "h:Hood6_Mesh_021_M_Opaque_PlasticSmoothBlack_Max_006_h:M_Opaque",
+      "materials": [
+        "hM_Opaque_PlasticSmoothBlack_Max1"
+      ],
+      "center": [
+        4.889443516731262e-09,
+        -0.011462248396128416,
+        0.008289324585348368
+      ],
+      "size": [
+        0.004626949783414602,
+        0.00017429981380701065,
+        0.00011900905519723892
+      ]
+    },
+    {
+      "name": "h:Hood6_Mesh_021_M_Opaque_PlasticSmoothBlack_Max_007_h:M_Badge_",
+      "materials": [
+        "hM_Badge_Max1"
+      ],
+      "center": [
+        5.005858838558197e-09,
+        -0.01951996050775051,
+        0.00642589945346117
+      ],
+      "size": [
+        0.0005879499949514866,
+        0.0004225596785545349,
+        0.00028413906693458557
+      ]
+    },
+    {
+      "name": "h:Hood6_Mesh_021_M_Opaque_PlasticSmoothBlack_Max_008_h:M_Engine",
+      "materials": [
+        "hM_Engine_Max1"
+      ],
+      "center": [
+        -2.9499824449885637e-07,
+        -0.018523965030908585,
+        0.0058961245231330395
+      ],
+      "size": [
+        0.00011238999650231563,
+        0.0007387101650238037,
+        0.000650470145046711
+      ]
+    },
+    {
+      "name": "h:Hood6_Mesh_021_M_Opaque_PlasticSmoothBlack_Max_009_h:M_CarPai",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        -4.889443516731262e-09,
+        -0.0140790194272995,
+        0.007026364095509052
+      ],
+      "size": [
+        0.014349369797855616,
+        0.011785022914409637,
+        0.002982070669531822
+      ]
+    },
+    {
+      "name": "h:MirrorBaseL5_Mesh_022_M_Opaque_PlasticRoughBlack_Max_007_h:M_",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.008065764792263508,
+        -0.005225557833909988,
+        0.00864370446652174
+      ],
+      "size": [
+        0.0008784104138612747,
+        0.000668640248477459,
+        0.000622989609837532
+      ]
+    },
+    {
+      "name": "h:MirrorBaseL5_Mesh_022_M_Opaque_PlasticRoughBlack_Max_008_h:M_",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        0.0077290048357099295,
+        -0.005700743291527033,
+        0.008927099872380495
+      ],
+      "size": [
+        0.0015519303269684315,
+        0.0022020507603883743,
+        0.0017427792772650719
+      ]
+    },
+    {
+      "name": "h:MirrorBaseR5_Mesh_023_M_Opaque_PlasticRoughBlack_Max_008_h:M_",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -0.008065764792263508,
+        -0.005225557833909988,
+        0.008643699809908867
+      ],
+      "size": [
+        0.0008784104138612747,
+        0.000668640248477459,
+        0.0006229802966117859
+      ]
+    },
+    {
+      "name": "h:MirrorBaseR5_Mesh_023_M_Opaque_PlasticRoughBlack_Max_009_h:M_",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        -0.0077290048357099295,
+        -0.0057007381692528725,
+        0.008927109651267529
+      ],
+      "size": [
+        0.0015519303269684315,
+        0.0022020405158400536,
+        0.0017427802085876465
+      ]
+    },
+    {
+      "name": "h:MirrorL6_Mesh_024_M_Opaque_PlasticRoughBlack_Max_009_h:M_Opaq",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.008662499720230699,
+        -0.00490832282230258,
+        0.008952564559876919
+      ],
+      "size": [
+        0.002071899827569723,
+        0.001303110271692276,
+        0.0012407097965478897
+      ]
+    },
+    {
+      "name": "h:MirrorL6_Mesh_024_M_Opaque_PlasticRoughBlack_Max_010_h:M_Glas",
+      "materials": [
+        "hM_GlassOpaque_Mirror_Max1"
+      ],
+      "center": [
+        0.008909814525395632,
+        -0.004564977716654539,
+        0.009071274660527706
+      ],
+      "size": [
+        0.0015772702172398567,
+        0.0006164200603961945,
+        0.001003289595246315
+      ]
+    },
+    {
+      "name": "h:MirrorL6_Mesh_024_M_Opaque_PlasticRoughBlack_Max_011_h:M_CarP",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        0.008747325045987964,
+        -0.004847372882068157,
+        0.009021809324622154
+      ],
+      "size": [
+        0.0022415504790842533,
+        0.0014413706958293915,
+        0.001399800181388855
+      ]
+    },
+    {
+      "name": "h:MirrorR6_Mesh_025_M_Opaque_PlasticRoughBlack_Max_010_h:M_Opaq",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -0.008662499720230699,
+        -0.00490832282230258,
+        0.00895256968215108
+      ],
+      "size": [
+        0.002071899827569723,
+        0.001303110271692276,
+        0.0012407200410962105
+      ]
+    },
+    {
+      "name": "h:MirrorR6_Mesh_025_M_Opaque_PlasticRoughBlack_Max_011_h:M_Glas",
+      "materials": [
+        "hM_GlassOpaque_Mirror_Max1"
+      ],
+      "center": [
+        -0.008909819647669792,
+        -0.004564977716654539,
+        0.009071279782801867
+      ],
+      "size": [
+        0.001577259972691536,
+        0.0006164200603961945,
+        0.0010032998397946358
+      ]
+    },
+    {
+      "name": "h:MirrorR6_Mesh_025_M_Opaque_PlasticRoughBlack_Max_012_h:M_CarP",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        -0.008747325045987964,
+        -0.00484737753868103,
+        0.009021809324622154
+      ],
+      "size": [
+        0.0022415504790842533,
+        0.0014413800090551376,
+        0.001399800181388855
+      ]
+    },
+    {
+      "name": "h:Skirts6_Mesh_026_M_Opaque_PlasticRoughBlack_Max_011_h:M_Opaqu",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.0,
+        0.0005532684735953808,
+        0.0018837936804629862
+      ],
+      "size": [
+        0.016266999766230583,
+        0.01927775237709284,
+        0.0008203302277252078
+      ]
+    },
+    {
+      "name": "h:Skirts6_Mesh_026_M_Opaque_PlasticRoughBlack_Max_012_h:M_CarPa",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        0.0,
+        0.0005768239498138428,
+        0.0018770687165670097
+      ],
+      "size": [
+        0.016442660242319107,
+        0.019324863329529762,
+        0.0008337801555171609
+      ]
+    },
+    {
+      "name": "h:Skirts6_Mesh_026_M_Opaque_PlasticRoughBlack_Max_013_h:M_Chass",
+      "materials": [
+        "hM_Chassis_Max1"
+      ],
+      "center": [
+        0.0,
+        0.0005532684735953808,
+        0.0018837936804629862
+      ],
+      "size": [
+        0.016266999766230583,
+        0.01927775237709284,
+        0.0008203302277252078
+      ]
+    },
+    {
+      "name": "h:Spoiler6_Mesh_027_M_CarPaint_Max_013_h:M_CarPaint_Max1_0",
+      "materials": [
+        "hM_CarPaint_Max1"
+      ],
+      "center": [
+        0.0,
+        0.013738710898905993,
+        0.012629454955458641
+      ],
+      "size": [
+        0.012236899696290493,
+        0.0030423300340771675,
+        0.0012850705534219742
+      ]
+    },
+    {
+      "name": "h:TailLightL6_Mesh_028_M_LightBucket_Max_001_h:M_LightBucket_Ma",
+      "materials": [
+        "hM_LightBucket_Max1"
+      ],
+      "center": [
+        0.006853699684143066,
+        0.018038376234471798,
+        0.0077311694622039795
+      ],
+      "size": [
+        0.0022406596690416336,
+        0.002272060140967369,
+        0.003225620836019516
+      ]
+    },
+    {
+      "name": "h:TailLightL6_Mesh_028_M_LightBucket_Max_002_h:M_Opaque_Plastic",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        0.006807634606957436,
+        0.018159320577979088,
+        0.0077311694622039795
+      ],
+      "size": [
+        0.002332789823412895,
+        0.0020203106105327606,
+        0.003225620836019516
+      ]
+    },
+    {
+      "name": "h:TailLightL6_Mesh_028_M_LightBucket_Max_003_h:M_LightGlassNorm",
+      "materials": [
+        "hM_LightGlassNormal_Clear_Low1"
+      ],
+      "center": [
+        0.0062907999381423,
+        0.019079930149018764,
+        0.007239579688757658
+      ],
+      "size": [
+        0.0006309403106570244,
+        0.00022138841450214386,
+        0.0006541600450873375
+      ]
+    },
+    {
+      "name": "h:TailLightL6_Mesh_028_M_LightBucket_Max_004_h:M_LightGlassNorm",
+      "materials": [
+        "hM_LightGlassNormal_Orange_Low1"
+      ],
+      "center": [
+        0.007248514797538519,
+        0.01834541093558073,
+        0.007240149658173323
+      ],
+      "size": [
+        0.0013029100373387337,
+        0.001287730410695076,
+        0.0006552999839186668
+      ]
+    },
+    {
+      "name": "h:TailLightL6_Mesh_028_M_LightBucket_Max_005_h:M_LightGlassNorm",
+      "materials": [
+        "hM_LightGlassNormal_Red_Low1"
+      ],
+      "center": [
+        0.006867099553346634,
+        0.018374170176684856,
+        0.00773363932967186
+      ],
+      "size": [
+        0.0022674594074487686,
+        0.0016687121242284775,
+        0.0032305605709552765
+      ]
+    },
+    {
+      "name": "h:TailLightR6_Mesh_029_M_LightBucket_Max_001_h:M_LightBucket_Ma",
+      "materials": [
+        "hM_LightBucket_Max1"
+      ],
+      "center": [
+        -0.00685369479469955,
+        0.01805215049535036,
+        0.007731184829026461
+      ],
+      "size": [
+        0.002240669447928667,
+        0.00224447064101696,
+        0.0032256105914711952
+      ]
+    },
+    {
+      "name": "h:TailLightR6_Mesh_029_M_LightBucket_Max_002_h:M_LightGlassNorm",
+      "materials": [
+        "hM_LightGlassNormal_Clear_Low1"
+      ],
+      "center": [
+        -0.006290809949859977,
+        0.019079935736954212,
+        0.007239574566483498
+      ],
+      "size": [
+        0.0006309398449957371,
+        0.00022139959037303925,
+        0.0006541498005390167
+      ]
+    },
+    {
+      "name": "h:TailLightR6_Mesh_029_M_LightBucket_Max_003_h:M_LightGlassNorm",
+      "materials": [
+        "hM_LightGlassNormal_Orange_Low1"
+      ],
+      "center": [
+        -0.007248514797538519,
+        0.018345420248806477,
+        0.007240149658173323
+      ],
+      "size": [
+        0.0013029100373387337,
+        0.001287730410695076,
+        0.0006552999839186668
+      ]
+    },
+    {
+      "name": "h:TailLightR6_Mesh_029_M_LightBucket_Max_004_h:M_LightGlassNorm",
+      "materials": [
+        "hM_LightGlassNormal_Red_Low1"
+      ],
+      "center": [
+        -0.0068670997861772776,
+        0.01837416086345911,
+        0.0077336495742201805
+      ],
+      "size": [
+        0.002267479430884123,
+        0.0016687307506799698,
+        0.003230540081858635
+      ]
+    },
+    {
+      "name": "h:TailLightR6_Mesh_029_M_LightBucket_Max_005_h:M_Opaque_Plastic",
+      "materials": [
+        "hM_Opaque_PlasticRoughBlack_Max1"
+      ],
+      "center": [
+        -0.006807629484683275,
+        0.01815931499004364,
+        0.007731184829026461
+      ],
+      "size": [
+        0.002332800067961216,
+        0.0020202994346618652,
+        0.0032256105914711952
+      ]
+    },
+    {
+      "name": "h:WheelFL6_Mesh_030_M_RimBadge_Max3_h:M_Rim_Main_Max1_0",
+      "materials": [
+        "hM_Rim_Main_Max1"
+      ],
+      "center": [
+        0.00844952603802085,
+        -0.012738306540995836,
+        0.002806760123348795
+      ],
+      "size": [
+        0.0008545992895960808,
+        0.00393760297447443,
+        0.003950748010538518
+      ]
+    },
+    {
+      "name": "h:WheelFL6_Mesh_030_M_RimBadge_Max1_h:M_Rim_NoTint_Max1_0",
+      "materials": [
+        "hM_Rim_NoTint_Max1"
+      ],
+      "center": [
+        0.008528148755431175,
+        -0.013332709670066833,
+        0.0027442462742328644
+      ],
+      "size": [
+        0.0004632994532585144,
+        0.0025502853095531464,
+        0.0013109403662383556
+      ]
+    },
+    {
+      "name": "h:WheelFL6_Mesh_030_M_RimBadge_Max_h:M_RimBadge_Max1_0",
+      "materials": [
+        "hM_RimBadge_Max1"
+      ],
+      "center": [
+        0.008594981394708157,
+        -0.012730215210467577,
+        0.0028052080888301134
+      ],
+      "size": [
+        1.8456950783729553e-05,
+        0.0004523852840065956,
+        0.0005255183205008507
+      ]
+    },
+    {
+      "name": "h:WheelFL6_Mesh_030_M_RimBadge_Max2_h:M_Rim_Main_Max1_0",
+      "materials": [
+        "hM_Rim_Main_Max1"
+      ],
+      "center": [
+        0.0077793196542188525,
+        -0.012738242745399475,
+        0.0027681118372129276
+      ],
+      "size": [
+        0.002212763298302889,
+        0.004382111132144928,
+        0.004475473542697728
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max3_h:M_Rim_Main_Max1_0",
+      "materials": [
+        "hM_Rim_Main_Max1"
+      ],
+      "center": [
+        -0.00847819063346833,
+        -0.012738178949803114,
+        0.002806760181556456
+      ],
+      "size": [
+        0.0008546002209186554,
+        0.00393760297447443,
+        0.003950748068746179
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max1_h:M_Rim_NoTint_Max1_0",
+      "materials": [
+        "hM_Rim_NoTint_Max1"
+      ],
+      "center": [
+        -0.008556813350878656,
+        -0.012143776286393404,
+        0.0027442462742328644
+      ],
+      "size": [
+        0.000463300384581089,
+        0.0025502843782305717,
+        0.0013109403662383556
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max_h:M_RimBadge_Max1_0",
+      "materials": [
+        "hM_RimBadge_Max1"
+      ],
+      "center": [
+        -0.008623645640909672,
+        -0.012746270280331373,
+        0.0028052080888301134
+      ],
+      "size": [
+        1.8456950783729553e-05,
+        0.0004523852840065956,
+        0.0005255183205008507
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max2_h:M_Rim_Main_Max1_0",
+      "materials": [
+        "hM_Rim_Main_Max1"
+      ],
+      "center": [
+        -0.007807983900420368,
+        -0.012738242745399475,
+        0.0027681118444888853
+      ],
+      "size": [
+        0.002212765160948038,
+        0.004382111132144928,
+        0.004475473542697728
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max4_h:M_Rim_Main_Max1_0",
+      "materials": [
+        "hM_Rim_Main_Max1"
+      ],
+      "center": [
+        0.008417726028710604,
+        0.013592179398983717,
+        0.002825576870236546
+      ],
+      "size": [
+        0.0009225448593497276,
+        0.00393760297447443,
+        0.003960275847930461
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max5_h:M_Rim_NoTint_Max1_0",
+      "materials": [
+        "hM_Rim_NoTint_Max1"
+      ],
+      "center": [
+        0.008497427916154265,
+        0.01299777626991272,
+        0.002764444681815803
+      ],
+      "size": [
+        0.0004855981096625328,
+        0.0025502853095531464,
+        0.0013172461185604334
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max6_h:M_RimBadge_Max1_0",
+      "materials": [
+        "hM_RimBadge_Max1"
+      ],
+      "center": [
+        0.008563186042010784,
+        0.013600270729511976,
+        0.00282656354829669
+      ],
+      "size": [
+        2.7626752853393555e-05,
+        0.0004523852840065956,
+        0.0005251197144389153
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max7_h:M_Rim_Main_Max1_0",
+      "materials": [
+        "hM_Rim_Main_Max1"
+      ],
+      "center": [
+        0.007748296484351158,
+        0.013592243194580078,
+        0.0027752375171985477
+      ],
+      "size": [
+        0.0022880248725414276,
+        0.004382111132144928,
+        0.004508041602093726
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max8_h:M_Rim_Main_Max1_0",
+      "materials": [
+        "hM_Rim_Main_Max1"
+      ],
+      "center": [
+        -0.00841772637795657,
+        0.013592306757345796,
+        0.002825576870236546
+      ],
+      "size": [
+        0.0009225457906723022,
+        0.00393760297447443,
+        0.003960275847930461
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max9_h:M_Rim_NoTint_Max1_0",
+      "materials": [
+        "hM_Rim_NoTint_Max1"
+      ],
+      "center": [
+        -0.008497428032569587,
+        0.01418670965358615,
+        0.002764444623608142
+      ],
+      "size": [
+        0.0004855990409851074,
+        0.0025502843782305717,
+        0.0013172461185604334
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max10_h:M_RimBadge_Max1_0",
+      "materials": [
+        "hM_RimBadge_Max1"
+      ],
+      "center": [
+        -0.008563186274841428,
+        0.01358421565964818,
+        0.00282656354829669
+      ],
+      "size": [
+        2.7626752853393555e-05,
+        0.0004523852840065956,
+        0.0005251197144389153
+      ]
+    },
+    {
+      "name": "WheelFL6_Mesh_030_M_RimBadge_Max11_h:M_Rim_Main_Max1_0",
+      "materials": [
+        "hM_Rim_Main_Max1"
+      ],
+      "center": [
+        -0.0077482962515205145,
+        0.013592242961749434,
+        0.00277523750992259
+      ],
+      "size": [
+        0.0022880258038640022,
+        0.004382111132144928,
+        0.004508041660301387
+      ]
+    },
+    {
+      "name": "polySurface144_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007546682143583894,
+        -0.012738242745399475,
+        0.0027599878958426416
+      ],
+      "size": [
+        9.359372779726982e-05,
+        0.002666812390089035,
+        0.002680174191482365
+      ]
+    },
+    {
+      "name": "polySurface145_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007396987872198224,
+        -0.012344282120466232,
+        0.003968311822973192
+      ],
+      "size": [
+        0.00022367620840668678,
+        0.0007879212498664856,
+        0.00026352633722126484
+      ]
+    },
+    {
+      "name": "polySurface146_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007396987872198224,
+        -0.013132203370332718,
+        0.003968311822973192
+      ],
+      "size": [
+        0.00022367620840668678,
+        0.0007879212498664856,
+        0.00026352633722126484
+      ]
+    },
+    {
+      "name": "polySurface147_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007413157494738698,
+        -0.01376985153183341,
+        0.0035052761086262763
+      ],
+      "size": [
+        0.00023813406005501747,
+        0.00048737507313489914,
+        0.000677542295306921
+      ]
+    },
+    {
+      "name": "polySurface148_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007439314387738705,
+        -0.014042594004422426,
+        0.0027562385657802224
+      ],
+      "size": [
+        0.00024365074932575226,
+        5.810987204313278e-05,
+        0.0008355302270501852
+      ]
+    },
+    {
+      "name": "polySurface149_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007465471280738711,
+        -0.01376985153183341,
+        0.0020072010229341686
+      ],
+      "size": [
+        0.00023813406005501747,
+        0.00048737507313489914,
+        0.0006775424117222428
+      ]
+    },
+    {
+      "name": "polySurface150_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007481640903279185,
+        -0.013132203370332718,
+        0.001544165308587253
+      ],
+      "size": [
+        0.00022367620840668678,
+        0.0007879212498664856,
+        0.0002635265700519085
+      ]
+    },
+    {
+      "name": "polySurface151_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007481640903279185,
+        -0.012344282120466232,
+        0.001544165308587253
+      ],
+      "size": [
+        0.00022367620840668678,
+        0.0007879212498664856,
+        0.0002635265700519085
+      ]
+    },
+    {
+      "name": "polySurface152_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007465471280738711,
+        -0.01170663395896554,
+        0.0020072010229341686
+      ],
+      "size": [
+        0.00023813406005501747,
+        0.00048737507313489914,
+        0.0006775424117222428
+      ]
+    },
+    {
+      "name": "polySurface153_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007439314387738705,
+        -0.011433891486376524,
+        0.0027562385657802224
+      ],
+      "size": [
+        0.00024365074932575226,
+        5.810987204313278e-05,
+        0.0008355302270501852
+      ]
+    },
+    {
+      "name": "polySurface154_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007413157494738698,
+        -0.01170663395896554,
+        0.0035052761086262763
+      ],
+      "size": [
+        0.00023813406005501747,
+        0.00048737507313489914,
+        0.000677542295306921
+      ]
+    },
+    {
+      "name": "polySurface155_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007331946399062872,
+        -0.012723871506750584,
+        0.0027524891775101423
+      ],
+      "size": [
+        9.72570851445198e-05,
+        0.00277053564786911,
+        0.002785083372145891
+      ]
+    },
+    {
+      "name": "polySurface156_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007598200463689864,
+        -0.013135874643921852,
+        0.005492121214047074
+      ],
+      "size": [
+        0.0019806204363703728,
+        0.0012029707431793213,
+        0.0004396406002342701
+      ]
+    },
+    {
+      "name": "polySurface157_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.006703351507894695,
+        -0.012738242745399475,
+        0.002730538149990025
+      ],
+      "size": [
+        0.00027743028476834297,
+        0.005408603698015213,
+        0.005408406173955882
+      ]
+    },
+    {
+      "name": "polySurface158_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.008717228658497334,
+        -0.012738242745399475,
+        0.002800864356686361
+      ],
+      "size": [
+        0.0003054030239582062,
+        0.005458591505885124,
+        0.0054592785745626315
+      ]
+    },
+    {
+      "name": "polySurface159_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007611081353388727,
+        -0.014215674251317978,
+        0.005114313215017319
+      ],
+      "size": [
+        0.0019957679323852062,
+        0.0011040903627872467,
+        0.0008555511012673378
+      ]
+    },
+    {
+      "name": "polySurface160_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007638721028342843,
+        -0.015037649311125278,
+        0.0043228124850429595
+      ],
+      "size": [
+        0.0020062136463820934,
+        0.000819789245724678,
+        0.0011546667665243149
+      ]
+    },
+    {
+      "name": "polySurface161_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007676123641431332,
+        -0.015455042012035847,
+        0.0032606981112621725
+      ],
+      "size": [
+        0.0020094215869903564,
+        0.00040489621460437775,
+        0.001264393562451005
+      ]
+    },
+    {
+      "name": "polySurface162_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007717125117778778,
+        -0.015420675743371248,
+        0.0020776121818926185
+      ],
+      "size": [
+        0.002009682822972536,
+        0.0004736287519335747,
+        0.0012540339957922697
+      ]
+    },
+    {
+      "name": "polySurface163_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007753019919618964,
+        -0.014923303853720427,
+        0.001049715036060661
+      ],
+      "size": [
+        0.002004795242100954,
+        0.0008835224434733391,
+        0.001114077284000814
+      ]
+    },
+    {
+      "name": "polySurface164_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.0077786934562027454,
+        -0.014050404075533152,
+        0.000323481067425746
+      ],
+      "size": [
+        0.0019932249560952187,
+        0.0011322079226374626,
+        0.000800577414338477
+      ]
+    },
+    {
+      "name": "polySurface165_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007789502386003733,
+        -0.012937566265463829,
+        4.996494681108743e-06
+      ],
+      "size": [
+        0.0019794562831521034,
+        0.001212187111377716,
+        0.00038845684321131557
+      ]
+    },
+    {
+      "name": "polySurface166_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007783745415508747,
+        -0.011774741113185883,
+        0.0001698533924354706
+      ],
+      "size": [
+        0.0019890516996383667,
+        0.0011696983128786087,
+        0.0006632184231420979
+      ]
+    },
+    {
+      "name": "polySurface167_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007763079833239317,
+        -0.01080811582505703,
+        0.0007705931930104271
+      ],
+      "size": [
+        0.0020013367757201195,
+        0.0009859949350357056,
+        0.0010328757925890386
+      ]
+    },
+    {
+      "name": "polySurface168_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007729894015938044,
+        -0.01017827820032835,
+        0.0017119528783950955
+      ],
+      "size": [
+        0.0020088301971554756,
+        0.000633586198091507,
+        0.0012296020286157727
+      ]
+    },
+    {
+      "name": "polySurface169_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007689644815400243,
+        -0.009963958989828825,
+        0.002864546491764486
+      ],
+      "size": [
+        0.0020106728188693523,
+        0.00028992537409067154,
+        0.001282368553802371
+      ]
+    },
+    {
+      "name": "polySurface170_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007650612504221499,
+        -0.010254508350044489,
+        0.003991235978901386
+      ],
+      "size": [
+        0.002007551956921816,
+        0.0007010689005255699,
+        0.0012108462397009134
+      ]
+    },
+    {
+      "name": "polySurface171_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007619040552526712,
+        -0.010948079638183117,
+        0.0048863859847188
+      ],
+      "size": [
+        0.00200017262250185,
+        0.0010259859263896942,
+        0.000981692224740982
+      ]
+    },
+    {
+      "name": "polySurface172_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007600352400913835,
+        -0.011957663111388683,
+        0.00542154663708061
+      ],
+      "size": [
+        0.0019861734472215176,
+        0.0011831317096948624,
+        0.0005807899869978428
+      ]
+    },
+    {
+      "name": "polySurface173_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007546682143583894,
+        -0.012738242745399475,
+        0.0027599878958426416
+      ],
+      "size": [
+        9.359372779726982e-05,
+        0.002666812390089035,
+        0.002680174191482365
+      ]
+    },
+    {
+      "name": "polySurface174_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007331946399062872,
+        -0.012723871506750584,
+        0.0027524891775101423
+      ],
+      "size": [
+        9.72570851445198e-05,
+        0.00277053564786911,
+        0.002785083372145891
+      ]
+    },
+    {
+      "name": "polySurface318_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007575346389785409,
+        -0.012738242745399475,
+        0.0027599878958426416
+      ],
+      "size": [
+        9.359465911984444e-05,
+        0.002666812390089035,
+        0.002680174191482365
+      ]
+    },
+    {
+      "name": "polySurface319_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007425651885569096,
+        -0.013132203835994005,
+        0.003968311822973192
+      ],
+      "size": [
+        0.0002236766740679741,
+        0.0007879221811890602,
+        0.00026352633722126484
+      ]
+    },
+    {
+      "name": "polySurface320_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007425652118399739,
+        -0.012344281654804945,
+        0.003968311822973192
+      ],
+      "size": [
+        0.00022367620840668678,
+        0.0007879221811890602,
+        0.00026352633722126484
+      ]
+    },
+    {
+      "name": "polySurface321_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007441821857355535,
+        -0.011706633493304253,
+        0.0035052761086262763
+      ],
+      "size": [
+        0.00023813406005501747,
+        0.0004873741418123245,
+        0.000677542295306921
+      ]
+    },
+    {
+      "name": "polySurface322_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0074679788667708635,
+        -0.011433891486376524,
+        0.0027562385657802224
+      ],
+      "size": [
+        0.00024365121498703957,
+        5.810987204313278e-05,
+        0.0008355302270501852
+      ]
+    },
+    {
+      "name": "polySurface323_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007494135876186192,
+        -0.011706633493304253,
+        0.0020072010229341686
+      ],
+      "size": [
+        0.00023813406005501747,
+        0.0004873741418123245,
+        0.0006775424117222428
+      ]
+    },
+    {
+      "name": "polySurface324_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0075103051494807005,
+        -0.012344281654804945,
+        0.001544165308587253
+      ],
+      "size": [
+        0.00022367620840668678,
+        0.0007879221811890602,
+        0.0002635265700519085
+      ]
+    },
+    {
+      "name": "polySurface325_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007510304916650057,
+        -0.013132203835994005,
+        0.001544165308587253
+      ],
+      "size": [
+        0.0002236766740679741,
+        0.0007879221811890602,
+        0.0002635265700519085
+      ]
+    },
+    {
+      "name": "polySurface326_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007494135177694261,
+        -0.013769851997494698,
+        0.0020072010229341686
+      ],
+      "size": [
+        0.00023813406005501747,
+        0.0004873741418123245,
+        0.0006775424117222428
+      ]
+    },
+    {
+      "name": "polySurface327_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007467978168278933,
+        -0.014042594004422426,
+        0.0027562385657802224
+      ],
+      "size": [
+        0.00024365074932575226,
+        5.810987204313278e-05,
+        0.0008355302270501852
+      ]
+    },
+    {
+      "name": "polySurface328_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007441821275278926,
+        -0.013769851997494698,
+        0.003505276079522446
+      ],
+      "size": [
+        0.00023813406005501747,
+        0.0004873741418123245,
+        0.000677542295306921
+      ]
+    },
+    {
+      "name": "polySurface329_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007360610645264387,
+        -0.012752613984048367,
+        0.0027524891775101423
+      ],
+      "size": [
+        9.725801646709442e-05,
+        0.00277053564786911,
+        0.002785083372145891
+      ]
+    },
+    {
+      "name": "polySurface330_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007626864884514362,
+        -0.012340611079707742,
+        0.005492121214047074
+      ],
+      "size": [
+        0.0019806213676929474,
+        0.001202971674501896,
+        0.0004396406002342701
+      ]
+    },
+    {
+      "name": "polySurface331_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.006732015637680888,
+        -0.012738242745399475,
+        0.002730538149990025
+      ],
+      "size": [
+        0.0002774321474134922,
+        0.005408605560660362,
+        0.005408406204878702
+      ]
+    },
+    {
+      "name": "polySurface332_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.008745893137529492,
+        -0.012738243211060762,
+        0.0028008642984787002
+      ],
+      "size": [
+        0.0003054039552807808,
+        0.005458592437207699,
+        0.00545927861094242
+      ]
+    },
+    {
+      "name": "polySurface333_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0076397458324208856,
+        -0.011260811472311616,
+        0.005114313215017319
+      ],
+      "size": [
+        0.001995768863707781,
+        0.0011040903627872467,
+        0.0008555511012673378
+      ]
+    },
+    {
+      "name": "polySurface334_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007667386089451611,
+        -0.010438835946843028,
+        0.0043228124850429595
+      ],
+      "size": [
+        0.0020062141120433807,
+        0.000819789245724678,
+        0.0011546667665243149
+      ]
+    },
+    {
+      "name": "polySurface335_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0077047887607477605,
+        -0.010021443711593747,
+        0.0032606981694698334
+      ],
+      "size": [
+        0.0020094220526516438,
+        0.00040489621460437775,
+        0.0012643937952816486
+      ]
+    },
+    {
+      "name": "polySurface336_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007745790353510529,
+        -0.010055809747427702,
+        0.0020776121818926185
+      ],
+      "size": [
+        0.0020096837542951107,
+        0.0004736287519335747,
+        0.0012540339957922697
+      ]
+    },
+    {
+      "name": "polySurface337_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007781684980727732,
+        -0.01055318140424788,
+        0.0010497150433366187
+      ],
+      "size": [
+        0.002004796639084816,
+        0.0008835224434733391,
+        0.001114077284000814
+      ]
+    },
+    {
+      "name": "polySurface338_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0078073578188195825,
+        -0.011426081415265799,
+        0.0003234810747017036
+      ],
+      "size": [
+        0.0019932249560952187,
+        0.0011322079226374626,
+        0.0008005774070625193
+      ]
+    },
+    {
+      "name": "polySurface339_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.00781816674862057,
+        -0.012538919458165765,
+        4.996489224140532e-06
+      ],
+      "size": [
+        0.0019794576801359653,
+        0.0012121880427002907,
+        0.0003884568577632308
+      ]
+    },
+    {
+      "name": "polySurface340_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007812409428879619,
+        -0.013701744377613068,
+        0.00016985338334052358
+      ],
+      "size": [
+        0.001989052165299654,
+        0.0011696983128786087,
+        0.0006632184522459283
+      ]
+    },
+    {
+      "name": "polySurface341_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.00779174332274124,
+        -0.014668370131403208,
+        0.0007705931784585118
+      ],
+      "size": [
+        0.0020013367757201195,
+        0.0009859958663582802,
+        0.001032875821692869
+      ]
+    },
+    {
+      "name": "polySurface342_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007758557505439967,
+        -0.015298207523301244,
+        0.0017119528783950955
+      ],
+      "size": [
+        0.0020088301971554756,
+        0.0006335871294140816,
+        0.0012296020286157727
+      ]
+    },
+    {
+      "name": "polySurface343_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007718308188486844,
+        -0.0155125274322927,
+        0.002864546491764486
+      ],
+      "size": [
+        0.0020106728188693523,
+        0.00028992537409067154,
+        0.001282368553802371
+      ]
+    },
+    {
+      "name": "polySurface344_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007679275993723422,
+        -0.015221977140754461,
+        0.003991235978901386
+      ],
+      "size": [
+        0.002007551956921816,
+        0.0007010689005255699,
+        0.0012108462397009134
+      ]
+    },
+    {
+      "name": "polySurface345_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0076477042166516185,
+        -0.014528406085446477,
+        0.0048863859847188
+      ],
+      "size": [
+        0.0020001735538244247,
+        0.0010259859263896942,
+        0.000981692224740982
+      ]
+    },
+    {
+      "name": "polySurface346_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007629016297869384,
+        -0.01351882261224091,
+        0.005421546578872949
+      ],
+      "size": [
+        0.001986173912882805,
+        0.001183132641017437,
+        0.0005807899869978428
+      ]
+    },
+    {
+      "name": "polySurface347_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007575346389785409,
+        -0.012738242745399475,
+        0.0027599878958426416
+      ],
+      "size": [
+        9.359465911984444e-05,
+        0.002666812390089035,
+        0.002680174191482365
+      ]
+    },
+    {
+      "name": "polySurface348_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007360610645264387,
+        -0.012752613984048367,
+        0.0027524891775101423
+      ],
+      "size": [
+        9.725801646709442e-05,
+        0.00277053564786911,
+        0.002785083372145891
+      ]
+    },
+    {
+      "name": "polySurface349_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007612315122969449,
+        0.012011400889605284,
+        0.005050025298260152
+      ],
+      "size": [
+        0.0018592309206724167,
+        0.0010822201147675514,
+        0.0009300336241722107
+      ]
+    },
+    {
+      "name": "polySurface350_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.006817780900746584,
+        0.013595991767942905,
+        0.00272897417198692
+      ],
+      "size": [
+        0.00037360191345214844,
+        0.005431098863482475,
+        0.005430827541204053
+      ]
+    },
+    {
+      "name": "polySurface351_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.008673141710460186,
+        0.013592243660241365,
+        0.0028212038523633964
+      ],
+      "size": [
+        0.00038801319897174835,
+        0.005458592437207699,
+        0.005456473561935127
+      ]
+    },
+    {
+      "name": "polySurface352_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.0076553503749892116,
+        0.011232852004468441,
+        0.00422886450542137
+      ],
+      "size": [
+        0.0018732273019850254,
+        0.0007897969335317612,
+        0.0011970982886850834
+      ]
+    },
+    {
+      "name": "polySurface353_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.00771222251933068,
+        0.010851700324565172,
+        0.0031436809804290533
+      ],
+      "size": [
+        0.001878533512353897,
+        0.0003524096682667732,
+        0.001298339106142521
+      ]
+    },
+    {
+      "name": "polySurface354_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007773791323415935,
+        0.010947925504297018,
+        0.001968878088518977
+      ],
+      "size": [
+        0.00187729112803936,
+        0.0005348613485693932,
+        0.0012746279826387763
+      ]
+    },
+    {
+      "name": "polySurface355_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007826150744222105,
+        0.011482162866741419,
+        0.0009698042558738962
+      ],
+      "size": [
+        0.00186923798173666,
+        0.000913514755666256,
+        0.0011209722142666578
+      ]
+    },
+    {
+      "name": "polySurface356_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007862482103519142,
+        0.012389272451400757,
+        0.0002765597510006046
+      ],
+      "size": [
+        0.0018511214293539524,
+        0.001145642250776291,
+        0.0007752860692562535
+      ]
+    },
+    {
+      "name": "polySurface357_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007876968942582607,
+        0.013520855456590652,
+        1.3551652955356985e-07
+      ],
+      "size": [
+        0.0018302574753761292,
+        0.0012143738567829132,
+        0.0003771852207137272
+      ]
+    },
+    {
+      "name": "polySurface358_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007865359541028738,
+        0.014668840449303389,
+        0.00022164932124724146
+      ],
+      "size": [
+        0.0018485048785805702,
+        0.0011609503999352455,
+        0.0007253674120875075
+      ]
+    },
+    {
+      "name": "polySurface359_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.00783157895784825,
+        0.015610471833497286,
+        0.0008662231339258142
+      ],
+      "size": [
+        0.0018674065358936787,
+        0.0009497543796896935,
+        0.0010860292240977287
+      ]
+    },
+    {
+      "name": "polySurface360_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007780654705129564,
+        0.01619719620794058,
+        0.0018379197572357953
+      ],
+      "size": [
+        0.0018769064918160439,
+        0.0005835983902215958,
+        0.001267296145670116
+      ]
+    },
+    {
+      "name": "polySurface361_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007719706976786256,
+        0.01635652966797352,
+        0.003000867087393999
+      ],
+      "size": [
+        0.0018788515590131283,
+        0.0003149174153804779,
+        0.0013044229708611965
+      ]
+    },
+    {
+      "name": "polySurface362_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007661596522666514,
+        0.01602286659181118,
+        0.004109683737624437
+      ],
+      "size": [
+        0.0018743393011391163,
+        0.0007423087954521179,
+        0.0012183135841041803
+      ]
+    },
+    {
+      "name": "polySurface363_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.0076164682395756245,
+        0.015283994376659393,
+        0.00497077964246273
+      ],
+      "size": [
+        0.0018612584099173546,
+        0.0010578520596027374,
+        0.0009687207639217377
+      ]
+    },
+    {
+      "name": "polySurface364_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007591255474835634,
+        0.014254181645810604,
+        0.005451869918033481
+      ],
+      "size": [
+        0.0018403949216008186,
+        0.0011867247521877289,
+        0.0005706199444830418
+      ]
+    },
+    {
+      "name": "polySurface365_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.00758968573063612,
+        0.01306856982409954,
+        0.005481821019202471
+      ],
+      "size": [
+        0.0018372554332017899,
+        0.0011945739388465881,
+        0.0005107177421450615
+      ]
+    },
+    {
+      "name": "polySurface366_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007416934706270695,
+        0.013592243194580078,
+        0.0027578716981224716
+      ],
+      "size": [
+        0.00012786313891410828,
+        0.0024418700486421585,
+        0.0024397714296355844
+      ]
+    },
+    {
+      "name": "polySurface367_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007310339482501149,
+        0.013419162947684526,
+        0.003911700448952615
+      ],
+      "size": [
+        9.866943582892418e-05,
+        0.0007473072037100792,
+        0.00013211392797529697
+      ]
+    },
+    {
+      "name": "polySurface368_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.0073275568429380655,
+        0.01277620391920209,
+        0.0035831736167892814
+      ],
+      "size": [
+        0.00011976202949881554,
+        0.0005386108532547951,
+        0.0005345826502889395
+      ]
+    },
+    {
+      "name": "polySurface369_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.00736094918102026,
+        0.012439103331416845,
+        0.0029460095101967454
+      ],
+      "size": [
+        0.00013101939111948013,
+        0.0001355903223156929,
+        0.0007493884768337011
+      ]
+    },
+    {
+      "name": "polySurface370_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007398147135972977,
+        0.012551574502140284,
+        0.0022362295421771705
+      ],
+      "size": [
+        0.00012737326323986053,
+        0.00033803749829530716,
+        0.0006798143731430173
+      ]
+    },
+    {
+      "name": "polySurface371_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007424958283081651,
+        0.013056131545454264,
+        0.0017246419447474182
+      ],
+      "size": [
+        0.00011024577543139458,
+        0.000671076588332653,
+        0.00035300373565405607
+      ]
+    },
+    {
+      "name": "polySurface372_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007431531557813287,
+        0.01376532344147563,
+        0.0015992214903235435
+      ],
+      "size": [
+        9.866943582892418e-05,
+        0.0007473072037100792,
+        0.00013211392797529697
+      ]
+    },
+    {
+      "name": "polySurface373_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.00741431419737637,
+        0.014408282469958067,
+        0.0019277482642792165
+      ],
+      "size": [
+        0.00011976202949881554,
+        0.0005386108532547951,
+        0.0005345825338736176
+      ]
+    },
+    {
+      "name": "polySurface374_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007380921859294176,
+        0.014745383057743311,
+        0.0025649123126640916
+      ],
+      "size": [
+        0.00013101939111948013,
+        0.0001355903223156929,
+        0.0007493884768337011
+      ]
+    },
+    {
+      "name": "polySurface375_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007343723904341459,
+        0.014632911887019873,
+        0.0032746923388913274
+      ],
+      "size": [
+        0.00012737326323986053,
+        0.00033803749829530716,
+        0.0006798144895583391
+      ]
+    },
+    {
+      "name": "polySurface376_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007316912757232785,
+        0.014128354843705893,
+        0.0037862799363210797
+      ],
+      "size": [
+        0.00011024577543139458,
+        0.000671076588332653,
+        0.00035300361923873425
+      ]
+    },
+    {
+      "name": "polySurface377_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.0073246092069894075,
+        0.013584745116531849,
+        0.002759289985988289
+      ],
+      "size": [
+        0.00013237586244940758,
+        0.0025268476456403732,
+        0.0025258808163926005
+      ]
+    },
+    {
+      "name": "polySurface511_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.007416934706270695,
+        0.013592243194580078,
+        0.0027578716981224716
+      ],
+      "size": [
+        0.00012786313891410828,
+        0.0024418700486421585,
+        0.0024397714296355844
+      ]
+    },
+    {
+      "name": "polySurface512_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        0.0073246092069894075,
+        0.013584745116531849,
+        0.002759289985988289
+      ],
+      "size": [
+        0.00013237586244940758,
+        0.0025268476456403732,
+        0.0025258808163926005
+      ]
+    },
+    {
+      "name": "polySurface513_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0076123158214613795,
+        0.015173085266724229,
+        0.005050025414675474
+      ],
+      "size": [
+        0.001859231386333704,
+        0.0010822219774127007,
+        0.0009300336241722107
+      ]
+    },
+    {
+      "name": "polySurface514_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.006817780900746584,
+        0.01358849462121725,
+        0.0027289741751701513
+      ],
+      "size": [
+        0.00037360377609729767,
+        0.005431098863482475,
+        0.005430827580312325
+      ]
+    },
+    {
+      "name": "polySurface515_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.008673142059706151,
+        0.01359224272891879,
+        0.002821203845087439
+      ],
+      "size": [
+        0.0003880159929394722,
+        0.00545859057456255,
+        0.005456473620142788
+      ]
+    },
+    {
+      "name": "polySurface516_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007655351306311786,
+        0.01595163461752236,
+        0.00422886450542137
+      ],
+      "size": [
+        0.0018732273019850254,
+        0.0007897969335317612,
+        0.0011970982886850834
+      ]
+    },
+    {
+      "name": "polySurface517_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007712223450653255,
+        0.016332786064594984,
+        0.0031436810386367142
+      ],
+      "size": [
+        0.001878533512353897,
+        0.00035241059958934784,
+        0.0012983393389731646
+      ]
+    },
+    {
+      "name": "polySurface518_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.00777379225473851,
+        0.01623656041920185,
+        0.0019688781758304685
+      ],
+      "size": [
+        0.00187729112803936,
+        0.0005348622798919678,
+        0.0012746279826387763
+      ]
+    },
+    {
+      "name": "polySurface519_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007826151384506375,
+        0.01570232375524938,
+        0.000969804277701769
+      ],
+      "size": [
+        0.0018692384473979473,
+        0.0009135156869888306,
+        0.0011209723015781492
+      ]
+    },
+    {
+      "name": "polySurface520_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007862482394557446,
+        0.014795213704928756,
+        0.00027655975895868323
+      ],
+      "size": [
+        0.0018511218950152397,
+        0.001145642250776291,
+        0.0007752860547043383
+      ]
+    },
+    {
+      "name": "polySurface521_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007876968826167285,
+        0.01366363069973886,
+        1.355147105641663e-07
+      ],
+      "size": [
+        0.0018302579410374165,
+        0.0012143747881054878,
+        0.0003771852207137272
+      ]
+    },
+    {
+      "name": "polySurface522_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007865359424613416,
+        0.012515645939856768,
+        0.0002216492875959375
+      ],
+      "size": [
+        0.0018485053442418575,
+        0.0011609503999352455,
+        0.0007253673829836771
+      ]
+    },
+    {
+      "name": "polySurface523_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007831578433979303,
+        0.01157401385717094,
+        0.0008662231120979413
+      ],
+      "size": [
+        0.001867407001554966,
+        0.0009497553110122681,
+        0.0010860292823053896
+      ]
+    },
+    {
+      "name": "polySurface524_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007780653715599328,
+        0.010987290181219578,
+        0.00183791974268388
+      ],
+      "size": [
+        0.0018769069574773312,
+        0.000583600252866745,
+        0.0012672962620854378
+      ]
+    },
+    {
+      "name": "polySurface525_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0077197065111249685,
+        0.010827956488355994,
+        0.0030008670000825077
+      ],
+      "size": [
+        0.001878852490335703,
+        0.00031491927802562714,
+        0.0013044232036918402
+      ]
+    },
+    {
+      "name": "polySurface526_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007661595765966922,
+        0.011161620263010263,
+        0.004109683737624437
+      ],
+      "size": [
+        0.0018743393011391163,
+        0.0007423097267746925,
+        0.0012183135841041803
+      ]
+    },
+    {
+      "name": "polySurface527_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007616468006744981,
+        0.011900492012500763,
+        0.004970779526047409
+      ],
+      "size": [
+        0.0018612593412399292,
+        0.0010578520596027374,
+        0.0009687207639217377
+      ]
+    },
+    {
+      "name": "polySurface528_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007591255358420312,
+        0.012930304510518909,
+        0.005451869918033481
+      ],
+      "size": [
+        0.001840395387262106,
+        0.0011867256835103035,
+        0.0005706199444830418
+      ]
+    },
+    {
+      "name": "polySurface529_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007589686079882085,
+        0.014115916565060616,
+        0.005481821135617793
+      ],
+      "size": [
+        0.0018372563645243645,
+        0.0011945758014917374,
+        0.0005107177421450615
+      ]
+    },
+    {
+      "name": "polySurface530_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007416934706270695,
+        0.013592243194580078,
+        0.0027578716981224716
+      ],
+      "size": [
+        0.0001278640702366829,
+        0.0024418700486421585,
+        0.0024397714296355844
+      ]
+    },
+    {
+      "name": "polySurface531_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007310339715331793,
+        0.01376532344147563,
+        0.003911700448952615
+      ],
+      "size": [
+        9.866990149021149e-05,
+        0.0007473072037100792,
+        0.00013211392797529697
+      ]
+    },
+    {
+      "name": "polySurface532_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007327557250391692,
+        0.014408282469958067,
+        0.003583173645893112
+      ],
+      "size": [
+        0.00011976202949881554,
+        0.0005386108532547951,
+        0.0005345826502889395
+      ]
+    },
+    {
+      "name": "polySurface533_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007360949646681547,
+        0.014745383057743311,
+        0.0029460095684044063
+      ],
+      "size": [
+        0.00013101939111948013,
+        0.0001355903223156929,
+        0.0007493884768337011
+      ]
+    },
+    {
+      "name": "polySurface534_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007398147601634264,
+        0.014632912119850516,
+        0.0022362295421771705
+      ],
+      "size": [
+        0.00012737326323986053,
+        0.0003380384296178818,
+        0.0006798143731430173
+      ]
+    },
+    {
+      "name": "polySurface535_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007424958574119955,
+        0.014128354843705893,
+        0.0017246419592993334
+      ],
+      "size": [
+        0.00011024624109268188,
+        0.000671076588332653,
+        0.00035300373565405607
+      ]
+    },
+    {
+      "name": "polySurface536_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007431531324982643,
+        0.013419162947684526,
+        0.0015992214903235435
+      ],
+      "size": [
+        9.866990149021149e-05,
+        0.0007473072037100792,
+        0.00013211392797529697
+      ]
+    },
+    {
+      "name": "polySurface537_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007414313731715083,
+        0.01277620391920209,
+        0.0019277482642792165
+      ],
+      "size": [
+        0.00011976202949881554,
+        0.0005386108532547951,
+        0.0005345825338736176
+      ]
+    },
+    {
+      "name": "polySurface538_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007380921393632889,
+        0.012439103331416845,
+        0.0025649123126640916
+      ],
+      "size": [
+        0.00013101939111948013,
+        0.0001355903223156929,
+        0.0007493884768337011
+      ]
+    },
+    {
+      "name": "polySurface539_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007343723438680172,
+        0.01255157426930964,
+        0.0032746923388913274
+      ],
+      "size": [
+        0.00012737326323986053,
+        0.0003380384296178818,
+        0.0006798144895583391
+      ]
+    },
+    {
+      "name": "polySurface540_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.00731691240798682,
+        0.013056131545454264,
+        0.0037862799363210797
+      ],
+      "size": [
+        0.00011024624109268188,
+        0.000671076588332653,
+        0.00035300361923873425
+      ]
+    },
+    {
+      "name": "polySurface541_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0073246092069894075,
+        0.013599741272628307,
+        0.0027592900150921196
+      ],
+      "size": [
+        0.0001323767937719822,
+        0.0025268476456403732,
+        0.0025258808163926005
+      ]
+    },
+    {
+      "name": "polySurface675_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.007416934706270695,
+        0.013592243194580078,
+        0.0027578716981224716
+      ],
+      "size": [
+        0.0001278640702366829,
+        0.0024418700486421585,
+        0.0024397714296355844
+      ]
+    },
+    {
+      "name": "polySurface676_Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3D",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994_Wheel1A_3D_3DWheel2A_Materia"
+      ],
+      "center": [
+        -0.0073246092069894075,
+        0.013599741272628307,
+        0.0027592900150921196
+      ],
+      "size": [
+        0.0001323767937719822,
+        0.0025268476456403732,
+        0.0025258808163926005
+      ]
+    },
+    {
+      "name": "polySurface677_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007635799236595631,
+        -0.014130792114883661,
+        0.0026167675387114286
+      ],
+      "size": [
+        7.482897490262985e-05,
+        0.00030359718948602676,
+        0.0009781606495380402
+      ]
+    },
+    {
+      "name": "polySurface678_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007633698987774551,
+        -0.013670208398252726,
+        0.0026769252435769886
+      ],
+      "size": [
+        7.492396980524063e-05,
+        0.0003243749961256981,
+        0.000980874290689826
+      ]
+    },
+    {
+      "name": "polySurface679_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007819797610864043,
+        -0.013856787350960076,
+        0.0026449275319464505
+      ],
+      "size": [
+        0.0003956933505833149,
+        0.000749579630792141,
+        0.0017542586429044604
+      ]
+    },
+    {
+      "name": "polySurface680_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007820572995115072,
+        -0.014026815071702003,
+        0.002622719868668355
+      ],
+      "size": [
+        0.0003950330428779125,
+        0.0006048399955034256,
+        0.0017353537259623408
+      ]
+    },
+    {
+      "name": "polySurface681_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007357824011705816,
+        -0.01410839322488755,
+        0.0033883963769767433
+      ],
+      "size": [
+        0.0006219148635864258,
+        0.0003560176119208336,
+        0.00047905161045491695
+      ]
+    },
+    {
+      "name": "polySurface682_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007411709288135171,
+        -0.014005107805132866,
+        0.001845326434704475
+      ],
+      "size": [
+        0.0006233411841094494,
+        0.0003180168569087982,
+        0.00051989930216223
+      ]
+    },
+    {
+      "name": "polySurface683_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007411854923702776,
+        -0.013667673454619944,
+        0.0017827884876169264
+      ],
+      "size": [
+        0.00034711929038167,
+        0.00033848267048597336,
+        0.0002601371379569173
+      ]
+    },
+    {
+      "name": "polySurface684_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007352517917752266,
+        -0.013795659528113902,
+        0.0034819726133719087
+      ],
+      "size": [
+        0.00034793000668287277,
+        0.00033573340624570847,
+        0.00028336397372186184
+      ]
+    },
+    {
+      "name": "polySurface685_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007418444205541164,
+        -0.013800505781546235,
+        0.0016307836049236357
+      ],
+      "size": [
+        0.00035051628947257996,
+        0.00010924879461526871,
+        4.461302887648344e-05
+      ]
+    },
+    {
+      "name": "polySurface686_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0073332920437678695,
+        -0.013939720578491688,
+        0.0036222318012733012
+      ],
+      "size": [
+        0.0003189234994351864,
+        0.00010918080806732178,
+        3.172224387526512e-05
+      ]
+    },
+    {
+      "name": "polySurface687_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007348882267251611,
+        -0.013939720578491688,
+        0.003622776217525825
+      ],
+      "size": [
+        0.0003501041792333126,
+        0.00010918080806732178,
+        3.281119279563427e-05
+      ]
+    },
+    {
+      "name": "polySurface688_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00759616686264053,
+        -0.014085068251006305,
+        0.003399769717361778
+      ],
+      "size": [
+        0.0001450059935450554,
+        0.00035372283309698105,
+        0.0004620982799679041
+      ]
+    },
+    {
+      "name": "polySurface689_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007650365121662617,
+        -0.013971343170851469,
+        0.0018477378907846287
+      ],
+      "size": [
+        0.0001458069309592247,
+        0.00033129099756479263,
+        0.00048502220306545496
+      ]
+    },
+    {
+      "name": "polySurface690_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007408144534565508,
+        -0.013722202624194324,
+        0.0016505318781128153
+      ],
+      "size": [
+        0.0003077802248299122,
+        5.725491791963577e-05,
+        5.536479875445366e-05
+      ]
+    },
+    {
+      "name": "polySurface691_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007339589472394437,
+        -0.013859385857358575,
+        0.003613690845668316
+      ],
+      "size": [
+        0.00030798371881246567,
+        5.317945033311844e-05,
+        6.118230521678925e-05
+      ]
+    },
+    {
+      "name": "polySurface692_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007928760373033583,
+        -0.013970143860206008,
+        0.0032840301282703876
+      ],
+      "size": [
+        6.599072366952896e-05,
+        3.69735062122345e-05,
+        5.288282409310341e-05
+      ]
+    },
+    {
+      "name": "polySurface693_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007927813567221165,
+        -0.01392966543789953,
+        0.0033111412776634097
+      ],
+      "size": [
+        6.460584700107574e-05,
+        5.617272108793259e-05,
+        1.320824958384037e-05
+      ]
+    },
+    {
+      "name": "polySurface694_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007928789593279362,
+        -0.013885939726606011,
+        0.0032898735953494906
+      ],
+      "size": [
+        6.655789911746979e-05,
+        3.146473318338394e-05,
+        5.580834113061428e-05
+      ]
+    },
+    {
+      "name": "polySurface695_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007930495077744126,
+        -0.01388262095861137,
+        0.0032410265412181616
+      ],
+      "size": [
+        6.64563849568367e-05,
+        3.7017278373241425e-05,
+        5.290471017360687e-05
+      ]
+    },
+    {
+      "name": "polySurface696_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007931674481369555,
+        -0.013923095655627549,
+        0.003213923948351294
+      ],
+      "size": [
+        6.460491567850113e-05,
+        5.620904266834259e-05,
+        1.3212906196713448e-05
+      ]
+    },
+    {
+      "name": "polySurface697_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007930690771900117,
+        -0.013966838829219341,
+        0.0032354240538552403
+      ],
+      "size": [
+        6.654206663370132e-05,
+        3.139302134513855e-05,
+        5.534547381103039e-05
+      ]
+    },
+    {
+      "name": "polySurface698_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007968362653627992,
+        -0.013926416169852018,
+        0.00326411152491346
+      ],
+      "size": [
+        1.7484650015830994e-05,
+        0.000124429352581501,
+        0.00011469540186226368
+      ]
+    },
+    {
+      "name": "polySurface699_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00797624746337533,
+        -0.013886210741475224,
+        0.00205093139084056
+      ],
+      "size": [
+        6.64563849568367e-05,
+        3.691576421260834e-05,
+        5.2891671657562256e-05
+      ]
+    },
+    {
+      "name": "polySurface700_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007975301006808877,
+        -0.013845757814124227,
+        0.0020780393097084016
+      ],
+      "size": [
+        6.507057696580887e-05,
+        5.618017166852951e-05,
+        1.3225246220827103e-05
+      ]
+    },
+    {
+      "name": "polySurface701_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007976284716278315,
+        -0.013801971217617393,
+        0.002056544879451394
+      ],
+      "size": [
+        6.700772792100906e-05,
+        3.139302134513855e-05,
+        5.5361539125442505e-05
+      ]
+    },
+    {
+      "name": "polySurface702_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007978214998729527,
+        -0.01379866641946137,
+        0.0020079388632439077
+      ],
+      "size": [
+        6.64563849568367e-05,
+        3.69735062122345e-05,
+        5.2899355068802834e-05
+      ]
+    },
+    {
+      "name": "polySurface703_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00797916145529598,
+        -0.013839090475812554,
+        0.0019808346987701952
+      ],
+      "size": [
+        6.507150828838348e-05,
+        5.629565566778183e-05,
+        1.3240380212664604e-05
+      ]
+    },
+    {
+      "name": "polySurface704_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007978418841958046,
+        -0.01388287590816617,
+        0.00200210273033008
+      ],
+      "size": [
+        6.655789911746979e-05,
+        3.1395815312862396e-05,
+        5.579926073551178e-05
+      ]
+    },
+    {
+      "name": "polySurface705_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00801236741244793,
+        -0.013842438580468297,
+        0.002030662086326629
+      ],
+      "size": [
+        2.7738511562347412e-05,
+        0.00012446008622646332,
+        0.00011551054194569588
+      ]
+    },
+    {
+      "name": "polySurface706_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007606786966789514,
+        -0.013713451800867915,
+        0.002652003997354768
+      ],
+      "size": [
+        0.0002411147579550743,
+        0.0007818518206477165,
+        0.0020629374776035547
+      ]
+    },
+    {
+      "name": "polySurface707_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007005854859016836,
+        -0.01326129212975502,
+        0.0026896785420831293
+      ],
+      "size": [
+        0.0005672345869243145,
+        0.0014901626855134964,
+        0.0021676330361515284
+      ]
+    },
+    {
+      "name": "polySurface708_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0069851442240178585,
+        -0.013991705956868827,
+        0.002593908051494509
+      ],
+      "size": [
+        0.0005454765632748604,
+        0.0009354948997497559,
+        0.00209360895678401
+      ]
+    },
+    {
+      "name": "polySurface709_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0076644637156277895,
+        -0.014130791649222374,
+        0.0026167674805037677
+      ],
+      "size": [
+        7.482944056391716e-05,
+        0.00030359625816345215,
+        0.0009781606495380402
+      ]
+    },
+    {
+      "name": "polySurface710_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007662363059353083,
+        -0.013670208398252726,
+        0.002676925272680819
+      ],
+      "size": [
+        7.492396980524063e-05,
+        0.0003243749961256981,
+        0.000980874290689826
+      ]
+    },
+    {
+      "name": "polySurface711_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007848461798857898,
+        -0.013856787118129432,
+        0.0026449275319464505
+      ],
+      "size": [
+        0.0003956933505833149,
+        0.000749579630792141,
+        0.0017542586429044604
+      ]
+    },
+    {
+      "name": "polySurface712_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007849237299524248,
+        -0.01402681483887136,
+        0.00262271985411644
+      ],
+      "size": [
+        0.0003950330428779125,
+        0.000604839064180851,
+        0.0017353538423776627
+      ]
+    },
+    {
+      "name": "polySurface713_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007386488374322653,
+        -0.014108393341302872,
+        0.0033883963769767433
+      ],
+      "size": [
+        0.0006219148635864258,
+        0.00035601668059825897,
+        0.00047905161045491695
+      ]
+    },
+    {
+      "name": "polySurface714_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007440373650752008,
+        -0.014005107572302222,
+        0.001845326434704475
+      ],
+      "size": [
+        0.0006233416497707367,
+        0.0003180159255862236,
+        0.00051989930216223
+      ]
+    },
+    {
+      "name": "polySurface715_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.00744051905348897,
+        -0.013667673338204622,
+        0.0017827885167207569
+      ],
+      "size": [
+        0.0003471197560429573,
+        0.00033848267048597336,
+        0.0002601372543722391
+      ]
+    },
+    {
+      "name": "polySurface716_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007381182280369103,
+        -0.013795659760944545,
+        0.0034819726133719087
+      ],
+      "size": [
+        0.0003479304723441601,
+        0.00033573340624570847,
+        0.00028336397372186184
+      ]
+    },
+    {
+      "name": "polySurface717_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007447108451742679,
+        -0.013800505665130913,
+        0.0016307836049236357
+      ],
+      "size": [
+        0.00035051628947257996,
+        0.00010924786329269409,
+        4.461302887648344e-05
+      ]
+    },
+    {
+      "name": "polySurface718_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007361956289969385,
+        -0.013939720811322331,
+        0.0036222318012733012
+      ],
+      "size": [
+        0.0003189234994351864,
+        0.00010918080806732178,
+        3.172224387526512e-05
+      ]
+    },
+    {
+      "name": "polySurface719_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007377546513453126,
+        -0.013939720811322331,
+        0.003622776217525825
+      ],
+      "size": [
+        0.0003501041792333126,
+        0.00010918080806732178,
+        3.281119279563427e-05
+      ]
+    },
+    {
+      "name": "polySurface720_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007624831341672689,
+        -0.014085068251006305,
+        0.003399769717361778
+      ],
+      "size": [
+        0.0001450064592063427,
+        0.00035372283309698105,
+        0.0004620982799679041
+      ]
+    },
+    {
+      "name": "polySurface721_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007679029426071793,
+        -0.013971343170851469,
+        0.0018477378907846287
+      ],
+      "size": [
+        0.0001458064652979374,
+        0.00033129099756479263,
+        0.00048502220306545496
+      ]
+    },
+    {
+      "name": "polySurface722_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007436808722559363,
+        -0.013722202507779002,
+        0.0016505318781128153
+      ],
+      "size": [
+        0.0003077802248299122,
+        5.725491791963577e-05,
+        5.536479875445366e-05
+      ]
+    },
+    {
+      "name": "polySurface723_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007368253776803613,
+        -0.013859385973773897,
+        0.003613690845668316
+      ],
+      "size": [
+        0.00030798325315117836,
+        5.317945033311844e-05,
+        6.118230521678925e-05
+      ]
+    },
+    {
+      "name": "polySurface724_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007957424619235098,
+        -0.01397014339454472,
+        0.0032840301282703876
+      ],
+      "size": [
+        6.599072366952896e-05,
+        3.69735062122345e-05,
+        5.288282409310341e-05
+      ]
+    },
+    {
+      "name": "polySurface725_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.00795647781342268,
+        -0.013929665321484208,
+        0.0033111412776634097
+      ],
+      "size": [
+        6.460584700107574e-05,
+        5.617272108793259e-05,
+        1.320824958384037e-05
+      ]
+    },
+    {
+      "name": "polySurface726_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007957453839480877,
+        -0.013885939493775368,
+        0.0032898735953494906
+      ],
+      "size": [
+        6.655789911746979e-05,
+        3.1463801860809326e-05,
+        5.580834113061428e-05
+      ]
+    },
+    {
+      "name": "polySurface727_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007959159323945642,
+        -0.013882620842196047,
+        0.0032410265412181616
+      ],
+      "size": [
+        6.64563849568367e-05,
+        3.7017278373241425e-05,
+        5.290471017360687e-05
+      ]
+    },
+    {
+      "name": "polySurface728_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.00796033872757107,
+        -0.013923095306381583,
+        0.003213923948351294
+      ],
+      "size": [
+        6.460491567850113e-05,
+        5.620904266834259e-05,
+        1.3212906196713448e-05
+      ]
+    },
+    {
+      "name": "polySurface729_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007959355134516954,
+        -0.013966838829219341,
+        0.0032354240538552403
+      ],
+      "size": [
+        6.654206663370132e-05,
+        3.139302134513855e-05,
+        5.534547381103039e-05
+      ]
+    },
+    {
+      "name": "polySurface730_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007997026899829507,
+        -0.013926415937021375,
+        0.00326411152491346
+      ],
+      "size": [
+        1.7484650015830994e-05,
+        0.0001244284212589264,
+        0.00011469540186226368
+      ]
+    },
+    {
+      "name": "polySurface731_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.008004911825992167,
+        -0.01388621050864458,
+        0.00205093139084056
+      ],
+      "size": [
+        6.64563849568367e-05,
+        3.691576421260834e-05,
+        5.2891671657562256e-05
+      ]
+    },
+    {
+      "name": "polySurface732_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.008003965369425714,
+        -0.013845757581293583,
+        0.0020780393097084016
+      ],
+      "size": [
+        6.507057696580887e-05,
+        5.6179240345954895e-05,
+        1.3225246220827103e-05
+      ]
+    },
+    {
+      "name": "polySurface733_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.00800494896247983,
+        -0.013801970984786749,
+        0.002056544879451394
+      ],
+      "size": [
+        6.700772792100906e-05,
+        3.1393952667713165e-05,
+        5.5361539125442505e-05
+      ]
+    },
+    {
+      "name": "polySurface734_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.008006879244931042,
+        -0.013798666186630726,
+        0.0020079388632439077
+      ],
+      "size": [
+        6.64563849568367e-05,
+        3.69735062122345e-05,
+        5.2899355068802834e-05
+      ]
+    },
+    {
+      "name": "polySurface735_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.008007825701497495,
+        -0.01383909024298191,
+        0.0019808346987701952
+      ],
+      "size": [
+        6.507150828838348e-05,
+        5.6294724345207214e-05,
+        1.3240380212664604e-05
+      ]
+    },
+    {
+      "name": "polySurface736_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.008007083088159561,
+        -0.013882875675335526,
+        0.00200210273033008
+      ],
+      "size": [
+        6.655789911746979e-05,
+        3.1395815312862396e-05,
+        5.579926073551178e-05
+      ]
+    },
+    {
+      "name": "polySurface737_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.008041031658649445,
+        -0.013842438580468297,
+        0.002030662086326629
+      ],
+      "size": [
+        2.7738511562347412e-05,
+        0.00012446008622646332,
+        0.00011551054194569588
+      ]
+    },
+    {
+      "name": "polySurface738_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007635451212991029,
+        -0.013713451568037271,
+        0.0026520040119066834
+      ],
+      "size": [
+        0.00024111522361636162,
+        0.0007818518206477165,
+        0.0020629374776035547
+      ]
+    },
+    {
+      "name": "polySurface739_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007034518988803029,
+        -0.01326129212975502,
+        0.0026896785566350445
+      ],
+      "size": [
+        0.0005672345869243145,
+        0.0014901626855134964,
+        0.0021676330361515284
+      ]
+    },
+    {
+      "name": "polySurface740_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007013808470219374,
+        -0.01399170607328415,
+        0.0025939080369425938
+      ],
+      "size": [
+        0.0005454765632748604,
+        0.0009354948997497559,
+        0.0020936093060299754
+      ]
+    },
+    {
+      "name": "polySurface741_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007552586146630347,
+        0.014543568366207182,
+        0.0032326828222721815
+      ],
+      "size": [
+        6.327871233224869e-05,
+        0.00010240823030471802,
+        0.00010774238035082817
+      ]
+    },
+    {
+      "name": "polySurface742_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007573308888822794,
+        0.014573572319932282,
+        0.0028268689929973334
+      ],
+      "size": [
+        9.922031313180923e-05,
+        0.0006007403135299683,
+        0.000802346970885992
+      ]
+    },
+    {
+      "name": "polySurface743_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0075963115086779,
+        0.014650100958533585,
+        0.0023975220101419836
+      ],
+      "size": [
+        6.30384311079979e-05,
+        9.035319089889526e-05,
+        0.00010324292816221714
+      ]
+    },
+    {
+      "name": "polySurface744_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007057200593408197,
+        0.014887718367390335,
+        0.002267016185214743
+      ],
+      "size": [
+        0.00025004148483276367,
+        5.5456534028053284e-05,
+        8.990615606307983e-05
+      ]
+    },
+    {
+      "name": "polySurface745_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007056928239762783,
+        0.014948184136301279,
+        0.002274316851980984
+      ],
+      "size": [
+        0.0002497006207704544,
+        6.89411535859108e-05,
+        7.823831401765347e-05
+      ]
+    },
+    {
+      "name": "polySurface746_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007060685311444104,
+        0.014956315979361534,
+        0.0022045951918698847
+      ],
+      "size": [
+        0.00025009550154209137,
+        5.595572292804718e-05,
+        8.991966024041176e-05
+      ]
+    },
+    {
+      "name": "polySurface747_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007060891191940755,
+        0.014896094799041748,
+        0.0021975466806907207
+      ],
+      "size": [
+        0.0002495669759809971,
+        6.895139813423157e-05,
+        7.872888818383217e-05
+      ]
+    },
+    {
+      "name": "polySurface748_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006999740726314485,
+        0.014758002362214029,
+        0.0033644356299191713
+      ],
+      "size": [
+        0.0002494608052074909,
+        6.870087236166e-05,
+        7.871817797422409e-05
+      ]
+    },
+    {
+      "name": "polySurface749_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00699948170222342,
+        0.01481828629039228,
+        0.003371482715010643
+      ],
+      "size": [
+        0.000250308308750391,
+        5.6080520153045654e-05,
+        8.993363007903099e-05
+      ]
+    },
+    {
+      "name": "polySurface750_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006995949835982174,
+        0.014810284599661827,
+        0.003440968692302704
+      ],
+      "size": [
+        0.000249513890594244,
+        6.88266009092331e-05,
+        7.872376590967178e-05
+      ]
+    },
+    {
+      "name": "polySurface751_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006996142852585763,
+        0.014749870635569096,
+        0.0034341656137257814
+      ],
+      "size": [
+        0.0002501220442354679,
+        5.5694952607154846e-05,
+        8.941814303398132e-05
+      ]
+    },
+    {
+      "name": "polySurface752_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007619238458573818,
+        0.014639074448496103,
+        0.002175434958189726
+      ],
+      "size": [
+        0.00027198437601327896,
+        0.00031944457441568375,
+        0.00010467926040291786
+      ]
+    },
+    {
+      "name": "polySurface753_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007702423550654203,
+        0.014438234851695597,
+        0.002255310188047588
+      ],
+      "size": [
+        9.707128629088402e-05,
+        8.243601769208908e-05,
+        8.197245188057423e-05
+      ]
+    },
+    {
+      "name": "polySurface754_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007684082782361656,
+        0.01434697734657675,
+        0.0027928537456318736
+      ],
+      "size": [
+        0.00010831141844391823,
+        0.00013662409037351608,
+        0.0010075231548398733
+      ]
+    },
+    {
+      "name": "polySurface755_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0075575394439511,
+        0.014487945125438273,
+        0.0034514105936978012
+      ],
+      "size": [
+        0.0002429978922009468,
+        0.00029881298542022705,
+        0.00016589625738561153
+      ]
+    },
+    {
+      "name": "polySurface756_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007641293574124575,
+        0.01431456208229065,
+        0.0033373974438291043
+      ],
+      "size": [
+        8.88751819729805e-05,
+        7.567554712295532e-05,
+        9.532715193927288e-05
+      ]
+    },
+    {
+      "name": "polySurface757_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007690183352679014,
+        0.014457980054430664,
+        0.0028097164758946747
+      ],
+      "size": [
+        0.00010982248932123184,
+        0.00013788416981697083,
+        0.0008019262459129095
+      ]
+    },
+    {
+      "name": "polySurface758_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006896002567373216,
+        0.014700941974297166,
+        0.0031539929332211614
+      ],
+      "size": [
+        0.0004240879788994789,
+        0.00016876962035894394,
+        0.00025965156964957714
+      ]
+    },
+    {
+      "name": "polySurface759_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006898405961692333,
+        0.0145548265427351,
+        0.003031988308066502
+      ],
+      "size": [
+        0.000423661433160305,
+        0.0003018658608198166,
+        9.695230983197689e-05
+      ]
+    },
+    {
+      "name": "polySurface760_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006906891067046672,
+        0.014354693819768727,
+        0.002761811832897365
+      ],
+      "size": [
+        0.00045754481106996536,
+        0.00023376662284135818,
+        0.0005259600002318621
+      ]
+    },
+    {
+      "name": "polySurface761_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006948527414351702,
+        0.01478309789672494,
+        0.0024436216917820275
+      ],
+      "size": [
+        0.00039259064942598343,
+        0.00019428599625825882,
+        0.00024026678875088692
+      ]
+    },
+    {
+      "name": "polySurface762_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0069247501087374985,
+        0.014627138967625797,
+        0.0025287508033216
+      ],
+      "size": [
+        0.00042206747457385063,
+        0.0003278041258454323,
+        6.633345037698746e-05
+      ]
+    },
+    {
+      "name": "polySurface763_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006721456826198846,
+        0.014581392053514719,
+        0.002775645611109212
+      ],
+      "size": [
+        8.987495675683022e-05,
+        0.0006879186257719994,
+        0.0005142008885741234
+      ]
+    },
+    {
+      "name": "polySurface764_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00688696897123009,
+        0.014850294915959239,
+        0.0031963007641024888
+      ],
+      "size": [
+        0.0004326729103922844,
+        0.00040205568075180054,
+        0.0006785029545426369
+      ]
+    },
+    {
+      "name": "polySurface765_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006897451414261013,
+        0.014907598844729364,
+        0.002818609442329034
+      ],
+      "size": [
+        0.00030220719054341316,
+        2.766866236925125e-05,
+        0.00019259401597082615
+      ]
+    },
+    {
+      "name": "polySurface766_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006941908912267536,
+        0.014938759966753423,
+        0.002439801930449903
+      ],
+      "size": [
+        0.0004023960791528225,
+        0.00030658673495054245,
+        0.0006832943763583899
+      ]
+    },
+    {
+      "name": "polySurface767_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007608754909597337,
+        0.014577168505638838,
+        0.003180401836289093
+      ],
+      "size": [
+        0.0001276782713830471,
+        0.0002505490556359291,
+        6.678677164018154e-05
+      ]
+    },
+    {
+      "name": "polySurface768_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007605240098200738,
+        0.014726207125931978,
+        0.003246398497140035
+      ],
+      "size": [
+        0.00012995954602956772,
+        7.350090891122818e-05,
+        0.00011161086149513721
+      ]
+    },
+    {
+      "name": "polySurface769_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00764609850011766,
+        0.014660222339443862,
+        0.00246718930429779
+      ],
+      "size": [
+        0.00012579979375004768,
+        0.0002527395263314247,
+        3.0917814001441e-05
+      ]
+    },
+    {
+      "name": "polySurface770_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00764376949518919,
+        0.014822148368693888,
+        0.002433266839943826
+      ],
+      "size": [
+        0.00013751070946455002,
+        8.552614599466324e-05,
+        0.00010206666775047779
+      ]
+    },
+    {
+      "name": "polySurface771_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007643820426892489,
+        0.014663418522104621,
+        0.0029575641674455255
+      ],
+      "size": [
+        0.0001237005926668644,
+        0.00019591953605413437,
+        0.00015292991884052753
+      ]
+    },
+    {
+      "name": "polySurface772_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007605335675179958,
+        0.014519031858071685,
+        0.0030022910214029253
+      ],
+      "size": [
+        8.289143443107605e-05,
+        0.0002412227913737297,
+        5.267397500574589e-05
+      ]
+    },
+    {
+      "name": "polySurface773_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00764089182484895,
+        0.014785032020881772,
+        0.0028419271984603256
+      ],
+      "size": [
+        0.00014085695147514343,
+        8.650589734315872e-05,
+        0.00014168745838105679
+      ]
+    },
+    {
+      "name": "polySurface774_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007657166745048016,
+        0.014695198275148869,
+        0.0027026525349356234
+      ],
+      "size": [
+        0.00012518465518951416,
+        0.0001695193350315094,
+        0.00018144981004297733
+      ]
+    },
+    {
+      "name": "polySurface775_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007624869234859943,
+        0.014561562682501972,
+        0.0026292293914593756
+      ],
+      "size": [
+        8.483976125717163e-05,
+        0.00023334845900535583,
+        8.991733193397522e-05
+      ]
+    },
+    {
+      "name": "polySurface776_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0076076616533100605,
+        0.0147493458352983,
+        0.002842481480911374
+      ],
+      "size": [
+        0.00030685123056173325,
+        0.000713796354830265,
+        0.0009614098817110062
+      ]
+    },
+    {
+      "name": "polySurface777_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007666477176826447,
+        0.014875972177833319,
+        0.002860910608433187
+      ],
+      "size": [
+        8.962908759713173e-05,
+        0.00023146625608205795,
+        0.00017326720990240574
+      ]
+    },
+    {
+      "name": "polySurface778_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00766573054715991,
+        0.014731025788933039,
+        0.002291132987011224
+      ],
+      "size": [
+        0.0001849830150604248,
+        0.0005118241533637047,
+        0.00027761608362197876
+      ]
+    },
+    {
+      "name": "polySurface779_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007717092172242701,
+        0.014390142052434385,
+        0.0028005229542031884
+      ],
+      "size": [
+        7.646391168236732e-05,
+        0.00019011925905942917,
+        0.0011671872343868017
+      ]
+    },
+    {
+      "name": "polySurface780_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007612196903210133,
+        0.01468343788292259,
+        0.0023602726869285107
+      ],
+      "size": [
+        2.845562994480133e-05,
+        0.0001952117308974266,
+        0.00010119332000613213
+      ]
+    },
+    {
+      "name": "polySurface781_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00755845959065482,
+        0.014782805345021188,
+        0.002359104109928012
+      ],
+      "size": [
+        0.00010320916771888733,
+        2.7991831302642822e-05,
+        0.00010251719504594803
+      ]
+    },
+    {
+      "name": "polySurface782_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007615213515236974,
+        0.01460416754707694,
+        0.0033535553666297346
+      ],
+      "size": [
+        0.00017801998183131218,
+        0.0005129659548401833,
+        0.0003387131728231907
+      ]
+    },
+    {
+      "name": "polySurface783_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.00755323440534994,
+        0.014571130159310997,
+        0.0032769961981102824
+      ],
+      "size": [
+        1.9243452697992325e-05,
+        0.0002017281949520111,
+        0.00011527701281011105
+      ]
+    },
+    {
+      "name": "polySurface784_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0075067494180984795,
+        0.014681658358313143,
+        0.003289716667495668
+      ],
+      "size": [
+        9.721051901578903e-05,
+        2.7281232178211212e-05,
+        0.00010119262151420116
+      ]
+    },
+    {
+      "name": "polySurface785_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0071776676923036575,
+        0.014524624915793538,
+        0.002814218547428027
+      ],
+      "size": [
+        0.00015911925584077835,
+        0.00102127343416214,
+        0.0014589785132557154
+      ]
+    },
+    {
+      "name": "polySurface786_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007380380528047681,
+        0.014777830452658236,
+        0.0022438987507484853
+      ],
+      "size": [
+        0.00021549919620156288,
+        6.556417793035507e-05,
+        0.00026715314015746117
+      ]
+    },
+    {
+      "name": "polySurface787_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007247079280205071,
+        0.014631762634962797,
+        0.0022277492680586874
+      ],
+      "size": [
+        7.938593626022339e-05,
+        0.00035774242132902145,
+        0.0002633053809404373
+      ]
+    },
+    {
+      "name": "polySurface788_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0073370240279473364,
+        0.01464175630826503,
+        0.0033952414232771844
+      ],
+      "size": [
+        0.0002495246008038521,
+        1.5929341316223145e-05,
+        0.00027433806098997593
+      ]
+    },
+    {
+      "name": "polySurface789_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007193045224994421,
+        0.014396123355254531,
+        0.0033872702333610505
+      ],
+      "size": [
+        6.635300815105438e-05,
+        0.0005065957084298134,
+        0.0002655675634741783
+      ]
+    },
+    {
+      "name": "polySurface790_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0071093818405643106,
+        0.01498924009501934,
+        0.0029312686529010534
+      ],
+      "size": [
+        0.0007324996404349804,
+        0.00016592629253864288,
+        0.00013334956020116806
+      ]
+    },
+    {
+      "name": "polySurface791_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007119015441276133,
+        0.015009466093033552,
+        0.00274728998192586
+      ],
+      "size": [
+        0.0007311860099434853,
+        0.0001778705045580864,
+        0.00010819733142852783
+      ]
+    },
+    {
+      "name": "polySurface792_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006954609008971602,
+        0.014930398669093847,
+        0.0022833411931060255
+      ],
+      "size": [
+        8.943071588873863e-05,
+        0.0002386411651968956,
+        0.00030281487852334976
+      ]
+    },
+    {
+      "name": "polySurface793_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007196046877652407,
+        0.014908426441252232,
+        0.003134832833893597
+      ],
+      "size": [
+        0.0006208028644323349,
+        0.00032373517751693726,
+        0.00035250536166131496
+      ]
+    },
+    {
+      "name": "polySurface794_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007227032445371151,
+        0.014974027057178319,
+        0.0025430743116885424
+      ],
+      "size": [
+        0.0006234440952539444,
+        0.0002642665058374405,
+        0.0004033530130982399
+      ]
+    },
+    {
+      "name": "polySurface795_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007389779610093683,
+        0.014725352288223803,
+        0.0022218532394617796
+      ],
+      "size": [
+        0.0004613436758518219,
+        0.0005436325445771217,
+        0.00025671208277344704
+      ]
+    },
+    {
+      "name": "polySurface796_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007542303646914661,
+        0.014887448633089662,
+        0.0021567451767623425
+      ],
+      "size": [
+        0.00011449959129095078,
+        0.00019989348948001862,
+        5.406513810157776e-05
+      ]
+    },
+    {
+      "name": "polySurface797_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.007322388410102576,
+        0.014521581819280982,
+        0.003418412961764261
+      ],
+      "size": [
+        0.0004585213027894497,
+        0.0006980923935770988,
+        0.0002471928019076586
+      ]
+    },
+    {
+      "name": "polySurface798_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.0074864698108285666,
+        0.014713666751049459,
+        0.0035098925000056624
+      ],
+      "size": [
+        0.00010143080726265907,
+        0.00022226572036743164,
+        4.291604273021221e-05
+      ]
+    },
+    {
+      "name": "polySurface799_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        0.006898187915794551,
+        0.014814550522714853,
+        0.0033608375815674663
+      ],
+      "size": [
+        8.817017078399658e-05,
+        0.0002692127600312233,
+        0.0002785313408821821
+      ]
+    },
+    {
+      "name": "polySurface800_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0075525721767917275,
+        0.01454329548869282,
+        0.0032326820073649287
+      ],
+      "size": [
+        6.320513784885406e-05,
+        0.00010240823030471802,
+        0.00010774633847177029
+      ]
+    },
+    {
+      "name": "polySurface801_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0075733172707259655,
+        0.014573300373740494,
+        0.0028268694295547903
+      ],
+      "size": [
+        9.879376739263535e-05,
+        0.0006007403135299683,
+        0.0008023700211197138
+      ]
+    },
+    {
+      "name": "polySurface802_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0075963776325806975,
+        0.014649829012341797,
+        0.00239752558991313
+      ],
+      "size": [
+        6.297370418906212e-05,
+        9.035319089889526e-05,
+        0.00010324642062187195
+      ]
+    },
+    {
+      "name": "polySurface803_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007057445996906608,
+        0.014887857832945883,
+        0.0022670294565614313
+      ],
+      "size": [
+        0.0002500023692846298,
+        5.545560270547867e-05,
+        8.990825153887272e-05
+      ]
+    },
+    {
+      "name": "polySurface804_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0070572191616520286,
+        0.014948323834687471,
+        0.002274332568049431
+      ],
+      "size": [
+        0.0002496507950127125,
+        6.89411535859108e-05,
+        7.824087515473366e-05
+      ]
+    },
+    {
+      "name": "polySurface805_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007060982286930084,
+        0.014956455561332405,
+        0.0022046112280804664
+      ],
+      "size": [
+        0.0002500563859939575,
+        5.595572292804718e-05,
+        8.99219885468483e-05
+      ]
+    },
+    {
+      "name": "polySurface806_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007061142765451223,
+        0.01489623449742794,
+        0.002197560272179544
+      ],
+      "size": [
+        0.00024951761588454247,
+        6.895139813423157e-05,
+        7.873191498219967e-05
+      ]
+    },
+    {
+      "name": "polySurface807_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0069998883991502225,
+        0.014758140780031681,
+        0.0033644436043687165
+      ],
+      "size": [
+        0.000249410979449749,
+        6.870180368423462e-05,
+        7.872073911130428e-05
+      ]
+    },
+    {
+      "name": "polySurface808_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.00699967477703467,
+        0.014818424358963966,
+        0.003371493163285777
+      ],
+      "size": [
+        0.00025026872754096985,
+        5.6080520153045654e-05,
+        8.993572555482388e-05
+      ]
+    },
+    {
+      "name": "polySurface809_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0069961369736120105,
+        0.014810422551818192,
+        0.003440978762228042
+      ],
+      "size": [
+        0.0002494645304977894,
+        6.88266009092331e-05,
+        7.872609421610832e-05
+      ]
+    },
+    {
+      "name": "polySurface810_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006996284355409443,
+        0.014750008704140782,
+        0.0034341732680331916
+      ],
+      "size": [
+        0.00025008292868733406,
+        5.5694952607154846e-05,
+        8.942000567913055e-05
+      ]
+    },
+    {
+      "name": "polySurface811_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007619296200573444,
+        0.01463879446964711,
+        0.002175438101403415
+      ],
+      "size": [
+        0.000271746888756752,
+        0.00031944457441568375,
+        0.00010469206608831882
+      ]
+    },
+    {
+      "name": "polySurface812_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007702330010943115,
+        0.014437888748943806,
+        0.0022553051239810884
+      ],
+      "size": [
+        9.701168164610863e-05,
+        8.24369490146637e-05,
+        8.197571150958538e-05
+      ]
+    },
+    {
+      "name": "polySurface813_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007683920557610691,
+        0.014346623443998396,
+        0.0027928448980674148
+      ],
+      "size": [
+        0.00010824110358953476,
+        0.0001366250216960907,
+        0.0010075268801301718
+      ]
+    },
+    {
+      "name": "polySurface814_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007557483564596623,
+        0.014487659558653831,
+        0.0034514075377956033
+      ],
+      "size": [
+        0.00024277763441205025,
+        0.00029881298542022705,
+        0.00016590836457908154
+      ]
+    },
+    {
+      "name": "polySurface815_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007641106960363686,
+        0.014314218191429973,
+        0.003337387286592275
+      ],
+      "size": [
+        8.88206996023655e-05,
+        7.567647844552994e-05,
+        9.533017873764038e-05
+      ]
+    },
+    {
+      "name": "polySurface816_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007690104655921459,
+        0.014457620796747506,
+        0.0028097121976315975
+      ],
+      "size": [
+        0.00010974425822496414,
+        0.00013788510113954544,
+        0.0008019302040338516
+      ]
+    },
+    {
+      "name": "polySurface817_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0068961072829551995,
+        0.014701167005114257,
+        0.00315399857936427
+      ],
+      "size": [
+        0.00042396876960992813,
+        0.00016876962035894394,
+        0.00025965808890759945
+      ]
+    },
+    {
+      "name": "polySurface818_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006898400548379868,
+        0.014555054600350559,
+        0.003031988046132028
+      ],
+      "size": [
+        0.0004234365187585354,
+        0.0003018658608198166,
+        9.696441702544689e-05
+      ]
+    },
+    {
+      "name": "polySurface819_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006906734895892441,
+        0.014354926533997059,
+        0.0027618033927865326
+      ],
+      "size": [
+        0.0004573850892484188,
+        0.0002337675541639328,
+        0.0005259686149656773
+      ]
+    },
+    {
+      "name": "polySurface820_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006948694062884897,
+        0.014783312217332423,
+        0.002443630713969469
+      ],
+      "size": [
+        0.0003924509510397911,
+        0.00019428692758083344,
+        0.00024027423933148384
+      ]
+    },
+    {
+      "name": "polySurface821_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006924799177795649,
+        0.014627367723733187,
+        0.002528753480874002
+      ],
+      "size": [
+        0.00042182207107543945,
+        0.0003278041258454323,
+        6.634672172367573e-05
+      ]
+    },
+    {
+      "name": "polySurface822_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006721471436321735,
+        0.014581764000467956,
+        0.002775646426016465
+      ],
+      "size": [
+        8.937343955039978e-05,
+        0.000687919557094574,
+        0.0005142281297594309
+      ]
+    },
+    {
+      "name": "polySurface823_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006887186085805297,
+        0.014850524719804525,
+        0.003196312492946163
+      ],
+      "size": [
+        0.0004323911853134632,
+        0.00040205661207437515,
+        0.0006785180885344744
+      ]
+    },
+    {
+      "name": "polySurface824_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006897711777128279,
+        0.014907836215570569,
+        0.002818623499479145
+      ],
+      "size": [
+        0.0003021922893822193,
+        2.766866236925125e-05,
+        0.0001925947144627571
+      ]
+    },
+    {
+      "name": "polySurface825_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006942192674614489,
+        0.014938979409635067,
+        0.002439817297272384
+      ],
+      "size": [
+        0.000402186531573534,
+        0.00030658766627311707,
+        0.0006833055522292852
+      ]
+    },
+    {
+      "name": "polySurface826_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007608766027260572,
+        0.014576855581253767,
+        0.0031804023892618716
+      ],
+      "size": [
+        0.0001274910755455494,
+        0.0002505490556359291,
+        6.679701618850231e-05
+      ]
+    },
+    {
+      "name": "polySurface827_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007605363556649536,
+        0.014725894085131586,
+        0.0032464051619172096
+      ],
+      "size": [
+        0.00012990739196538925,
+        7.350090891122818e-05,
+        0.00011161388829350471
+      ]
+    },
+    {
+      "name": "polySurface828_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007646172191016376,
+        0.0146599099971354,
+        0.0024671932333149016
+      ],
+      "size": [
+        0.00012561026960611343,
+        0.0002527395263314247,
+        3.092805854976177e-05
+      ]
+    },
+    {
+      "name": "polySurface829_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007643965363968164,
+        0.014821839286014438,
+        0.002433277346426621
+      ],
+      "size": [
+        0.0001374487765133381,
+        8.552614599466324e-05,
+        0.00010206992737948895
+      ]
+    },
+    {
+      "name": "polySurface830_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007643896562512964,
+        0.014663088135421276,
+        0.0029575682419817895
+      ],
+      "size": [
+        0.00012355763465166092,
+        0.00019592046737670898,
+        0.0001529376022517681
+      ]
+    },
+    {
+      "name": "polySurface831_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007605303078889847,
+        0.014518728479743004,
+        0.003002289216965437
+      ],
+      "size": [
+        8.271168917417526e-05,
+        0.00024122372269630432,
+        5.2683986723423004e-05
+      ]
+    },
+    {
+      "name": "polySurface832_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.0076410596375353634,
+        0.014784708502702415,
+        0.0028419362497515976
+      ],
+      "size": [
+        0.00014079594984650612,
+        8.650682866573334e-05,
+        0.00014169048517942429
+      ]
+    },
+    {
+      "name": "polySurface833_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007657266920432448,
+        0.014694868586957455,
+        0.0027026578900404274
+      ],
+      "size": [
+        0.00012506218627095222,
+        0.0001695193350315094,
+        0.00018145632930099964
+      ]
+    },
+    {
+      "name": "polySurface834_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007624868769198656,
+        0.014561260002665222,
+        0.002629229362355545
+      ],
+      "size": [
+        8.466653525829315e-05,
+        0.00023334845900535583,
+        8.992664515972137e-05
+      ]
+    },
+    {
+      "name": "polySurface835_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007607802515849471,
+        0.014749047346413136,
+        0.002842488989699632
+      ],
+      "size": [
+        0.0003063441254198551,
+        0.0007137972861528397,
+        0.0009614373557269573
+      ]
+    },
+    {
+      "name": "polySurface836_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007666713441722095,
+        0.014875628519803286,
+        0.002860923297703266
+      ],
+      "size": [
+        8.946005254983902e-05,
+        0.00023146625608205795,
+        0.00017327629029750824
+      ]
+    },
+    {
+      "name": "polySurface837_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007665857672691345,
+        0.014730705879628658,
+        0.0022911398264113814
+      ],
+      "size": [
+        0.00018460582941770554,
+        0.0005118250846862793,
+        0.0002776365727186203
+      ]
+    },
+    {
+      "name": "polySurface838_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007716962485574186,
+        0.014389763004146516,
+        0.002800515852868557
+      ],
+      "size": [
+        7.635820657014847e-05,
+        0.0001901211217045784,
+        0.001167193055152893
+      ]
+    },
+    {
+      "name": "polySurface839_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007612288172822446,
+        0.01468315557576716,
+        0.0023602775763720274
+      ],
+      "size": [
+        2.831174060702324e-05,
+        0.0001952117308974266,
+        0.00010120077058672905
+      ]
+    },
+    {
+      "name": "polySurface840_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007558625715319067,
+        0.014782563550397754,
+        0.0023591130157001317
+      ],
+      "size": [
+        0.00010319147258996964,
+        2.7991831302642822e-05,
+        0.00010251812636852264
+      ]
+    },
+    {
+      "name": "polySurface841_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007615244947373867,
+        0.0146038425154984,
+        0.0033535569673404098
+      ],
+      "size": [
+        0.00017764419317245483,
+        0.0005129659548401833,
+        0.0003387334290891886
+      ]
+    },
+    {
+      "name": "polySurface842_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007553241099230945,
+        0.014570854720659554,
+        0.0032769965182524174
+      ],
+      "size": [
+        1.9095372408628464e-05,
+        0.0002017281949520111,
+        0.00011528492905199528
+      ]
+    },
+    {
+      "name": "polySurface843_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007506839348934591,
+        0.014681417727842927,
+        0.003289721440523863
+      ],
+      "size": [
+        9.719282388687134e-05,
+        2.7281232178211212e-05,
+        0.00010119378566741943
+      ]
+    },
+    {
+      "name": "polySurface844_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007177639519795775,
+        0.014524651691317558,
+        0.0028142170049250126
+      ],
+      "size": [
+        0.00015839608386158943,
+        0.0010212752968072891,
+        0.0014590173959732056
+      ]
+    },
+    {
+      "name": "polySurface845_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007380543043836951,
+        0.014777727890759706,
+        0.0022439075401052833
+      ],
+      "size": [
+        0.0002154582180082798,
+        6.556417793035507e-05,
+        0.00026715523563325405
+      ]
+    },
+    {
+      "name": "polySurface846_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007247131667099893,
+        0.014631760772317648,
+        0.0022277520038187504
+      ],
+      "size": [
+        7.912470027804375e-05,
+        0.00035774242132902145,
+        0.00026331935077905655
+      ]
+    },
+    {
+      "name": "polySurface847_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007337084098253399,
+        0.01464163907803595,
+        0.003395244595594704
+      ],
+      "size": [
+        0.00024952134117484093,
+        1.5929341316223145e-05,
+        0.00027433806098997593
+      ]
+    },
+    {
+      "name": "polySurface848_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007192920369561762,
+        0.014396115089766681,
+        0.003387263452168554
+      ],
+      "size": [
+        6.597954779863358e-05,
+        0.000506596639752388,
+        0.00026558758690953255
+      ]
+    },
+    {
+      "name": "polySurface849_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.00710970361251384,
+        0.014989313087426126,
+        0.0029312859987840056
+      ],
+      "size": [
+        0.0007323776371777058,
+        0.0001659272238612175,
+        0.00013335631228983402
+      ]
+    },
+    {
+      "name": "polySurface850_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007119352463632822,
+        0.015009539318270981,
+        0.0027473081718198955
+      ],
+      "size": [
+        0.0007310546934604645,
+        0.000177871435880661,
+        0.00010820431634783745
+      ]
+    },
+    {
+      "name": "polySurface851_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006954886484891176,
+        0.01493061485234648,
+        0.002283356268890202
+      ],
+      "size": [
+        8.926074951887131e-05,
+        0.00023864302784204483,
+        0.00030282395891845226
+      ]
+    },
+    {
+      "name": "polySurface852_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007196307764388621,
+        0.014908425975590944,
+        0.0031348469492513686
+      ],
+      "size": [
+        0.0006205691024661064,
+        0.00032373610883951187,
+        0.0003525177016854286
+      ]
+    },
+    {
+      "name": "polySurface853_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007227342808619142,
+        0.014974027406424284,
+        0.002543091046391055
+      ],
+      "size": [
+        0.0006232564337551594,
+        0.0002642674371600151,
+        0.00040336325764656067
+      ]
+    },
+    {
+      "name": "polySurface854_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.00738990242825821,
+        0.01472524309065193,
+        0.0022218597878236324
+      ],
+      "size": [
+        0.000460941344499588,
+        0.0005436325445771217,
+        0.0002567339688539505
+      ]
+    },
+    {
+      "name": "polySurface855_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007542548584751785,
+        0.014887227211147547,
+        0.002156758331693709
+      ],
+      "size": [
+        0.00011435011401772499,
+        0.00019989442080259323,
+        5.4073287174105644e-05
+      ]
+    },
+    {
+      "name": "polySurface856_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007322357967495918,
+        0.014521475066430867,
+        0.003418411244638264
+      ],
+      "size": [
+        0.00045800209045410156,
+        0.0006980933248996735,
+        0.00024722074158489704
+      ]
+    },
+    {
+      "name": "polySurface857_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.007486583897843957,
+        0.014713432407006621,
+        0.003509898640913889
+      ],
+      "size": [
+        0.0001012641005218029,
+        0.00022226572036743164,
+        4.292512312531471e-05
+      ]
+    },
+    {
+      "name": "polySurface858_Honda_Civic15VTECCrewRecycled_1994CalliperGloss_",
+      "materials": [
+        "Honda_Civic15VTECCrewRecycled_1994CalliperGloss_Material"
+      ],
+      "center": [
+        -0.006898378138430417,
+        0.01481476565822959,
+        0.003360847884323448
+      ],
+      "size": [
+        8.797599002718925e-05,
+        0.0002692127600312233,
+        0.00027854181826114655
+      ]
+    }
+  ]
+}

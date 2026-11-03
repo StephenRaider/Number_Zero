@@ -1,0 +1,30 @@
+# Only known project directories belong in the repository.
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/*.ps1
+!/pipeline/
+!/assets/
+!/output/
+
+# Generated renders and diagnostics stay local; keep the offline showcases.
+/output/*
+!/output/relight-lab.html
+!/output/customization-lab.html
+
+# Local dependencies, caches, Blender work files and packaged downloads.
+**/__pycache__/
+*.py[cod]
+.runtime/
+.venv/
+venv/
+*.blend
+*.blend[0-9]
+*.zip
+*.log
+Thumbs.db
+.DS_Store
+.env
+.env.*
+!.env.example

@@ -1,0 +1,40 @@
+{
+ "elevation_deg": 30.0,
+ "azimuth_front": -45.0,
+ "azimuth_back": 135.0,
+ "anchor_world": [
+  0.0,
+  -0.15000000596046448,
+  0.0
+ ],
+ "depth": {
+  "encoding": "white=nearest; w=(value-0.5)*3.60 metres toward camera relative to anchor",
+  "range_m": 3.6
+ },
+ "sizes": {
+  "128": {
+   "canvas": 128,
+   "px_per_metre": 39.59797974644666,
+   "tile_axis_px": [
+    28,
+    14
+   ],
+   "anchor_px": [
+    64.0,
+    79.0
+   ]
+  },
+  "256": {
+   "canvas": 256,
+   "px_per_metre": 79.19595949289332,
+   "tile_axis_px": [
+    56,
+    28
+   ],
+   "anchor_px": [
+    128.0,
+    157.0
+   ]
+  }
+ }
+}

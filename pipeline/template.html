@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testarossa Relight Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a night-garage inspection bench. Big sprite stage on the left, light rig on the right. */
+:root{
+  --ink:#0c0e15;
+  --panel:#141824;
+  --line:#2a3043;
+  --text:#e6e8f0;
+  --dim:#8d94ab;
+  --sodium:#ff9a3d;
+  --neon:#3fd6c4;
+  --display:"Chakra Petch","Arial Narrow",sans-serif;
+  --body:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.45}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 16px 40px}
+h1{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:.02em;margin:0 0 4px;text-wrap:balance}
+.sub{color:var(--dim);margin:0 0 18px;max-width:78ch}
+.sub b{color:var(--text);font-weight:500}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px}
+.panel h2{font-family:var(--display);font-weight:500;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--sodium);margin:0 0 10px}
+.stage{display:flex;flex-direction:column;gap:12px}
+.stagebox{position:relative;width:100%;aspect-ratio:1/1;max-width:768px;margin:0 auto;background:#07080d;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.stagebox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#lit{image-rendering:pixelated}
+#over{touch-action:none;cursor:crosshair}
+.readout{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.readout span b{color:var(--text);font-weight:500}
+.maps{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.maps figure{margin:0;background:#07080d;border:1px solid var(--line);border-radius:4px;padding:6px}
+.maps canvas{width:100%;aspect-ratio:1/1;display:block;image-rendering:pixelated}
+.maps figcaption{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:4px;text-align:center}
+.ctl{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:96px 1fr 52px;gap:8px;align-items:center}
+.row label{font-size:13px;color:var(--dim)}
+.row output{font-family:var(--mono);font-size:12px;text-align:right;color:var(--text)}
+input[type=range]{width:100%;accent-color:var(--sodium);height:22px;margin:0}
+input[type=color]{width:100%;height:28px;background:none;border:1px solid var(--line);border-radius:4px;padding:0}
+.seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{flex:1;background:transparent;color:var(--dim);border:0;border-right:1px solid var(--line);padding:7px 6px;font:500 13px var(--body);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--sodium);color:#1a1006}
+button:focus-visible,input:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+.seglabel{font-size:13px;color:var(--dim);margin-bottom:4px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)}
+.chk input{accent-color:var(--sodium);width:16px;height:16px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:999px;padding:5px 11px;font:500 12px var(--body);cursor:pointer}
+.chips button:hover{border-color:var(--neon);color:var(--neon)}
+.stack{display:grid;gap:14px}
+.big{background:var(--sodium);color:#1a1006;border:0;border-radius:4px;padding:10px 12px;font:700 14px var(--display);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.big[aria-pressed=true]{background:transparent;color:var(--sodium);outline:2px solid var(--sodium);outline-offset:-2px}
+input:disabled{opacity:.35}
+.note{color:var(--dim);font-size:12.5px;margin:0}
+.note code{font-family:var(--mono);color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Testarossa Relight Test</h1>
+  <p class="sub">Isometric sprite rendered from the 3D model with flat colour, normal, depth and specular maps. Move the light in the grid space and check whether the car takes light the way a car should. Orthographic 2:1 pixel isometric: <b>30° elevation, 45° azimuth</b>, so a 1 m ground tile is 28×14 px at the 128 px scale. Glass is tinted black.</p>
+
+  <div class="grid">
+    <div class="panel stage">
+      <div class="stagebox" id="box">
+        <canvas id="lit" width="384" height="384"></canvas>
+        <canvas id="over" width="768" height="768"></canvas>
+      </div>
+      <div class="readout" id="readout"></div>
+      <div class="maps" id="maps"></div>
+      <p class="note">Drag on the stage to move the light across the ground at the current height. Left and right views are mirrors, so the mirror switch gives the other two headings from the same maps.</p>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <h2>Sprite set</h2>
+        <div class="ctl">
+          <div><div class="seglabel">View</div><div class="seg" id="segView"><button data-v="front" aria-pressed="true">Front</button><button data-v="back" aria-pressed="false">Back</button></div></div>
+          <div><div class="seglabel">Headlights</div><div class="seg" id="segState"><button data-v="down" aria-pressed="true">Down</button><button data-v="up" aria-pressed="false">Popped up</button></div></div>
+          <label class="chk"><input type="checkbox" id="mirror"> Mirror (other side of the car)</label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Car feel</h2>
+        <div class="ctl">
+          <div><div class="seglabel">Wheel spin</div><div class="seg" id="segWheel"><button data-v="stylised" aria-pressed="true">Stylised</button><button data-v="real" aria-pressed="false">Realistic</button></div></div>
+          <div class="row"><label for="shake">Shake</label><input type="range" id="shake" min="0" max="3" step="0.1" value="0"><output id="shakeo"></output></div>
+          <div class="row"><label for="glow">Light glow</label><input type="range" id="glow" min="0" max="2" step="0.1" value="1"><output id="glowo"></output></div>
+          <label class="chk"><input type="checkbox" id="carlights" checked> Car lights cast light</label>
+          <label class="chk"><input type="checkbox" id="headon" checked> Headlights on (popped up)</label>
+          <label class="chk"><input type="checkbox" id="brake"> Brake lights</label>
+          <label class="chk"><input type="checkbox" id="hazard"> Hazard blink</label>
+          <p class="note">Shake and wheel spin follow the highway speed. Wheels use 8 pre-rendered spin frames plus a blurred set. Lights glow from an emission map.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Highway mode</h2>
+        <div class="ctl">
+          <button class="big" id="hwBtn" aria-pressed="false">Start highway run</button>
+          <div class="row"><label for="speed">Speed</label><input type="range" id="speed" min="0" max="300" step="5" value="75"><output id="speedo"></output></div>
+          <div class="row"><label for="spacing">Lamp spacing</label><input type="range" id="spacing" min="5" max="40" step="1" value="14"><output id="spacingo"></output></div>
+          <div class="row"><label for="off">Lamp offset</label><input type="range" id="off" min="-5" max="5" step="0.1" value="-1.7"><output id="offo"></output></div>
+          <label class="chk"><input type="checkbox" id="beams" checked> Headlight beams (when popped up)</label>
+          <p class="note">The car stays put and the road scrolls under it along the car's heading. Lamps use the Height, Reach, Intensity and Colour settings below. Offset 0 puts them over the lane; the front/back and mirror switches change the heading.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Light</h2>
+        <div class="ctl">
+          <div class="row"><label for="gx">Grid X</label><input type="range" id="gx" min="-5" max="5" step="0.05" value="-1.8"><output id="gxo"></output></div>
+          <div class="row"><label for="gy">Grid Y</label><input type="range" id="gy" min="-5" max="5" step="0.05" value="0.9"><output id="gyo"></output></div>
+          <div class="row"><label for="gz">Height</label><input type="range" id="gz" min="0.3" max="6" step="0.05" value="2.35"><output id="gzo"></output></div>
+          <div class="row"><label for="tail">Light tail</label><input type="range" id="tail" min="0" max="0.5" step="0.01" value="0.16"><output id="tailo"></output></div>
+          <div class="row"><label for="rad">Reach</label><input type="range" id="rad" min="1.5" max="16" step="0.1" value="12.0"><output id="rado"></output></div>
+          <div class="row"><label for="inten">Intensity</label><input type="range" id="inten" min="0" max="4" step="0.05" value="1.1"><output id="intenO"></output></div>
+          <div class="row"><label for="lcol">Colour</label><input type="color" id="lcol" value="#ffffff"><span></span></div>
+          <label class="chk"><input type="checkbox" id="orbit"> Orbit the car at this height</label>
+          <div class="chips" id="presets">
+            <button data-p="sodium">Sodium lamp</button>
+            <button data-p="neon">Neon side light</button>
+            <button data-p="sun">Low sun</button>
+            <button data-p="top">Overhead</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Surface</h2>
+        <div class="ctl">
+          <div class="row"><label for="cleanSp">Cleaned sprite</label><input type="checkbox" id="cleanSp" checked><span></span></div>
+          <div class="row"><label for="amb">Ambient</label><input type="range" id="amb" min="0" max="1" step="0.01" value="0.04"><output id="ambo"></output></div>
+          <div class="row"><label for="spec">Specular</label><input type="range" id="spec" min="0" max="2" step="0.05" value="1.7"><output id="speco"></output></div>
+          <div class="row"><label for="shin">Gloss</label><input type="range" id="shin" min="4" max="120" step="1" value="99"><output id="shino"></output></div>
+          <div class="row"><label for="bands">Light bands</label><input type="range" id="bands" min="0" max="8" step="1" value="8"><output id="bandso"></output></div>
+          <div><div class="seglabel">Lamp shadow on the road (highway)</div><div class="seg" id="segShadow"><button data-v="tamed" aria-pressed="false">Tamed</button><button data-v="real" aria-pressed="true">Realistic</button><button data-v="off" aria-pressed="false">None</button></div></div>
+          <div class="row"><label for="follow">Follow lamps</label><input type="range" id="follow" min="0" max="1" step="0.05" value="0.3"><output id="followo"></output></div>
+          <div class="row"><label for="shadowStr">Shadow depth</label><input type="range" id="shadowStr" min="0" max="1" step="0.05" value="0.9"><output id="shadowstro"></output></div>
+          <label class="chk"><input type="checkbox" id="shadow" checked> Self-shadow from depth map</label>
+          <label class="chk"><input type="checkbox" id="lighton" checked> Lighting on (off shows flat colour)</label>
+          <label class="chk"><input type="checkbox" id="gridon" checked> Ground grid</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ASSETS = __ASSETS__;
+const ELEV = ASSETS.meta.elevation_deg * Math.PI / 180;
+const SE = Math.sin(ELEV), CE = Math.cos(ELEV), K = Math.SQRT1_2;
+const WR = ASSETS.meta.depth.range_m;               // depth range, metres
+const $ = id => document.getElementById(id);
+const lit = $('lit'), lctx = lit.getContext('2d');
+const over = $('over'), octx = over.getContext('2d');
+
+const state = { view:'front', st:'down', size:128, mirror:false, clean:true };
+let tex = null;                                       // decoded maps for the displayed orientation
+const cache = {};
+
+function loadImg(src){ return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = src; }); }
+function pixels(img, N){
+  const c = document.createElement('canvas'); c.width = c.height = N;
+  const x = c.getContext('2d', {willReadFrequently:true}); x.drawImage(img,0,0);
+  return x.getImageData(0,0,N,N).data;
+}
+// each set holds 9 frames: wheel spin 0..7 (9 degrees apart, rims repeat every 72) and frame 8 = blurred rims
+async function getSet(view, st){
+  const key = view+'_'+st+(state.clean?'':'_raw');
+  if (cache[key]) return cache[key];
+  const frames = ASSETS.data[view+'_'+st], N = 128;
+  const imgs = await Promise.all(frames.map((f,fi) => Promise.all([loadImg(state.clean?f.albedo:ASSETS.alt[view+'_'+st][fi]), loadImg(f.normal), loadImg(f.pack), loadImg(f.pack2), loadImg(f.emit)])));
+  const raw = { a:[], n:[], p:[], q:[], e:[] };
+  for (const [a,n,p,q,e] of imgs){ raw.a.push(pixels(a,N)); raw.n.push(pixels(n,N)); raw.p.push(pixels(p,N)); raw.q.push(pixels(q,N)); raw.e.push(pixels(e,N)); }
+  cache[key] = raw; return raw;
+}
+const toLin = new Float32Array(256); for (let i=0;i<256;i++) toLin[i] = Math.pow(i/255, 2.2);
+
+function buildTex(raw, N, mirror){
+  const meta = ASSETS.meta.sizes[N], WRr = ASSETS.meta.depth.range_m;
+  const frames = raw.a.map((_, fi) => {
+    const A=raw.a[fi], Nn=raw.n[fi], Pp=raw.p[fi], Qq=raw.q[fi], Ee=raw.e[fi];
+    const alpha = new Uint8Array(N*N), col = new Float32Array(N*N*3), nrm = new Float32Array(N*N*3), w = new Float32Array(N*N), wb = new Float32Array(N*N), sp = new Float32Array(N*N), em = new Float32Array(N*N*3);
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++){
+      const sx = mirror ? N-1-x : x, si = (y*N+sx)*4, di = y*N+x;
+      if (A[si+3] < 128) continue;
+      alpha[di]=1;
+      col[di*3]=toLin[A[si]]; col[di*3+1]=toLin[A[si+1]]; col[di*3+2]=toLin[A[si+2]];
+      let nx=(Nn[si]*256+Nn[si+1])/32767.5-1, ny=(Nn[si+2]*256+Qq[si])/32767.5-1;       // 16-bit normals
+      if (mirror) nx=-nx;
+      const nz=Math.sqrt(Math.max(0,1-nx*nx-ny*ny)); nrm[di*3]=nx; nrm[di*3+1]=ny; nrm[di*3+2]=nz;
+      w[di]=((Pp[si]*256+Pp[si+1])/65535-0.5)*WRr;
+      wb[di]=((Qq[si+1]*256+Qq[si+2])/65535-0.5)*WRr;                                   // farthest surface along the view ray
+      sp[di]=Pp[si+2]/255;
+      em[di*3]=Ee[si]/255; em[di*3+1]=Ee[si+1]/255; em[di*3+2]=Ee[si+2]/255;      // front lamps, rear lights, indicators
+    }
+    return { alpha, col, nrm, w, wb, sp, em };
+  });
+  const S=Math.round(N*1.5), pad=(S-N)/2, sc=meta.px_per_metre, ax=meta.anchor_px[0], ay=meta.anchor_px[1];
+  const XC=new Float32Array(S*S), YC=new Float32Array(S*S), GX=new Float32Array(S*S), GY=new Float32Array(S*S), GW=new Float32Array(S*S);
+  for (let V=0;V<S;V++) for (let U=0;U<S;U++){
+    const i=V*S+U, xc=(U-pad+0.5-ax)/sc, yc=(ay-(V-pad+0.5))/sc, gg=camToGroundGrid(xc,yc);
+    XC[i]=xc; YC[i]=yc; GX[i]=gg[0]; GY[i]=gg[1]; GW[i]=(gg[0]+gg[1])*K*CE;
+  }
+  return { N, S, pad, s:sc, ax, ay, frames, XC, YC, GX, GY, GW };
+}
+
+// ---------- light + iso transforms (grid space: x down-right, y down-left, z up; metres from the car anchor)
+function gridToCam(gx,gy,gz){ return [ (gx-gy)*K, gz*CE-(gx+gy)*K*SE, (gx+gy)*K*CE+gz*SE ]; }
+function camToGroundGrid(xc,yc){ const sum=-yc/(K*SE), dif=xc/K; return [(sum+dif)/2,(sum-dif)/2]; }
+
+const P = {};
+function readParams(){
+  for (const id of ['gx','gy','gz','rad','inten','amb','spec','shin','bands','speed','spacing','off','shake','glow','shadowStr','follow','tail']) P[id]=parseFloat($(id).value);
+  P.beams=$('beams').checked; P.headon=$('headon').checked; P.carlights=$('carlights').checked; P.brake=$('brake').checked; P.hazard=$('hazard').checked;
+  P.lcol=$('lcol').value; P.shadow=$('shadow').checked; P.lighton=$('lighton').checked; P.gridon=$('gridon').checked;
+  const h=P.lcol; P.lc=[parseInt(h.slice(1,3),16)/255,parseInt(h.slice(3,5),16)/255,parseInt(h.slice(5,7),16)/255].map(v=>Math.pow(v,2.2));
+  $('gxo').textContent=P.gx.toFixed(2); $('gyo').textContent=P.gy.toFixed(2); $('gzo').textContent=P.gz.toFixed(2)+' m';
+  $('rado').textContent=P.rad.toFixed(1)+' m'; $('intenO').textContent=P.inten.toFixed(2);
+  $('speedo').textContent=P.speed+' km/h'; $('spacingo').textContent=P.spacing+' m'; $('offo').textContent=P.off.toFixed(1)+' m';
+  $('shadowstro').textContent=P.shadowStr.toFixed(2); $('followo').textContent=P.follow.toFixed(2); $('tailo').textContent=P.tail.toFixed(2); $('shakeo').textContent=P.shake<=0?'off':P.shake.toFixed(1); $('glowo').textContent=P.glow.toFixed(1);
+  $('ambo').textContent=P.amb.toFixed(2); $('speco').textContent=P.spec.toFixed(2); $('shino').textContent=P.shin; $('bandso').textContent=P.bands===0?'off':P.bands;
+}
+const toSrgb = v => { v = v<=0?0:v>=1?1:v; return Math.round(255*Math.pow(v,1/2.2)); };
+
+function shadowed(T, px,py,pw, lx,ly,lw, dist){
+  // march from the surface point toward the light; blocked where the sprite surface is nearer to the camera than the ray
+  const steps = shSteps, N=T.N, s=T.s;
+  const dx=(lx-px)/dist, dy=(ly-py)/dist, dw=(lw-pw)/dist;
+  const maxT=Math.min(dist,3.2);
+  for (let i=1;i<=steps;i++){
+    const t=0.05+(maxT-0.05)*i/steps;
+    const qx=px+dx*t, qy=py+dy*t, qw=pw+dw*t;
+    const u=Math.floor(T.ax+qx*s), v=Math.floor(T.ay-qy*s);
+    if (u<0||v<0||u>=N||v>=N) continue;
+    const di=v*N+u;
+    if (curF.alpha[di] && curF.w[di] > qw+0.035 && curF.wb[di] < qw+0.02) return true;
+  }
+  return false;
+}
+
+const HW={on:false,dist:0,saved:null};
+let shadowStyle='real', frameDt=0.016;
+const TAILR=2.2;
+const DBG={};
+const SM={x:0,y:0,init:false};
+const WH={fi:0, ang:0, step:0};                     // wheel animation: frame index, realistic angle, stylised accumulator
+const SHK={du:0, dv:0, kickUntil:0, nextKick:1};     // car shake offsets in whole sprite pixels
+let outImg=null, lin=null, curF=null;
+function heading(){
+  let h = state.view==='front' ? [1,0] : [-1,0];
+  if (state.mirror) h=[h[1],h[0]];                 // mirroring swaps the two grid axes
+  return h;
+}
+function hash(a,b){ let h=(a*374761393+b*668265263)|0; h=Math.imul(h^(h>>>13),1274126177); return ((h^(h>>>16))>>>0)/4294967295; }
+const SH_STEPS_STATIC=30, SH_STEPS_HW=14;
+let shSteps=SH_STEPS_STATIC;
+const GLOW=[[0,0.62],[1,0.62],[1.45,0.38],[2.3,0.22],[3.2,0.11],[4.2,0.05]];   // stepped halo: [distance px, weight]
+
+function render(){
+  if (!tex) return;
+  const T=tex, N=T.N, S=T.S, pad=T.pad, s=T.s;
+  if (!outImg || outImg.width!==S){ outImg=lctx.createImageData(S,S); lin=new Float32Array(S*S*3); }
+  const F=T.frames[WH.fi], od=outImg.data, hw=HW.on, du=SHK.du, dv=SHK.dv;
+  curF=F;
+  const h=heading(), hx=h[0], hy=h[1];
+  const lights=[];                                   // {x,y,w,r2,i,c:[r,g,b]}
+  const lampC=P.lc;
+  let Dq=0;
+  if (hw){
+    const q=2/(K*s); Dq=Math.floor(HW.dist/q)*q;     // scroll in whole-pixel steps (2 px across, 1 px down)
+    const range=TAILR*P.rad+8, kmin=Math.ceil((HW.dist-range)/P.spacing), kmax=Math.floor((HW.dist+range)/P.spacing);
+    for (let k=kmin;k<=kmax;k++){
+      const along=k*P.spacing-HW.dist, c=gridToCam(along*hx-P.off*hy, along*hy+P.off*hx, P.gz);
+      lights.push({x:c[0],y:c[1],w:c[2],r2:P.rad*P.rad,rt2:TAILR*TAILR*P.rad*P.rad,tw:P.tail,i:P.inten,c:lampC,lamp:true,gx:along*hx-P.off*hy,gy:along*hy+P.off*hx});
+    }
+  } else { const c=gridToCam(P.gx,P.gy,P.gz); lights.push({x:c[0],y:c[1],w:c[2],r2:P.rad*P.rad,rt2:P.rad*P.rad,tw:0,i:P.inten,c:lampC}); }
+
+  // the car's own lights: rear red spill, front warm spill, headlight beams
+  const headsOn = P.headon && state.st==='up';
+  const blink = Math.floor(performance.now()/400)%2===0;
+  const emF = headsOn ? 1.9 : 0, emR = P.brake ? 3.2 : 1.5, emI = (P.hazard && blink) ? 2.4 : 0;
+  const cF=[1,0.86,0.58].map(v=>Math.pow(v,2.2)), cR=[1,0.06,0.04].map(v=>Math.pow(v,2.2)), cI=[1,0.42,0.05].map(v=>Math.pow(v,2.2));
+  if (P.carlights){
+    const rc=gridToCam(-2.15*hx, -2.15*hy, 0.45); lights.push({x:rc[0],y:rc[1],w:rc[2],r2:2.7*2.7,rt2:2.7*2.7,tw:0,i:(P.brake?1.7:0.7)*P.glow,c:cR});
+    if (headsOn){ const fc=gridToCam(2.1*hx,2.1*hy,0.5); lights.push({x:fc[0],y:fc[1],w:fc[2],r2:2.6*2.6,rt2:2.6*2.6,tw:0,i:0.6*P.glow,c:cF}); }
+  }
+  const beams=[]; let bdir=null;
+  if (P.carlights && headsOn){
+    for (const lat of [-0.45,0.45]) beams.push(gridToCam(1.55*hx-lat*hy, 1.55*hy+lat*hx, 0.42));
+    const d=gridToCam(hx,hy,-0.28), dl=Math.sqrt(d[0]*d[0]+d[1]*d[1]+d[2]*d[2]); bdir=[d[0]/dl,d[1]/dl,d[2]/dl];
+  }
+  shSteps = hw ? SH_STEPS_HW : SH_STEPS_STATIC;
+  // Tamed lamp shadows: all lamps share ONE shadow light, placed at their strength-weighted average position,
+  // capped to a minimum elevation of 45 degrees so the shadow stays short.
+  const lampMode = !hw ? 0 : shadowStyle==='tamed' ? 1 : shadowStyle==='off' ? 2 : 0;
+  let SLa=null, sStr=0;
+  if (lampMode===1 && P.shadow){
+    let sw=0, ax=0, ay=0;
+    for (const L of lights){ if (!L.lamp) continue; const att=1-(L.gx*L.gx+L.gy*L.gy+P.gz*P.gz)/L.r2; if (att>0){ const wt=att*att; sw+=wt; ax+=wt*L.gx; ay+=wt*L.gy; } }
+    // calm target: a fixed shadow light (about 65 degrees, behind-left of the car) nudged toward the lamp average
+    const fxg=-P.gz*(0.35*hx+0.30*hy), fyg=P.gz*(-0.35*hy+0.30*hx);
+    let tx=fxg, ty=fyg;
+    if (sw>0){
+      ax/=sw; ay/=sw; const hl=Math.sqrt(ax*ax+ay*ay), mh=P.gz;                   // horizontal offset <= height, so elevation >= 45 deg
+      if (hl>mh){ ax*=mh/hl; ay*=mh/hl; }
+      tx=fxg+P.follow*(ax-fxg); ty=fyg+P.follow*(ay-fyg);
+    }
+    const a=SM.init?Math.min(1,frameDt/0.15):1; SM.init=true;                       // low-pass so the shadow glides instead of jumping
+    SM.x+=(tx-SM.x)*a; SM.y+=(ty-SM.y)*a;
+    sStr=P.shadowStr*(0.5+0.5*Math.min(1,sw*2.2));
+    SLa=gridToCam(SM.x, SM.y, P.gz);
+  }
+  DBG.SLa=SLa; DBG.lights=lights; DBG.F=F;
+  const nl=lights.length, amb=P.amb, bands=P.bands, doShadow=P.shadow, upy=CE, upw=SE, shin=P.shin;
+  const q8=x=>bands>0?Math.floor(x*bands+0.5)/bands:x;
+  const band3=o=>{ const m=Math.max(o[0],o[1],o[2]); if (bands>0&&m>0){ const k=q8(m)/m; o[0]*=k; o[1]*=k; o[2]*=k; } };
+  const LB=[0,0,0];
+  const glowPts=[];                                  // emissive pixels, splatted with a halo afterwards
+  for (let V=0;V<S;V++) for (let U=0;U<S;U++){
+    const idx=V*S+U, li=idx*3, u=U-pad, v=V-pad, su=u-du, sv=v-dv;
+    const inside=su>=0&&sv>=0&&su<N&&sv<N, di=sv*N+su;
+    const xc=T.XC[idx], yc=T.YC[idx];
+    let r,g,b;
+    if (inside && F.alpha[di]){
+      const pw=F.w[di];
+      const cr=F.col[di*3], cg=F.col[di*3+1], cb=F.col[di*3+2];
+      if (!P.lighton){ r=cr; g=cg; b=cb; }
+      else {
+        const nx=F.nrm[di*3], ny=F.nrm[di*3+1], nz=F.nrm[di*3+2];
+        let lr=0,lg=0,lb=0, sr=0,sg=0,sb=0;
+        for (let i=0;i<nl;i++){
+          const L=lights[i]; let ex=L.x-xc, ey=L.y-yc, ew=L.w-pw;
+          const d2=ex*ex+ey*ey+ew*ew; if (d2>=L.rt2) continue;
+          const dist=Math.sqrt(d2)||1e-4; ex/=dist; ey/=dist; ew/=dist;
+          let att=0; if (d2<L.r2){ att=1-d2/L.r2; att*=att; }
+          if (L.tw>0){ const t=1-d2/L.rt2; att+=L.tw*t*t; }      // long soft tail so neighbouring lamps overlap and light never drops out
+          const diff=nx*ex+ny*ey+nz*ew; if (diff<=0) continue;
+          if (doShadow && shadowed(T,xc,yc,pw,L.x,L.y,L.w,dist)) continue;
+          const k=att*diff*L.i; lr+=k*L.c[0]; lg+=k*L.c[1]; lb+=k*L.c[2];
+          const hz2=ew+1, hl=Math.sqrt(ex*ex+ey*ey+hz2*hz2)||1;
+          const spd=(nx*ex+ny*ey+nz*hz2)/hl;
+          if (spd>0){ const k2=att*Math.pow(spd,shin)*P.spec*F.sp[di]*L.i; sr+=k2*L.c[0]; sg+=k2*L.c[1]; sb+=k2*L.c[2]; }
+        }
+        LB[0]=lr; LB[1]=lg; LB[2]=lb; band3(LB); lr=LB[0]; lg=LB[1]; lb=LB[2];
+        const sq=x=>x>0.35?(bands>0?Math.round(x*bands)/bands:x):0; sr=sq(sr); sg=sq(sg); sb=sq(sb);
+        const hemi=amb*(0.55+0.45*(ny*upy+nz*upw));
+        r=cr*(hemi+lr)+sr; g=cg*(hemi+lg)+sg; b=cb*(hemi+lb)+sb;
+      }
+      // emissive parts: front lamps (when on), rear lights, indicators
+      const ef=F.em[di*3]*emF, er=F.em[di*3+1]*emR, ei=F.em[di*3+2]*emI;
+      if (ef+er+ei>0){
+        const gr=ef*cF[0]+er*cR[0]+ei*cI[0], gg2=ef*cF[1]+er*cR[1]+ei*cI[1], gb=ef*cF[2]+er*cR[2]+ei*cI[2];
+        r+=gr*1.2; g+=gg2*1.2; b+=gb*1.2;
+        if (r<0.6&&g<0.6&&b<0.6){ const m=Math.max(gr,gg2,gb); if (m>0){ r=Math.max(r,gr*1.2); g=Math.max(g,gg2*1.2); b=Math.max(b,gb*1.2); } }
+        glowPts.push(U,V,gr,gg2,gb);
+      }
+    } else {
+      // ground plane, z = 0
+      const gx=T.GX[idx], gy=T.GY[idx], pw=T.GW[idx];
+      let tr, tg, tb;
+      if (hw){
+        const along=gx*hx+gy*hy, lat=-gx*hy+gy*hx, A=along+Dq, al=lat<0?-lat:lat;
+        let base=0.020*(0.8+0.45*hash(Math.floor(A*9),Math.floor(lat*9)));
+        tr=base; tg=base*1.02; tb=base*1.25;
+        if (al>4.9){ tr=0.05; tg=0.055; tb=0.065; }                          // shoulder / barrier base
+        else {
+          const m=((lat+1.5)%3+3)%3-1.5, wear=Math.abs(Math.abs(m)-0.65);   // polished wheel tracks in each lane
+          if (wear<0.26){ tr*=1.35; tg*=1.35; tb*=1.4; }
+          const dl=Math.abs(al-1.5);
+          if (dl<0.07 && ((A%6)+6)%6<3){ tr=0.5; tg=0.5; tb=0.46; }          // dashed lane lines
+          else if (Math.abs(al-4.5)<0.09){ tr=0.5; tg=0.5; tb=0.46; }        // solid edge lines
+          else if (((A%12)+12)%12<0.11){ tr*=0.35; tg*=0.35; tb*=0.4; }       // expansion joints
+        }
+      } else {
+        tr=0.020; tg=0.0204; tb=0.025;
+        if (P.gridon){
+          const fx=Math.abs(gx-Math.round(gx)), fy=Math.abs(gy-Math.round(gy)), wd=0.55/s;
+          if (fx<wd||fy<wd){ tr=0.075; tg=0.085; tb=0.12; }
+          if (Math.abs(gx)<wd*0.8&&Math.abs(gy)<wd*0.8){ tr=0.4; tg=0.12; tb=0.05; }
+        }
+      }
+      if (!P.lighton){ r=tr*4; g=tg*4; b=tb*4; }
+      else {
+        let lr=0,lg=0,lb=0, ar=0,ag=0,ab=0;
+        for (let i=0;i<nl;i++){
+          const L=lights[i]; let ex=L.x-xc, ey=L.y-yc, ew=L.w-pw;
+          const d2=ex*ex+ey*ey+ew*ew; if (d2>=L.rt2) continue;
+          const dist=Math.sqrt(d2)||1e-4; ex/=dist; ey/=dist; ew/=dist;
+          let att=0; if (d2<L.r2){ att=1-d2/L.r2; att*=att; }
+          if (L.tw>0){ const t=1-d2/L.rt2; att+=L.tw*t*t; }      // long soft tail so neighbouring lamps overlap and light never drops out
+          const diff=ey*upy+ew*upw; if (diff<=0) continue;
+          const k=att*diff*L.i;
+          if (L.lamp && lampMode!==0){ ar+=k*L.c[0]; ag+=k*L.c[1]; ab+=k*L.c[2]; continue; }   // lamp light: shadow applied below
+          let kk=k;
+          if (doShadow && shadowed(T,xc,yc,pw,L.x,L.y,L.w,dist)){ if (!L.lamp) continue; kk=k*(1-P.shadowStr); }   // lamp shadows keep (1 - depth) of the light
+          lr+=kk*L.c[0]; lg+=kk*L.c[1]; lb+=kk*L.c[2];
+        }
+        if (ar+ag+ab>0){
+          let f=1;
+          if (SLa && sStr>0){
+            const dx=SLa[0]-xc, dy=SLa[1]-yc, dw=SLa[2]-pw;
+            if (shadowed(T,xc,yc,pw,SLa[0],SLa[1],SLa[2],Math.sqrt(dx*dx+dy*dy+dw*dw)||1e-4)) f=1-sStr;   // hard, clean edge
+          }
+          lr+=ar*f; lg+=ag*f; lb+=ab*f;
+        }
+        LB[0]=lr; LB[1]=lg; LB[2]=lb; band3(LB); lr=LB[0]; lg=LB[1]; lb=LB[2];
+        r=tr*(amb+lr)*3.2+0.09*lr; g=tg*(amb+lg)*3.2+0.09*lg; b=tb*(amb+lb)*3.2+0.09*lb;
+        if (beams.length){
+          let bsum=0;
+          for (let i=0;i<beams.length;i++){
+            const Bp=beams[i]; const vx=xc-Bp[0], vy=yc-Bp[1], vw=pw-Bp[2];
+            const d=Math.sqrt(vx*vx+vy*vy+vw*vw)||1e-4, ca=(vx*bdir[0]+vy*bdir[1]+vw*bdir[2])/d;
+            let cone=(ca-0.86)/(0.985-0.86); if (cone<=0) continue; if (cone>1) cone=1; cone=cone*cone*(3-2*cone);
+            let fall=1-d/9; if (fall<=0) continue;
+            bsum+=cone*fall*fall;
+          }
+          bsum=q8(bsum);
+          r+=(tr*3.2+0.05)*bsum*1.4; g+=(tg*3.2+0.05)*bsum*1.35; b+=(tb*3.2+0.05)*bsum*1.15;
+        }
+      }
+    }
+    lin[li]=r; lin[li+1]=g; lin[li+2]=b;
+  }
+  // stepped halo around emissive pixels
+  if (P.glow>0 && glowPts.length){
+    for (let p=0;p<glowPts.length;p+=5){
+      const U0=glowPts[p], V0=glowPts[p+1], gr=glowPts[p+2], gg2=glowPts[p+3], gb=glowPts[p+4];
+      for (let dy=-4;dy<=4;dy++) for (let dx=-4;dx<=4;dx++){
+        const d=Math.sqrt(dx*dx+dy*dy); let wgt=0;
+        for (let k=GLOW.length-1;k>=0;k--) if (d<=GLOW[k][0]+0.01){ wgt=GLOW[k][1]; }
+        if (wgt===0 || (dx===0&&dy===0)) continue;
+        const X=U0+dx, Y=V0+dy; if (X<0||Y<0||X>=S||Y>=S) continue;
+        const o=(Y*S+X)*3; wgt*=P.glow*0.42; lin[o]+=gr*wgt; lin[o+1]+=gg2*wgt; lin[o+2]+=gb*wgt;
+      }
+    }
+  }
+  for (let i=0, n=S*S; i<n; i++){ const o=i*4, l=i*3; od[o]=toSrgb(lin[l]); od[o+1]=toSrgb(lin[l+1]); od[o+2]=toSrgb(lin[l+2]); od[o+3]=255; }
+  lit.width=S; lit.height=S; lctx.putImageData(outImg,0,0);
+  drawOverlay();
+  $('readout').innerHTML = hw
+    ? '<span>Speed <b>'+P.speed+' km/h</b></span><span>Lamps every <b>'+P.spacing+' m</b> at <b>'+P.gz.toFixed(1)+' m</b></span><span>Heading <b>'+facing()+'</b></span><span>Travelled <b>'+Math.floor(HW.dist)+' m</b></span><span>Wheel frame <b>'+(WH.fi===8?'blur':WH.fi)+'</b></span>'
+    : '<span>Light grid <b>'+P.gx.toFixed(2)+', '+P.gy.toFixed(2)+'</b> m</span><span>Height <b>'+P.gz.toFixed(2)+' m</b></span>'
+      +'<span>Tile <b>'+ASSETS.meta.sizes[N].tile_axis_px.join('×')+' px</b></span><span>Facing <b>'+facing()+'</b></span>';
+}
+function facing(){
+  // front view: nose toward +grid X (down-right); back view: nose toward -grid X (up-left); mirror swaps the two grid axes
+  const dir = state.view==='front' ? 'down-right' : 'up-left';
+  const m = {'down-right':'down-left','up-left':'up-right'};
+  return state.mirror ? m[dir] : dir;
+}
+function drawOverlay(){
+  const W=over.width=Math.round((over.clientWidth||768)*devicePixelRatio), k=W/tex.S, dpr=devicePixelRatio;
+  over.height=W;
+  octx.clearRect(0,0,W,W);
+  if (HW.on) return;
+  const L=gridToCam(P.gx,P.gy,P.gz), G=gridToCam(P.gx,P.gy,0);
+  const lp=[(tex.ax+tex.pad+L[0]*tex.s)*k,(tex.ay+tex.pad-L[1]*tex.s)*k], gp=[(tex.ax+tex.pad+G[0]*tex.s)*k,(tex.ay+tex.pad-G[1]*tex.s)*k];
+  octx.lineWidth=Math.max(1,2*dpr);
+  octx.strokeStyle='rgba(255,154,61,.6)'; octx.setLineDash([5*dpr,5*dpr]);
+  octx.beginPath(); octx.moveTo(gp[0],gp[1]); octx.lineTo(lp[0],lp[1]); octx.stroke(); octx.setLineDash([]);
+  octx.fillStyle='rgba(255,154,61,.4)'; octx.beginPath(); octx.ellipse(gp[0],gp[1],10*dpr,5*dpr,0,0,7); octx.fill();
+  const m=14*dpr, cx=Math.min(W-m,Math.max(m,lp[0])), cy=Math.min(W-m,Math.max(m,lp[1]));
+  octx.strokeStyle='#ffb55e'; octx.fillStyle=P.lcol; octx.lineWidth=2*dpr;
+  octx.beginPath(); octx.arc(cx,cy,7*dpr,0,7); octx.fill(); octx.stroke();
+  if (cx!==lp[0]||cy!==lp[1]){
+    octx.fillStyle='#ffb55e'; octx.font=(11*dpr)+'px "IBM Plex Mono",monospace';
+    const tx=cx<W/2?cx+12*dpr:cx-12*dpr; octx.textAlign=cx<W/2?'left':'right';
+    octx.fillText('light off stage',tx,Math.min(W-6*dpr,Math.max(14*dpr,cy+4*dpr)));
+  }
+}
+
+// ---------- maps strip
+function drawMaps(raw){
+  const el=$('maps'); el.innerHTML='';
+  const N=state.size;
+  [['albedo','a'],['normal','n'],['depth','p'],['thickness','p'],['specular','p'],['emission','e']].forEach(([name,k])=>{
+    const fig=document.createElement('figure'), cv=document.createElement('canvas'); cv.width=cv.height=N;
+    const cx=cv.getContext('2d'); const src=raw[k][0], alphaSrc=raw.a[0], im=cx.createImageData(N,N);
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++){
+      const sx=state.mirror?N-1-x:x, si=(y*N+sx)*4, di=(y*N+x)*4;
+      let r,g,b;
+      if (alphaSrc[si+3]<128){ r=g=b=22; }
+      else if (name==='albedo'||name==='emission'){ r=src[si]; g=src[si+1]; b=src[si+2]; }
+      else if (name==='normal'){ const nx=(src[si]*256+src[si+1])/32767.5-1, ny=(src[si+2]*256+raw.q[0][si])/32767.5-1, nz=Math.sqrt(Math.max(0,1-nx*nx-ny*ny)); r=((state.mirror?-nx:nx)*0.5+0.5)*255; g=(ny*0.5+0.5)*255; b=(nz*0.5+0.5)*255; }
+      else if (name==='thickness'){ const df=((src[si]*256+src[si+1])-(raw.q[0][si+1]*256+raw.q[0][si+2]))/65535*ASSETS.meta.depth.range_m; r=g=b=Math.min(255,df/1.4*255); }
+      else if (name==='depth'){ const v=(src[si]*256+src[si+1])/256; r=g=b=v; }
+      else { r=g=b=src[si+2]; }
+      im.data[di]=r; im.data[di+1]=g; im.data[di+2]=b; im.data[di+3]=255;
+    }
+    cx.putImageData(im,0,0);
+    const cap=document.createElement('figcaption'); cap.textContent=name;
+    fig.appendChild(cv); fig.appendChild(cap); el.appendChild(fig);
+  });
+}
+
+async function setSprite(){
+  const raw = await getSet(state.view, state.st);
+  tex = buildTex(raw, state.size, state.mirror);
+  drawMaps(raw);
+  readParams(); render();
+}
+
+// ---------- controls
+function seg(id, key, conv){
+  $(id).addEventListener('click', e => {
+    const b=e.target.closest('button'); if (!b) return;
+    [...$(id).children].forEach(x=>x.setAttribute('aria-pressed', x===b));
+    state[key]=conv?conv(b.dataset.v):b.dataset.v; setSprite();
+  });
+}
+seg('segView','view'); seg('segState','st');
+$('segShadow').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; [...$('segShadow').children].forEach(x=>x.setAttribute('aria-pressed',x===b)); shadowStyle=b.dataset.v; });
+let wheelStyle='stylised';
+$('segWheel').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; [...$('segWheel').children].forEach(x=>x.setAttribute('aria-pressed',x===b)); wheelStyle=b.dataset.v; });
+$('cleanSp').addEventListener('change', e => { state.clean=e.target.checked; setSprite(); });
+$('mirror').addEventListener('change', e => { state.mirror=e.target.checked; setSprite(); });
+let queued=false;
+function update(){ if (queued) return; queued=true; requestAnimationFrame(()=>{ queued=false; readParams(); render(); }); }
+document.querySelectorAll('input[type=range],input[type=color],#shadow,#lighton,#gridon,#beams,#headon,#carlights,#brake,#hazard').forEach(i=>i.addEventListener('input',update));
+
+const PRESETS={
+  sodium:{gx:-1.8,gy:0.9,gz:4.5,rad:8.5,inten:1.7,lcol:'#ffd9a8'},
+  neon:{gx:3.2,gy:-1.0,gz:0.7,rad:6,inten:2.4,lcol:'#ff3fa8'},
+  sun:{gx:-5,gy:-4,gz:1.2,rad:16,inten:1.6,lcol:'#ffb878'},
+  top:{gx:0,gy:0,gz:4.5,rad:9,inten:2.0,lcol:'#e8f0ff'}
+};
+$('presets').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const p=PRESETS[b.dataset.p]; for (const k in p) $(k).value=p[k]; update();
+});
+
+// drag the light across the ground plane at the current height
+function dragTo(ev){
+  const r=over.getBoundingClientRect(), k=tex.S/r.width;
+  const u=(ev.clientX-r.left)*k, v=(ev.clientY-r.top)*k;
+  const xc=(u-tex.ax-tex.pad)/tex.s, yc=(tex.ay+tex.pad-v)/tex.s;   // the pointer marks the ground point under the lamp
+  const gg=camToGroundGrid(xc,yc);
+  $('gx').value=Math.max(-5,Math.min(5,gg[0])).toFixed(2); $('gy').value=Math.max(-5,Math.min(5,gg[1])).toFixed(2);
+  update();
+}
+let dragging=false;
+over.addEventListener('pointerdown',e=>{ dragging=true; over.setPointerCapture(e.pointerId); $('orbit').checked=false; dragTo(e); });
+over.addEventListener('pointermove',e=>{ if(dragging) dragTo(e); });
+over.addEventListener('pointerup',()=>dragging=false);
+window.addEventListener('resize',()=>{ if(tex) drawOverlay(); });
+
+// ---------- animation loop: highway scroll, wheel spin, shake, orbit
+let ang=0, last=0;
+function animateCar(t, dt){
+  const v = HW.on ? P.speed/3.6 : 0;                 // m/s
+  // wheels
+  if (v<=0.05){ WH.fi=0; }
+  else if (wheelStyle==='stylised'){
+    WH.step += Math.min(v*3.2,30)*dt;                // spin steps per second, capped so it stays readable
+    WH.fi = (Math.floor(WH.step)*2)%8;               // 18 degrees per step
+  } else {
+    const adv = v/0.2*dt*180/Math.PI;                // true rotation this frame, 0.2 m tyre radius
+    WH.ang = (WH.ang+adv)%72;
+    WH.fi = adv>30 ? 8 : Math.floor(WH.ang/9)%8;     // blurred rims once the spokes would strobe
+  }
+  // shake: a small bob that grows with speed, plus occasional bump kicks. Whole pixels only.
+  const sp=Math.min(1,v/12), A=P.shake*sp, tt=t/1000;
+  if (A<=0){ SHK.du=0; SHK.dv=0; return; }
+  let dv=A*1.4*(0.55*Math.sin(2*Math.PI*9.1*tt)+0.45*Math.sin(2*Math.PI*14.3*tt+1.3)), du=0;
+  if (tt>SHK.nextKick){ SHK.kickUntil=tt+0.13; SHK.nextKick=tt+0.7+Math.random()*1.8; SHK.kickSide=Math.random()<0.5?-1:1; }
+  if (tt<SHK.kickUntil){ dv-=1.0*A; du=SHK.kickSide*(A>1.5?1:0); }
+  SHK.dv=Math.round(dv); SHK.du=du;
+}
+function tick(t){
+  const dt=Math.min(0.05,(t-last)/1000); last=t; frameDt=dt||0.016;
+  if (HW.on && tex){
+    HW.dist+=P.speed/3.6*dt; animateCar(t,dt); render();
+  } else if ($('orbit').checked && tex){
+    ang+=dt*0.9;
+    const r=Math.max(1.2,Math.hypot(P.gx,P.gy));
+    $('gx').value=(r*Math.cos(ang)).toFixed(2); $('gy').value=(r*Math.sin(ang)).toFixed(2);
+    readParams(); render();
+  } else if (tex && P.hazard){ render(); }           // keep indicators blinking while parked
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+$('hwBtn').addEventListener('click', ()=>{
+  HW.on=!HW.on; $('hwBtn').setAttribute('aria-pressed',HW.on); $('hwBtn').textContent=HW.on?'Stop highway run':'Start highway run';
+  for (const id of ['gx','gy','orbit']) $(id).disabled=HW.on;
+  if (HW.on){
+    $('orbit').checked=false;
+    HW.saved={gz:$('gz').value,rad:$('rad').value,inten:$('inten').value,lcol:$('lcol').value};
+    for (const k in PRESET_HW) $(k).value=PRESET_HW[k];
+  } else {
+    if (HW.saved){ for (const k in HW.saved) $(k).value=HW.saved[k]; }
+    WH.fi=0; SHK.du=0; SHK.dv=0;
+  }
+  readParams(); render();
+});
+const PRESET_HW={gz:2.35,rad:12,inten:1.1,lcol:'#ffffff'};
+setSprite();
+</script>
+</body>
+</html>
