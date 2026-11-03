@@ -1,30 +1,39 @@
-# Only known project directories belong in the repository.
-/*
-!/.gitignore
-!/.gitattributes
-!/README.md
-!/*.ps1
-!/pipeline/
-!/assets/
-!/output/
+# Local build products and editor files
+/build/
+/build-*/
+/bin/
+/obj/
+/out/
+/.cache/
+/.vs/
+/.idea/
+*.user
+*.suo
+*.pdb
+*.ilk
+*.obj
+*.o
+*.exe
+*.dll
 
-# Generated renders and diagnostics stay local; keep the offline showcases.
-/output/*
-!/output/relight-lab.html
-!/output/customization-lab.html
-
-# Local dependencies, caches, Blender work files and packaged downloads.
-**/__pycache__/
-*.py[cod]
+# Local dependencies, diagnostics and secrets
 .runtime/
 .venv/
 venv/
-*.blend
-*.blend[0-9]
-*.zip
+__pycache__/
+*.py[cod]
 *.log
-Thumbs.db
-.DS_Store
 .env
 .env.*
 !.env.example
+Thumbs.db
+.DS_Store
+
+# Experiment-only inputs/outputs do not belong in this game checkout
+/pipeline/
+/experiments/
+/output/
+*.blend
+*.blend[0-9]
+*.glb
+*.zip

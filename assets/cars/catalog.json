@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "cars": [
+    {
+      "id": "nissan_silvia_s13",
+      "name": "Nissan Silvia S13",
+      "manifest": "nissan_silvia_s13/manifest.json"
+    },
+    {
+      "id": "honda_civic_ek9",
+      "name": "Honda Civic Type R EK9",
+      "manifest": "honda_civic_ek9/manifest.json"
+    }
+  ]
+}
