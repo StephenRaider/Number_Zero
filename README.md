@@ -131,7 +131,7 @@ loaded/coast levels at 3000, 5000 and 7000 RPM for each car.
 
 The camera scales the complete shared highway corridor uniformly to the window,
 with aligned depth/normal-map lighting and shadows. Forward visibility ends at
-28 metres, fading into night fog over its final 8 metres on every display.
+38 metres, fading into night fog over its final 8 metres on every display.
 The same range fits all four lanes, including tall car roofs. Extra screen
 width adds scenery rather than earlier visibility of hazards. Future traffic
 must use `nz::VisibleAhead` for its visibility too.
@@ -169,3 +169,22 @@ Captures include logical dimensions in their filenames under `build/qa/`.
 
 `--feature-smoke-test` captures steering, acceleration and braking frames with
 hazards; add `--manual` to exercise scripted player-style sequential shifts.
+
+## Refined camera and sprite presentation
+
+The common lookahead is now 38 metres, with a 6-metre rear framing allowance.
+This zooms out slightly and places the player farther southwest while preserving
+the same forward visibility on every display. Twin headlight beams have wider
+shoulders and a 40-metre reach, still rotating with the rendered car heading.
+
+All neutral and pitched body views now receive dominant-material depth/normal
+selection, crease-aware filtering and supported low-contrast paint-speckle
+cleanup. Lamp, glass, plate, mask, emission and silhouette pixels are protected.
+The renderer shades at the original 128-pixel resolution and uses exact area
+coverage when shrinking the resulting colour image. Packed lighting maps remain
+point-sampled. This avoids missing thin details and irregular nearest-neighbour
+steps without blurring the full game image.
+
+Headlights and tail/brake lamps have a restrained Gaussian halo in a separate
+emission-only pass; it can spill over paint and road and follows each lamp switch.
+Braking strengthens the red halo. Bright paint and HUD elements do not bloom.

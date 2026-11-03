@@ -50,3 +50,12 @@ stock wheel files and their hashes are unchanged; this does not introduce a
 wheel-and-suspension render cross product. Source renders and export scripts
 remain in the experiment workspace (`render_pitch.py`, `pack_pitch.py`,
 `export_pitch.py`). Manifests include SHA-256 hashes for the new maps.
+
+The surface cleanup has been completed consistently for all 30 body samples per
+car (neutral plus four pitch angles across six view/steering poses), using
+`pipeline/cleanup_body_views.py` in the experiment workspace. It selects the
+dominant material for paint depth/normals, filters only compatible surfaces and
+repairs supported low-contrast colour speckles. Non-paint details, paint masks,
+emission masks and silhouettes are preserved byte-for-byte. Wheel maps are
+unchanged. Runtime shading now happens at native resolution before area-filtered
+minification, so smaller cars do not inherit irregular dropped pixel rows.

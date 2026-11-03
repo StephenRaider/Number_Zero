@@ -23,3 +23,9 @@
   aspect advantages. Out-of-view lights may still illuminate that corridor.
 - Manual gearbox (garage selection) uses Q down/E up; Z/C indicators, X hazards,
   H headlights and T tails work in the garage and on the road.
+
+- Body surface cleanup now covers neutral and pitch poses; use the experiment
+  cleanup_body_views.py after packing and before final verification/export.
+- Keep categorical normal/depth/mask maps point sampled. Shade the native car
+  first, then minify its lit colour with car_resolve.fs. Lamp-only bloom is in
+  lamp_glow.fs; --glow-smoke-test verifies on/off and brake intensity on the GPU.

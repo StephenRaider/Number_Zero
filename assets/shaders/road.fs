@@ -10,6 +10,9 @@ uniform float garage;
 uniform float playerLateral;
 uniform float carYaw;
 uniform float visibleAhead;
+uniform float beamReach;
+uniform float beamBase;
+uniform float beamSpread;
 uniform float headlights;
 uniform float taillights;
 uniform float braking;
@@ -35,7 +38,7 @@ bool shadow(vec3 p,vec3 lamp){
   else{float a=-uv0[axis]/duv[axis],b=(1.-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
  }
  if(leave<=enter)return false;
- float count=ceil(clamp(length(duv)*(leave-enter)*spritePixels*1.25,4.,64.));
+ float count=ceil(clamp(length(duv)*(leave-enter)*128.*1.25,4.,64.));
  for(int k=0;k<64;k++){
   if(float(k)>=count)break;
   float t=mix(enter,leave,(float(k)+.5)/count);
@@ -90,10 +93,10 @@ void main(){
   vec2 offset=vec2(s,lateral-playerLateral);
   float ahead=dot(offset,vec2(cos(carYaw),sin(carYaw)))-2.;
   float across=dot(offset,vec2(-sin(carYaw),cos(carYaw)));
-  if(ahead>0.&&ahead<30.){
-   float width=.19+ahead*.065;
+  if(ahead>0.&&ahead<beamReach){
+   float width=beamBase+ahead*beamSpread;
    float left=(across+.56)/width,right=(across-.56)/width;
-   float beam=(exp(-left*left*2.)+exp(-right*right*2.))*pow(1.-ahead/30.,1.6)*smoothstep(0.,.25,ahead);
+   float beam=(exp(-left*left*2.)+exp(-right*right*2.))*pow(1.-ahead/beamReach,1.6)*smoothstep(0.,.25,ahead);
    lit+=pow(base,vec3(2.2))*vec3(1.2,1.06,.75)*beam*1.3;
   }
  }

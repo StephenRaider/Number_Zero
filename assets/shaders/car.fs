@@ -24,7 +24,7 @@ uniform float headlights;
 uniform float taillights;
 uniform float braking;
 float unpack16(float high,float low){return (round(high*255.0)*256.0+round(low*255.0))/65535.0;}
-float band(float x){float n=x*7.0,b=floor(n),t=smoothstep(.34,.66,fract(n));return (b+t)/7.0;}
+float band(float x){float n=x*10.0,b=floor(n),t=smoothstep(.20,.80,fract(n));return (b+t)/10.0;}
 vec3 emission(vec2 uv){
  vec4 texel=texture(emissionMap,uv);vec3 e=texel.rgb;float indicator=texel.a<.5?indicatorLeft:indicatorRight;
  return e.r*headlights*vec3(1.25,1.08,.75)+e.g*max(taillights*.6,braking*1.9)*vec3(1.0,.025,.012)+e.b*indicator*vec3(1.8,.48,.015);
@@ -38,7 +38,7 @@ bool occluded(vec3 p,vec3 lamp){
   else{float a=-uv0[axis]/duv[axis],b=(1.-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
  }
  if(leave<=enter)return false;
- float count=ceil(clamp(length(duv)*(leave-enter)*spritePixels*1.25,4.,40.));
+ float count=ceil(clamp(length(duv)*(leave-enter)*128.*1.25,4.,40.));
  for(int k=0;k<40;k++){
   if(float(k)>=count)break;
   float t=mix(enter,leave,(float(k)+.5)/count);
@@ -56,16 +56,7 @@ bool occluded(vec3 p,vec3 lamp){
 }
 void main(){
  vec4 base=texture(texture0,fragTexCoord);
- if(base.a<.5){
-  vec3 glow=vec3(0);
-  for(int i=0;i<8;i++){
-   float angle=float(i)*.785398;
-   vec2 dir=vec2(cos(angle),sin(angle))/spritePixels;
-   glow+=emission(fragTexCoord+dir*1.6)*.06+emission(fragTexCoord+dir*3.0)*.025;
-  }
-  float alpha=clamp(max(glow.r,max(glow.g,glow.b)),0.,.45);
-  finalColor=vec4(glow/max(alpha,.001),alpha);return;
- }
+ if(base.a<.5){finalColor=vec4(0);return;}
  vec4 n=texture(normalMap,fragTexCoord),d=texture(depthMap,fragTexCoord),a=texture(auxiliaryMap,fragTexCoord);
  vec2 xy=vec2(unpack16(n.r,n.g),unpack16(n.b,a.r))*2.0-1.0;
  vec3 normal=normalize(vec3(xy,sqrt(max(0.,1.-dot(xy,xy)))));
