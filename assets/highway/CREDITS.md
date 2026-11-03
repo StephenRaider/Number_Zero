@@ -14,8 +14,10 @@ licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 - **Highway Sign**, by [haleem](https://sketchfab.com/haleem4):
   [source model](https://sketchfab.com/3d-models/highway-sign-28c2081eb3664308a53d38c674e08eff).
   Extracted gantry/sign assembly; normalized scale/orientation and rendered as
-  separate isometric colour/normal/depth layers. Sign UVs are counter-mirrored
-  to keep lettering readable in the driving view. Original floor excluded.
+  separate isometric colour/normal/depth layers. English faces replaced with
+  fictional Japanese destinations; sign UVs adapted for readable mirrored-view
+  lettering. Original floor excluded. Japanese sign-face artwork is generated
+  for Number Zero; no font files are redistributed.
 
 Original models, material images, Blender scenes and intermediate renders stay
 in the experiment workspace; only runtime exports are included here.
