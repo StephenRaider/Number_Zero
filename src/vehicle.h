@@ -17,11 +17,11 @@ struct CarSpec {
 };
 inline const std::array<CarSpec,2> Cars={{
     {"nissan_silvia_s13","NISSAN SILVIA S13 K'S","SR20DET  /  2.0 TURBO","RWD",
-     1150,205,275,2.475,.3135,4.083,.85,.64,850,3400,7050,7500,.53,.95,.93,3.5,false,true,
+     1150,205,275,2.475,.3135,4.083,.85,.64,850,3400,7050,7500,.53,.95,.93,9.5,false,true,
      {3.321,1.902,1.308,1.000,.759},
      {{800,90},{1500,150},{2500,210},{3500,265},{4000,275},{5000,265},{6000,240},{6500,220},{7000,195},{7500,150}}},
     {"honda_civic_ek9","HONDA CIVIC TYPE R EK9","B16B  /  1.6 VTEC","FWD",
-     1070,185,160,2.620,.29775,4.400,.87,.62,1000,5800,8450,8600,.62,1.00,.98,4.4,true,false,
+     1070,185,160,2.620,.29775,4.400,.87,.62,1000,5800,8450,8600,.62,1.00,.98,9.0,true,false,
      {3.230,2.105,1.458,1.107,.848},
      {{1000,80},{2000,104},{3000,118},{4500,128},{5500,136},{6000,145},{7000,155},{7500,160},{8000,159},{8200,158.4},{8500,150},{8600,140}}}
 }};
@@ -42,12 +42,17 @@ struct Vehicle {
 inline double Approach(double value,double target,double rate,double dt){
     return value+(target-value)*(1-std::exp(-rate*dt));
 }
+// Highway positioning envelope: quick at urban speeds, progressively calmer at speed.
+// Steering response is a game tuning parameter, separate from tyre grip and driven axle.
+inline double LateralSpeedLimit(double speed){
+    return std::min(speed*.32,1.7+3.0/(1+std::pow(speed/21.,2)));
+}
 inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     in.throttle=std::clamp(in.throttle,0.0,1.0);in.brake=std::clamp(in.brake,0.0,1.0);in.steer=std::clamp(in.steer,-1.0,1.0);
     const double mass=c.mass+75.; // One driver; catalogue curb mass already includes normal fluids.
     v.elapsed+=dt;v.shiftTime=std::max(0.,v.shiftTime-dt);v.shiftCooldown=std::max(0.,v.shiftCooldown-dt);
     v.throttle=Approach(v.throttle,in.brake>.05?0.:in.throttle,12.,dt);
-    v.brake=Approach(v.brake,in.brake,18.,dt);v.steering=Approach(v.steering,in.steer,c.steerResponse,dt);
+    v.brake=Approach(v.brake,in.brake,18.,dt);v.steering=Approach(v.steering,in.steer,std::abs(in.steer)<.01?24.:c.steerResponse/(1+v.speed/65.),dt);
     const double wheelRpm=v.speed/(2*Pi*c.radius)*60;
     double coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
     if(v.shiftTime<=0 && v.shiftCooldown<=0){
@@ -78,11 +83,11 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     v.speed=std::max(0.,v.speed+v.acceleration*dt);
     v.distance+=(oldSpeed+v.speed)*.5*dt;
     if(v.timeTo100<0 && oldSpeed<100./3.6 && v.speed>=100./3.6)v.timeTo100=v.elapsed;
-    const double speedGain=std::min(v.speed/7.,1.);
-    const double targetLateral=v.steering*std::min(v.speed*.115,4.8)*speedGain;
+    const double targetLateral=v.steering*LateralSpeedLimit(v.speed);
     const double availableG=std::sqrt(std::max(.12,c.grip*c.grip-std::pow(std::clamp(v.acceleration/9.81,-c.grip,c.grip),2)));
     const double maxLateralAcceleration=availableG*9.81;
-    const double desiredAcceleration=(targetLateral-v.lateralSpeed)*(c.frontDrive?4.8:4.0);
+    const double response=std::abs(in.steer)<.01?22./(1+v.speed/100.):std::max(5.,c.steerResponse*1.35/(1+v.speed/75.));
+    const double desiredAcceleration=(targetLateral-v.lateralSpeed)*response;
     v.lateralSpeed+=std::clamp(desiredAcceleration,-maxLateralAcceleration,maxLateralAcceleration)*dt;
     if(v.speed<.1)v.lateralSpeed=0;
     v.lateral+=v.lateralSpeed*dt;

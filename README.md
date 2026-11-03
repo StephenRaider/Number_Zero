@@ -84,3 +84,18 @@ Keep Blender models, render experiments, HTML labs and intermediate outputs in
 `../Isometric pixel car racer/`. They are not runtime/build dependencies.
 Review, commit and push game changes here; use fast-forward pulls and preserve
 unrelated work. There is no background auto-sync service.
+
+## Prototype polish
+
+Driving faces northeast; steering right moves toward the right side of the road.
+Paint uses stronger clearcoat highlights with a narrow and a broad specular lobe.
+Fixed world-space street lamps have a smooth extended falloff and stay active
+beyond the viewport. Each lamp casts its own depth-map shadow; ambient and other
+lamps remain independent. Shadow rays intersect the car atlas before marching,
+so they have no fixed screen clipping rectangle or nearest-lamp switch.
+
+Steering positioning is quicker at low/medium speed and calmer at highway speed.
+Releasing steering recentres promptly. This is prototype control tuning, not a
+validated comparison of real S13 and EK9 handling. Drivetrain, grip and braking
+parameters remain separate. `src/scene.h` contains shared projection and lamp
+selection math covered by the headless tests.

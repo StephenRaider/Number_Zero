@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "rlgl.h"
 #include "vehicle.h"
+#include "scene.h"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -26,7 +27,7 @@ struct Selection { int car=0;Color paint{229,226,207,255};bool twoTone=true,blac
 struct Light { Vector3 position;Vector3 colour;float power,radius; };
 struct Environment { Vector2 anchor;std::vector<Light> lights;int streetCount=0;bool garage=false;float distance=0,lateral=0;bool heads=true,tails=true,brake=false; };
 static Color RGBA(int r,int g,int b,int a=255){return Color{(unsigned char)r,(unsigned char)g,(unsigned char)b,(unsigned char)a};}
-static Vector3 WorldToCamera(float s,float l,float z){return {(-s+l)*K,z*ElevationCos+(s+l)*K*ElevationSin,(-s-l)*K*ElevationCos+z*ElevationSin};}
+static Vector3 WorldToCamera(float s,float l,float z){auto p=nz::NortheastCamera(s,l,z);return {p[0],p[1],p[2]};}
 static Vector2 Project(Vector2 anchor,float s,float l,float z=0){auto p=WorldToCamera(s,l,z);return {anchor.x+p.x*PixelsPerMetre,anchor.y-p.y*PixelsPerMetre};}
 static std::vector<Color> ReadPixels(const fs::path &path){
  Image image=LoadImage(path.string().c_str());
@@ -54,8 +55,9 @@ struct ShaderProgram {
  void Vec2(const char *name,Vector2 v){int loc=At(name);if(loc>=0)SetShaderValue(value,loc,&v,SHADER_UNIFORM_VEC2);}
  void Texture(const char *name,Texture2D tex){int loc=At(name);if(loc>=0)SetShaderValueTexture(value,loc,tex);}
  void Lights(const Environment &e){
-  std::array<float,36> positions{},colours{};std::array<float,12> powers{},radii{};
-  int n=std::min(12,(int)e.lights.size());
+  std::array<float,72> positions{},colours{};std::array<float,24> powers{},radii{};
+  if(e.lights.size()>24)throw std::runtime_error("Light capacity exceeded");
+  int n=(int)e.lights.size();
   for(int i=0;i<n;i++){const auto &l=e.lights[i];positions[i*3]=l.position.x;positions[i*3+1]=l.position.y;positions[i*3+2]=l.position.z;colours[i*3]=l.colour.x;colours[i*3+1]=l.colour.y;colours[i*3+2]=l.colour.z;powers[i]=l.power;radii[i]=l.radius;}
   Int("lightCount",n);Int("streetCount",e.streetCount);
   for(auto pair:{std::pair<const char*,const float*>{"lightPosition[0]",positions.data()},{"lightColour[0]",colours.data()}}){int loc=At(pair.first);if(loc>=0)SetShaderValueV(value,loc,pair.second,SHADER_UNIFORM_VEC3,n);}
@@ -87,6 +89,11 @@ struct CarRenderer {
     Color source=output[0][i];output[0][i]=RGBA(std::clamp((int)std::lround(paint.r*source.r/base[0]),0,255),std::clamp((int)std::lround(paint.g*source.g/base[1]),0,255),std::clamp((int)std::lround(paint.b*source.b/base[2]),0,255),source.a);
    }
   }
+  if(view==1){
+   // A mirrored sprite also needs mirrored camera-space normals, not just flipped colour.
+   for(int y=0;y<128;y++)for(int x=0;x<64;x++)for(int m=0;m<5;m++)std::swap(output[m][y*128+x],output[m][y*128+127-x]);
+   for(int i=0;i<PixelCount;i++){unsigned nx=65535u-(output[1][i].r*256u+output[1][i].g);output[1][i].r=(unsigned char)(nx/256);output[1][i].g=(unsigned char)(nx%256);}
+  }
   for(int i=0;i<5;i++)UpdateTexture(textures[i],output[i].data());
  }
  void Draw(ShaderProgram &shader,const Environment &env,Vector2 origin,float baseDepth){
@@ -96,12 +103,21 @@ struct CarRenderer {
  void Close(){for(auto tex:textures)UnloadTexture(tex);}
 };
 static Environment MakeEnvironment(bool garage,const nz::Vehicle &v,bool heads,bool tails,bool brake){
- Environment e;e.garage=garage;e.anchor=garage?Vector2{186,214}:Vector2{382,241};e.distance=(float)v.distance;e.lateral=garage?0.f:(float)v.lateral;e.heads=heads;e.tails=tails;e.brake=brake;
+ Environment e;e.garage=garage;e.anchor=garage?Vector2{186,214}:Vector2{250,234};e.distance=(float)v.distance;e.lateral=garage?0.f:(float)v.lateral;e.heads=heads;e.tails=tails;e.brake=brake;
  if(garage){e.lights={{{-2,3.2f,3.4f},{1,.83f,.61f},1.7f,11},{{2.6f,2.6f,2.2f},{.52f,.75f,1},1.1f,10},{{0,5,1.0f},{1,.96f,.85f},.7f,12}};e.streetCount=3;}
  else{
-  const int centre=(int)std::floor(v.distance/28.);
-  for(int k=centre-2;k<=centre+2;k++)for(int side:{-1,1}){
-   float s=(float)(k*28+(side>0?14:0)-v.distance);e.lights.push_back({WorldToCamera(s,side*8.3f,6),{1.f,.81f,.57f},1.85f,22});
+  // Keep fixed world-space posts alive until their full light tail clears every visible receiver.
+  float minS=1e9f,maxS=-1e9f;
+  for(float x:{-128.f,(float)Width+128})for(float y:{-128.f,(float)Height+128}){
+   float cx=(x-e.anchor.x)/PixelsPerMetre,cy=(e.anchor.y-y)/PixelsPerMetre;
+   float s=nz::NortheastGround(cx,cy).first;minS=std::min(minS,s);maxS=std::max(maxS,s);
+  }
+  for(int side:{-1,1}){
+   float phase=side>0?12.f:0.f;
+   auto [first,last]=nz::StreetRange(v.distance,minS,maxS,side);
+   for(int k=first;k<=last;k++){
+    float s=(float)(k*24+phase-v.distance);e.lights.push_back({WorldToCamera(s,side*4.2f,5.4f),{1.f,.85f,.66f},2.4f,11.5f});
+   }
   }
   e.streetCount=(int)e.lights.size();
   if(heads)e.lights.push_back({WorldToCamera(2.5f,(float)v.lateral,.5f),{1,.88f,.65f},.85f,5});
@@ -122,9 +138,9 @@ static void RoadFurniture(const Environment &e){
   Quad(a,b,c,d,RGBA(40,48,56));DrawLineEx(c,d,1,RGBA(91,102,111));
   Vector2 post=Project(e.anchor,s,l,.5f),bottom=Project(e.anchor,s,l);DrawLineEx(post,bottom,1,RGBA(107,119,121));
  }
- const int pole=(int)std::floor(e.distance/28.);
+ const int pole=(int)std::floor(e.distance/24.);
  for(int k=pole-3;k<=pole+4;k++)for(int side:{-1,1}){
-  float s=(float)(k*28+(side>0?14:0)-e.distance),l=side*8.3f;auto bottom=Project(e.anchor,s,l),top=Project(e.anchor,s,l,6),end=Project(e.anchor,s,l-side*.75f,6);
+  float s=(float)(k*24+(side>0?12:0)-e.distance),l=side*8.3f;auto bottom=Project(e.anchor,s,l),top=Project(e.anchor,s,l,5.4f),end=Project(e.anchor,s,side*4.2f,5.4f);
   if(bottom.x<-100||bottom.x>Width+100||bottom.y<-80||top.y>Height+100)continue;
   DrawLineEx(bottom,top,2,RGBA(49,60,71));DrawLineEx(top,end,2,RGBA(86,100,107));
   DrawCircleGradient((int)end.x,(int)end.y,12,RGBA(255,193,107,36),BLANK);DrawRectangle((int)end.x-2,(int)end.y-1,5,2,RGBA(255,228,173));
@@ -209,7 +225,7 @@ int main(int argc,char **argv){
    if(!paused){accumulator+=dt;while(accumulator>=1./120.){nz::Step(vehicle,nz::Cars[selected.car],input,1./120.);accumulator-=1./120.;}}
   }
   bool brake=driving&&vehicle.brake>.1;auto env=MakeEnvironment(!driving,vehicle,heads,tails,brake);
-  int pose=1;if(driving&&std::abs(vehicle.yaw)>.027)pose=vehicle.yaw>0?0:2;
+  int pose=1;if(driving&&std::abs(vehicle.yaw)>.027)pose=vehicle.yaw>0?2:0;
   int wheel=driving?(vehicle.speed*3.6>75?8:(int)std::floor(vehicle.distance/(2*nz::Pi*nz::Cars[selected.car].radius)*8)%8):0;
   car.Compose(art[selected.car],selected,driving?1:0,pose,wheel);
   Vector2 carAnchor=driving?Project(env.anchor,0,(float)vehicle.lateral):env.anchor;

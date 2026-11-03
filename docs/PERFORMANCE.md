@@ -83,3 +83,18 @@ falling back to unlit rendering. Test captures/logs stay under `build/`.
 Gearbox values for the S13 are reference FS5W71C/SR20DET five-speed values. Stock
 variant, equipment and measured tyre/drivetrain data should be reviewed again
 before introducing a larger roster or making comparative performance claims.
+
+## Revised highway steering
+
+Full steering uses a speed-dependent lateral velocity envelope in m/s:
+`min(speed * 0.32, 1.7 + 3 / (1 + (speed / 21)^2))` with speed in m/s.
+It ramps from zero at rest, reaches roughly 3.8 m/s at 50 km/h, then falls to
+2.55 m/s at 120 km/h and 2.15 m/s at 180 km/h. Steering input and velocity
+responses also become calmer with speed. Release uses quicker damping to limit
+unwanted lateral drift. Available tyre grip still caps lateral acceleration,
+including under braking/acceleration.
+
+The earlier S13 response disadvantage was a prototype tuning choice, not a
+validated factory comparison. The revised base response is 9.5 for the S13 and
+9.0 for the EK9, a small preference for prompt S13 input. RWD does not establish
+superior handling by itself; real comparative handling needs measured data.

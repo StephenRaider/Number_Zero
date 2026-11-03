@@ -11,10 +11,11 @@ uniform vec2 screenAnchor;
 uniform vec2 carOrigin;
 uniform float carDepth;
 uniform int lightCount;
-uniform vec3 lightPosition[12];
-uniform vec3 lightColour[12];
-uniform float lightPower[12];
-uniform float lightRadius[12];
+uniform int streetCount;
+uniform vec3 lightPosition[24];
+uniform vec3 lightColour[24];
+uniform float lightPower[24];
+uniform float lightRadius[24];
 uniform float headlights;
 uniform float taillights;
 uniform float braking;
@@ -26,20 +27,28 @@ vec3 emission(vec2 uv){
 }
 bool occluded(vec3 p,vec3 lamp){
  vec3 delta=lamp-p;
- float steps=clamp(length(delta.xy)*26.0,6.0,22.0);
- for(int step=2;step<22;step++){
-  if(float(step)>=steps)break;
-  float t=float(step)/steps;
-  vec2 uv=fragTexCoord+vec2(delta.x,-delta.y)*26.0/128.0*t;
-  if(any(lessThan(uv,vec2(0)))||any(greaterThanEqual(uv,vec2(1))))continue;
+ vec2 uv0=fragTexCoord,duv=vec2(delta.x,-delta.y)*26./128.;
+ float enter=0.,leave=1.;
+ for(int axis=0;axis<2;axis++){
+  if(abs(duv[axis])<.000001){if(uv0[axis]<0.||uv0[axis]>1.)return false;}
+  else{float a=-uv0[axis]/duv[axis],b=(1.-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
+ }
+ if(leave<=enter)return false;
+ float count=ceil(clamp(length(duv)*(leave-enter)*128.*1.25,4.,40.));
+ for(int k=0;k<40;k++){
+  if(float(k)>=count)break;
+  float t=mix(enter,leave,(float(k)+.5)/count);
+  if(t*length(delta)<.10)continue;
+  vec2 uv=uv0+duv*t;
   if(texture(texture0,uv).a<.5)continue;
-  vec4 d=texture(depthMap,uv),a=texture(auxiliaryMap,uv);
-  float front=(unpack16(d.r,d.g)-.5)*5.2+carDepth;
-  float back=(unpack16(a.g,a.b)-.5)*5.2+carDepth;
+  vec4 a=texture(depthMap,uv),b=texture(auxiliaryMap,uv);
+  float front=(unpack16(a.r,a.g)-.5)*5.2+carDepth;
+  float back=(unpack16(b.g,b.b)-.5)*5.2+carDepth;
   float ray=p.z+delta.z*t;
-  if(ray<front-.045&&ray>back-.02)return true;
+  if(ray<front-.045&&ray>back-.025)return true;
  }
  return false;
+
 }
 void main(){
  vec4 base=texture(texture0,fragTexCoord);
@@ -59,17 +68,18 @@ void main(){
  vec2 pixel=carOrigin+fragTexCoord*128.0;
  vec3 p=vec3((pixel.x-screenAnchor.x)/26.,(screenAnchor.y-pixel.y)/26.,(unpack16(d.r,d.g)-.5)*5.2+carDepth);
  vec3 diffuse=vec3(0),specular=vec3(0);
- for(int i=0;i<12;i++){
+ for(int i=0;i<24;i++){
   if(i>=lightCount)break;
   vec3 delta=lightPosition[i]-p;float distance2=dot(delta,delta);
   float att=max(0.,1.-distance2/(lightRadius[i]*lightRadius[i]));att*=att;
+  if(i<streetCount){float tail=max(0.,1.-distance2/(lightRadius[i]*lightRadius[i]*4.84));att+=.14*tail*tail;}
   if(att<=0.)continue;
   vec3 direction=normalize(delta);float lambert=max(0.,dot(normal,direction));
   if(lambert<=0.||occluded(p,lightPosition[i]))continue;
   vec3 colour=pow(lightColour[i],vec3(2.2));
   diffuse+=colour*att*lambert*lightPower[i];
   vec3 halfway=normalize(direction+vec3(0,0,1));
-  float highlight=pow(max(0.,dot(normal,halfway)),75.0)*d.b*1.35;
+  float highlight=pow(max(0.,dot(normal,halfway)),90.0)*d.b*4.6 + pow(max(0.,dot(normal,halfway)),22.0)*d.b*.32;
   specular+=colour*att*highlight*lightPower[i];
  }
  float peak=max(diffuse.r,max(diffuse.g,diffuse.b));if(peak>0.)diffuse*=band(peak)/peak;

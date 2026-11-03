@@ -16,31 +16,43 @@ uniform sampler2D carFront;
 uniform sampler2D carBack;
 uniform int lightCount;
 uniform int streetCount;
-uniform vec3 lightPosition[12];
-uniform vec3 lightColour[12];
-uniform float lightPower[12];
-uniform float lightRadius[12];
+uniform vec3 lightPosition[24];
+uniform vec3 lightColour[24];
+uniform float lightPower[24];
+uniform float lightRadius[24];
 float unpack16(float high,float low){return (round(high*255.)*256.+round(low*255.))/65535.;}
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 bool shadow(vec3 p,vec3 lamp){
  vec3 delta=lamp-p;
- for(int k=1;k<28;k++){
-  float t=float(k)/28.;vec3 q=p+delta*t;
-  vec2 pixel=screenAnchor+vec2(q.x,-q.y)*26.;vec2 uv=(pixel-carOrigin)/128.;
-  if(any(lessThan(uv,vec2(0)))||any(greaterThanEqual(uv,vec2(1))))continue;
+ vec2 uv0=(screenAnchor+vec2(p.x,-p.y)*26.-carOrigin)/128.,duv=vec2(delta.x,-delta.y)*26./128.;
+ float enter=0.,leave=1.;
+ for(int axis=0;axis<2;axis++){
+  if(abs(duv[axis])<.000001){if(uv0[axis]<0.||uv0[axis]>1.)return false;}
+  else{float a=-uv0[axis]/duv[axis],b=(1.-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
+ }
+ if(leave<=enter)return false;
+ float count=ceil(clamp(length(duv)*(leave-enter)*128.*1.25,4.,64.));
+ for(int k=0;k<64;k++){
+  if(float(k)>=count)break;
+  float t=mix(enter,leave,(float(k)+.5)/count);
+  if(t*length(delta)<.035)continue;
+  vec2 uv=uv0+duv*t;
   if(texture(carAlbedo,uv).a<.5)continue;
   vec4 a=texture(carFront,uv),b=texture(carBack,uv);
   float front=(unpack16(a.r,a.g)-.5)*5.2+carDepth;
   float back=(unpack16(b.g,b.b)-.5)*5.2+carDepth;
-  if(q.z<front-.025&&q.z>back-.03)return true;
+  float ray=p.z+delta.z*t;
+  if(ray<front-.045&&ray>back-.025)return true;
  }
  return false;
+
 }
 void main(){
  vec2 pixel=vec2(gl_FragCoord.x,resolution.y-gl_FragCoord.y);
  vec2 camera=vec2((pixel.x-screenAnchor.x)/26.,(screenAnchor.y-pixel.y)/26.);
  float sum=camera.y/.35355339,difference=camera.x/.70710678;
- float s=(sum-difference)*.5,lateral=(sum+difference)*.5,absoluteS=s+travelled;
+ float s=garage>.5?(sum-difference)*.5:(difference+sum)*.5;
+ float lateral=garage>.5?(sum+difference)*.5:(difference-sum)*.5,absoluteS=s+travelled;
  vec3 p=vec3(camera,-camera.y*1.7320508),normal=vec3(0,.8660254,.5);
  float noise=hash(floor(vec2(absoluteS,lateral)*10.));
  vec3 base=vec3(.145,.16,.19)*( .89+.16*noise);
@@ -58,17 +70,16 @@ void main(){
   else base=vec3(.075,.105,.11)*(.8+.3*noise);
   if(abs(abs(lateral)-7.65)<.18&&mod(absoluteS,5.)<.5)base=vec3(.66,.65,.52);
  }
- vec3 lighting=vec3(.105,.12,.16);int key=0;float nearest=1e10;
- for(int i=0;i<12;i++){
+ vec3 lighting=vec3(.105,.12,.16);
+ for(int i=0;i<24;i++){
   if(i>=lightCount)break;
   vec3 delta=lightPosition[i]-p;float d2=dot(delta,delta);
   float a=max(0.,1.-d2/(lightRadius[i]*lightRadius[i]));a*=a;
+  if(i<streetCount){float tail=max(0.,1.-d2/(lightRadius[i]*lightRadius[i]*4.84));a+=.14*tail*tail;}
+  if(a*lightPower[i]<.0001)continue;
   float diff=max(0.,dot(normal,normalize(delta)));
-  lighting+=pow(lightColour[i],vec3(2.2))*a*lightPower[i]*diff;
-  if(i<streetCount&&d2<nearest){key=i;nearest=d2;}
- }
- if(abs(pixel.x-carOrigin.x-64.)<145.&&abs(pixel.y-carOrigin.y-65.)<105.&&streetCount>0){
-  if(shadow(p,lightPosition[key]))lighting*=.36;
+  float visibility=i<streetCount&&shadow(p,lightPosition[i])?.20:1.;
+  lighting+=pow(lightColour[i],vec3(2.2))*a*lightPower[i]*diff*visibility;
  }
  vec3 lit=pow(base,vec3(2.2))*lighting;
  if(garage<.5&&headlights>.5){
