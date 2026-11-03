@@ -36,11 +36,20 @@ struct Input { double throttle=0,brake=0,steer=0; };
 struct Vehicle {
     double speed=0,distance=0,lateral=1.75,lateralSpeed=0,rpm=900;
     double throttle=0,brake=0,steering=0,boost=0,shiftTime=0,shiftCooldown=0,acceleration=0;
+    double pitch=0,pitchVelocity=0;bool automatic=true;
     double yaw=0,elapsed=0,timeTo100=-1;
     int gear=0,shifts=0;bool limiter=false;
 };
 inline double Approach(double value,double target,double rate,double dt){
     return value+(target-value)*(1-std::exp(-rate*dt));
+}
+inline bool Shift(Vehicle &v,const CarSpec &c,int direction){
+    if(direction==0||v.shiftTime>0||v.shiftCooldown>0)return false;
+    int next=v.gear+(direction>0?1:-1);
+    if(next<0||next>4)return false;
+    double targetRpm=v.speed/(2*Pi*c.radius)*60*c.gears[next]*c.finalDrive;
+    if(direction<0&&targetRpm>c.redline*.985)return false;
+    v.gear=next;++v.shifts;v.shiftTime=direction>0?.28:.22;v.shiftCooldown=.38;return true;
 }
 // Highway positioning envelope: quick at urban speeds, progressively calmer at speed.
 // Steering response is a game tuning parameter, separate from tyre grip and driven axle.
@@ -55,7 +64,7 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     v.brake=Approach(v.brake,in.brake,18.,dt);v.steering=Approach(v.steering,in.steer,std::abs(in.steer)<.01?24.:c.steerResponse/(1+v.speed/65.),dt);
     const double wheelRpm=v.speed/(2*Pi*c.radius)*60;
     double coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
-    if(v.shiftTime<=0 && v.shiftCooldown<=0){
+    if(v.automatic && v.shiftTime<=0 && v.shiftCooldown<=0){
         if(coupledRpm>c.shiftRpm && v.gear<4 && v.throttle>.2){++v.gear;++v.shifts;v.shiftTime=.28;v.shiftCooldown=.48;}
         else if(v.gear>0 && coupledRpm<2600 && wheelRpm*c.gears[v.gear-1]*c.finalDrive<c.shiftRpm*.92){--v.gear;v.shiftTime=.16;v.shiftCooldown=.5;}
     }
@@ -81,6 +90,12 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     const double oldSpeed=v.speed;
     v.acceleration=(force-aero-rolling-engineBrake-braking)/(mass*1.04); // Equivalent rotating wheel/driveline inertia.
     v.speed=std::max(0.,v.speed+v.acceleration*dt);
+    // A damped suspension response: positive pitch lifts the nose, negative pitches into braking.
+    // Suppress the nominal braking force once stationary, so a held brake does not leave a parked car diving.
+    double actualAcceleration=(v.speed-oldSpeed)/dt;
+    double targetPitch=std::clamp(actualAcceleration*.58,-3.,3.);
+    v.pitchVelocity+=(100.*(targetPitch-v.pitch)-17.*v.pitchVelocity)*dt;
+    v.pitch=std::clamp(v.pitch+v.pitchVelocity*dt,-3.,3.);
     v.distance+=(oldSpeed+v.speed)*.5*dt;
     if(v.timeTo100<0 && oldSpeed<100./3.6 && v.speed>=100./3.6)v.timeTo100=v.elapsed;
     const double targetLateral=v.steering*LateralSpeedLimit(v.speed);

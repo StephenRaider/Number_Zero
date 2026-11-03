@@ -35,7 +35,18 @@ comparison, rather than always drawing one whole layer above the other.
 - Wheel phases 0-7 represent 45-degree spin steps; frame 8 is a blur frame.
 - These stock-wheel exports are still car-specific. The planned reusable wheel
   library with fixed standard sizes has not been implemented yet.
-- Acceleration squat, braking dive and their gameplay logic are not implemented.
+- Acceleration squat and braking dive now use the body pitch maps described below.
 
 Original 3D models, Blender scenes, render passes and HTML viewers are kept in
 the separate experiment workspace. They are not required at game runtime.
+
+Body pitch is now available: each car manifest has `body_pitch` entries for
+all six view/steering poses at -3, -1.5, +1.5 and +3 degrees; the existing body
+maps supply zero pitch. Blender 5.2 rotates body geometry and split normals
+around the suspension pivot at (0,0,0.45), keeping wheels in their original
+positions. All exported body maps retain the existing panel-aware cleanup.
+Runtime selects these samples from a damped acceleration/braking state. The
+stock wheel files and their hashes are unchanged; this does not introduce a
+wheel-and-suspension render cross product. Source renders and export scripts
+remain in the experiment workspace (`render_pitch.py`, `pack_pitch.py`,
+`export_pitch.py`). Manifests include SHA-256 hashes for the new maps.

@@ -8,6 +8,8 @@ uniform float spritePixels;
 uniform float travelled;
 uniform float garage;
 uniform float playerLateral;
+uniform float carYaw;
+uniform float visibleAhead;
 uniform float headlights;
 uniform float taillights;
 uniform float braking;
@@ -53,7 +55,7 @@ void main(){
  vec2 pixel=vec2(gl_FragCoord.x,resolution.y-gl_FragCoord.y);
  vec2 camera=vec2((pixel.x-screenAnchor.x)/pixelsPerMetre,(screenAnchor.y-pixel.y)/pixelsPerMetre);
  float sum=camera.y/.35355339,difference=camera.x/.70710678;
- float s=garage>.5?(sum-difference)*.5:(difference+sum)*.5;
+ float s=garage>.5?(difference-sum)*.5:(difference+sum)*.5;
  float lateral=garage>.5?(sum+difference)*.5:(difference-sum)*.5,absoluteS=s+travelled;
  vec3 p=vec3(camera,-camera.y*1.7320508),normal=vec3(0,.8660254,.5);
  float noise=hash(floor(vec2(absoluteS,lateral)*10.));
@@ -84,14 +86,19 @@ void main(){
   lighting+=pow(lightColour[i],vec3(2.2))*a*lightPower[i]*diff*visibility;
  }
  vec3 lit=pow(base,vec3(2.2))*lighting;
- if(garage<.5&&headlights>.5){
-  float ahead=s-1.35;
+ if(headlights>.5){
+  vec2 offset=vec2(s,lateral-playerLateral);
+  float ahead=dot(offset,vec2(cos(carYaw),sin(carYaw)))-2.;
+  float across=dot(offset,vec2(-sin(carYaw),cos(carYaw)));
   if(ahead>0.&&ahead<30.){
-   float width=.65+ahead*.14;float side=(lateral-playerLateral)/width;
-   float beam=exp(-side*side*3.0)*pow(1.-ahead/30.,1.6);
-   lit+=pow(base,vec3(2.2))*vec3(1.2,1.06,.75)*beam*1.8;
+   float width=.19+ahead*.065;
+   float left=(across+.56)/width,right=(across-.56)/width;
+   float beam=(exp(-left*left*2.)+exp(-right*right*2.))*pow(1.-ahead/30.,1.6)*smoothstep(0.,.25,ahead);
+   lit+=pow(base,vec3(2.2))*vec3(1.2,1.06,.75)*beam*1.3;
   }
  }
+ // Same longitudinal visibility for every display. Extra width cannot reveal earlier hazards.
+ if(garage<.5)lit=mix(lit,vec3(.0012,.0020,.0035),smoothstep(visibleAhead-8.,visibleAhead,s));
  // Mild blue ambient falloff keeps the outer scene quiet without hiding the road.
  float vignette=1.-.22*pow(length((pixel/resolution-.5)*vec2(1.,.8)),1.5);
  finalColor=vec4(pow(max(lit,vec3(0)),vec3(1./2.2))*vignette,1.);

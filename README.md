@@ -32,10 +32,11 @@ Night Drive or press Enter.
 
 Steering is continuous rather than lane snapping. Its response depends on speed,
 car setup and available tyre grip. The car settles after releasing steering.
-Five-speed gear ratios are simulated with automatic shifts for this prototype.
+Choose AUTO or MANUAL in the garage. Manual uses Q down / E up with an assisted
+clutch, shift delay and over-rev downshift protection; AUTO shifts itself.
 The game pauses on focus loss. The window can be resized; rendering uses a
-dynamic pixel canvas with nearest-neighbour integer scaling. Widescreen reveals
-more highway; taller windows gain vertical space. The garage stays centred.
+dynamic pixel canvas with nearest-neighbour integer scaling. The road camera fits a shared world-space visibility corridor into every
+aspect ratio, with the same forward fog limit for all players. The garage stays centred.
 Press **F11** to toggle borderless fullscreen.
 
 ## Implemented
@@ -49,7 +50,7 @@ Press **F11** to toggle borderless fullscreen.
 - Speed, gear, RPM, pedal inputs and distance HUD.
 
 The road is currently an empty driving test: traffic, rivals, parking areas,
-damage, and acceleration/braking body-pitch poses are future work.
+and damage are future work.
 The stock wheels remain the car-specific prototype exports; the planned shared
 standard-size wheel library has not been implemented.
 
@@ -128,17 +129,43 @@ loaded/coast levels at 3000, 5000 and 7000 RPM for each car.
 
 ## View and instruments
 
-The driving camera uses 19.5 pixels/metre instead of 26, so the car/road are 25%
-smaller with correctly aligned depth/normal-map lighting and shadows. The car
-sits farther back toward the southwest, leaving more road visible ahead.
+The camera scales the complete shared highway corridor uniformly to the window,
+with aligned depth/normal-map lighting and shadows. Forward visibility ends at
+28 metres, fading into night fog over its final 8 metres on every display.
+The same range fits all four lanes, including tall car roofs. Extra screen
+width adds scenery rather than earlier visibility of hazards. Future traffic
+must use `nz::VisibleAhead` for its visibility too.
 Garage previews retain their original size; the studio key light orbits the
 car roughly once every 11.4 seconds.
 
-The bottom-right cluster groups a needle RPM dial with redline markings,
-digital speed, gear, trip distance, throttle/brake bars, lamp/audio status and
-warnings. It anchors to the current viewport when resizing.
+The compact borderless bottom-right cluster groups an RPM dial with redline
+markings, digital speed, gear, trip distance, tiny pedal ticks, lamp/audio status
+and warnings. It anchors to the current viewport when resizing.
 
 Graphics checks support `--ultrawide` (2560x1080), `--superwide` (3840x1080),
 and `--tall` (960x900), combined with `--smoke-test`. Use
 `--resize-smoke-test` to exercise render-target resizing during a drive.
 Captures include logical dimensions in their filenames under `build/qa/`.
+
+## Lights, gearbox and suspension
+
+- **H** toggles headlights and **T** toggles tail lamps in the garage or driving.
+- **Z** toggles the left indicator, **C** the right; **X** toggles hazards.
+  Garage buttons share the same state. Actual amber sections blink independently
+  of the white headlights and red tail/brake sections.
+- Two bumper-spaced headlight cones follow the rendered steering yaw, and their
+  near-ground lamps share the same positions. Garage floor spill uses its
+  front-view camera basis.
+- Click the **AUTO / MANUAL** garage button to choose the gearbox. In manual,
+  **Q** shifts down and **E** shifts up. There is no clutch pedal, neutral or
+  reverse yet. An unsafe downshift is ignored; holding a gear reaches its rev
+  limiter instead of automatically shifting. **M** remains audio mute.
+- Acceleration lifts the nose/compresses the rear; braking dips the nose. A
+  damped suspension state selects body poses from -3 to +3 degrees at 1.5-degree
+  intervals, including all steering views. Wheels remain independently grounded
+  and reuse their original animations. Rendered body masks, normals, front/far
+  depth and lamp channels follow each pose. This is a small stylised motion,
+  rather than a full tyre/suspension solver.
+
+`--feature-smoke-test` captures steering, acceleration and braking frames with
+hazards; add `--manual` to exercise scripted player-style sequential shifts.

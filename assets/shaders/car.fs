@@ -18,14 +18,16 @@ uniform vec3 lightPosition[32];
 uniform vec3 lightColour[32];
 uniform float lightPower[32];
 uniform float lightRadius[32];
+uniform float indicatorLeft;
+uniform float indicatorRight;
 uniform float headlights;
 uniform float taillights;
 uniform float braking;
 float unpack16(float high,float low){return (round(high*255.0)*256.0+round(low*255.0))/65535.0;}
 float band(float x){float n=x*7.0,b=floor(n),t=smoothstep(.34,.66,fract(n));return (b+t)/7.0;}
 vec3 emission(vec2 uv){
- vec3 e=texture(emissionMap,uv).rgb;
- return e.r*headlights*vec3(1.25,1.08,.75)+e.g*max(taillights*.6,braking*1.9)*vec3(1.0,.025,.012);
+ vec4 texel=texture(emissionMap,uv);vec3 e=texel.rgb;float indicator=texel.a<.5?indicatorLeft:indicatorRight;
+ return e.r*headlights*vec3(1.25,1.08,.75)+e.g*max(taillights*.6,braking*1.9)*vec3(1.0,.025,.012)+e.b*indicator*vec3(1.8,.48,.015);
 }
 bool occluded(vec3 p,vec3 lamp){
  vec3 delta=lamp-p;

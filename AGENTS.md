@@ -13,6 +13,13 @@
   Never force-push or reset away unrelated changes.
 - The native Raylib highway prototype is implemented. Build with build.ps1; run
   build.ps1 -Test for driving-model checks. Do not assume the stock-wheel
-  exports implement the planned reusable standard-size wheel library or body
-  squat/dive poses; see `assets/README.md` for current asset state.
+  exports implement the planned reusable standard-size wheel library; see `assets/README.md` for current asset state.
 - Engine sound uses the supplied procedural synthesiser in third_party/car_engine_synth. Keep its DSP single-thread owned; publish game inputs through the atomic snapshot in engine_audio.h. M mutes; pause/garage fade out. build.ps1 -Test includes offline audio checks; --audio-smoke-test exercises the real output device.
+
+- Body pitch maps are now exported for both cars at +/-1.5 and +/-3 degrees for
+  every front/back steering pose. Existing wheel textures are reused unchanged.
+- Every display fits the same road visibility corridor. Keep future traffic
+  visibility tied to nz::VisibleAhead, not the viewport bounds, to avoid screen
+  aspect advantages. Out-of-view lights may still illuminate that corridor.
+- Manual gearbox (garage selection) uses Q down/E up; Z/C indicators, X hazards,
+  H headlights and T tails work in the garage and on the road.

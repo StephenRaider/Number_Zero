@@ -10,17 +10,22 @@ int main(){try{
   Require(view.width>=640&&view.height>=360&&view.scale>=1,"Viewport clips garage controls");
   Require(view.width*view.scale>=size.first&&view.width*view.scale-size.first<view.scale,"Viewport leaves horizontal borders");
   Require(view.height*view.scale>=size.second&&view.height*view.scale-size.second<view.scale,"Viewport leaves vertical borders");
+  auto fit=nz::FitDrivingView(view.width,view.height);
+  for(float forward:{-nz::VisibleBehind,nz::VisibleAhead})for(float lateral:{-7.2f,7.2f})for(float z:{0.f,1.5f}){
+   auto camera=nz::NortheastCamera(forward,lateral,z);float px=fit.x+camera[0]*fit.pixelsPerMetre,py=fit.y-camera[1]*fit.pixelsPerMetre;
+   Require(px>=0&&px<view.width&&py>=0&&py<view.height,"Common visible highway range is clipped");
+  }
   // Select all street lamps for the actual zoomed/padded viewport across spawn boundaries.
   float lo=1e9f,hi=-1e9f;
   for(float x:{-128.f,(float)view.width+128})for(float y:{-128.f,(float)view.height+128}){
-   auto ground=nz::NortheastGround((x-view.width*.28f)/19.5f,(view.height*.78f-y)/19.5f);lo=std::min(lo,ground.first);hi=std::max(hi,ground.first);
+   auto fit=nz::FitDrivingView(view.width,view.height);auto ground=nz::NortheastGround((x-fit.x)/fit.pixelsPerMetre,(fit.y-y)/fit.pixelsPerMetre);lo=std::min(lo,ground.first);hi=std::max(hi,ground.first);
   }
   for(int tick=0;tick<100;tick++){
-   int count=2;for(int side:{-1,1}){auto range=nz::StreetRange(tick*.137,lo,hi,side);count+=range.second-range.first+1;}
+   int count=3;for(int side:{-1,1}){auto range=nz::StreetRange(tick*.137,lo,hi,side);count+=range.second-range.first+1;}
    Require(count<=32,"Wide viewport exhausts light capacity");
   }
  }
- auto wide=nz::MakeViewport(2560,1080);Require(wide.width>640&&wide.height==360,"Ultrawide fails to reveal more highway");
+ auto wide=nz::MakeViewport(2560,1080);Require(wide.width>640&&wide.height==360,"Ultrawide viewport dimension invalid");
  auto orbitA=nz::GarageKeyLight(0),orbitB=nz::GarageKeyLight((float)(nz::Pi/.55)),orbitFull=nz::GarageKeyLight((float)(2*nz::Pi/.55));
  Require(orbitA[0]*orbitB[0]<0&&std::abs(orbitA[0]-orbitFull[0])<.001,"Garage light fails to orbit");
  for(int i=0;i<100;i++){auto light=nz::GarageKeyLight(i*.25f);Require(std::abs(light[1]*nz::CameraCos+light[2]*nz::CameraSin-3.2f)<.001,"Garage light height drifts");}
@@ -45,7 +50,35 @@ int main(){try{
  }
  Require(nz::StreetFalloff(25.3)==0&&nz::StreetFalloff(25.299)<1e-8,"Lamp tail pops at despawn");
  Require(nz::LateralSpeedLimit(30./3.6)>2.5&&nz::LateralSpeedLimit(30./3.6)>nz::LateralSpeedLimit(160./3.6),"Steering speed envelope invalid");
+ // Twin beams are split close to the bumper and rotate with the same headlamp basis.
+ Require(nz::HeadlampBeam(4,.56f,0)>nz::HeadlampBeam(4,0,0)*3,"Headlight beams merge at the bumper");
+ for(float yaw:{-.122f,.122f}){
+  auto a=nz::HeadlampPosition(yaw,-1),b=nz::HeadlampPosition(yaw,1);
+  Require(std::abs(std::hypot(a.first-b.first,a.second-b.second)-1.12f)<.0001,"Headlamp spacing changes with yaw");
+  float forward=5,lateral=.56f;
+  float rotatedS=forward*std::cos(yaw)-lateral*std::sin(yaw),rotatedL=forward*std::sin(yaw)+lateral*std::cos(yaw);
+  Require(std::abs(nz::HeadlampBeam(forward,lateral,0)-nz::HeadlampBeam(rotatedS,rotatedL,yaw))<.0001,"Beam does not follow vehicle rotation");
+ }
  for(const auto &car:nz::Cars){
+  nz::Vehicle manual;manual.automatic=false;
+  for(int i=0;i<120*15;i++)nz::Step(manual,car,{1,0,0},1./120.);
+  Require(manual.gear==0&&manual.rpm>car.redline*.95,"Manual gearbox shifted itself or failed to hold revs");
+  Require(nz::Shift(manual,car,1)&&manual.gear==1&&manual.shiftTime>0,"Manual upshift failed");
+  Require(!nz::Shift(manual,car,1),"Shift cooldown can be bypassed");
+  manual.shiftTime=manual.shiftCooldown=0;manual.speed=140./3.6;manual.gear=2;
+  Require(!nz::Shift(manual,car,-1)&&manual.gear==2,"Over-rev downshift accepted");
+  manual.speed=15./3.6;Require(nz::Shift(manual,car,-1)&&manual.gear==1,"Safe downshift rejected");
+  manual.shiftTime=manual.shiftCooldown=0;manual.gear=4;Require(!nz::Shift(manual,car,1),"Upshift past fifth accepted");
+  manual.gear=0;Require(!nz::Shift(manual,car,-1),"Downshift below first accepted");
+  nz::Vehicle suspension;
+  for(int i=0;i<60;i++)nz::Step(suspension,car,{1,0,0},1./120.);
+  Require(suspension.pitch>.75&&suspension.pitch<=3,"Acceleration squat missing");
+  suspension.speed=25;
+  for(int i=0;i<80;i++)nz::Step(suspension,car,{0,1,0},1./120.);
+  Require(suspension.pitch<-.75&&suspension.pitch>=-3,"Braking dive missing");
+  suspension.speed=0;
+  for(int i=0;i<120*3;i++)nz::Step(suspension,car,{0,1,0},1./120.);
+  Require(std::abs(suspension.pitch)<.01,"Suspension remains pitched at rest");
   nz::Vehicle rest;for(int i=0;i<1200;i++)nz::Step(rest,car,{},1./120.);
   Require(rest.speed==0 && rest.lateral==1.75,"Car moved without input");
   nz::Vehicle v;for(int i=0;i<120*70;i++)nz::Step(v,car,{1,0,0},1./120.);
@@ -78,5 +111,5 @@ int main(){try{
   Require(std::abs(x.speed-y.speed)<.2,"Physics timestep dependence too high");
   std::printf("PASS %s: 0-100 %.2fs, 100-0 %.1fm in %.2fs, stock max %.1fkm/h\n",car.name,v.timeTo100,v.distance-start,seconds,180.0);
  }
- std::puts("PASS: idle, throttle, gears, limiter, braking, continuous steering, road bounds timestep stability, speed-sensitive steering, release, northeast projection and persistent lamps");return 0;
+ std::puts("PASS: idle, throttle, gears, limiter, braking, continuous steering, road bounds timestep stability, speed-sensitive steering, release, northeast projection and persistent lamps, common lookahead, paired rotating beams, manual shifts and suspension pitch");return 0;
  }catch(const std::exception &e){std::fprintf(stderr,"FAIL: %s\n",e.what());return 1;}}
