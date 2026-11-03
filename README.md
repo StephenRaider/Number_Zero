@@ -47,7 +47,7 @@ The game pauses on focus loss. The window can be resized; rendering uses a
 - Speed, gear, RPM, pedal inputs and distance HUD.
 
 The road is currently an empty driving test: traffic, rivals, parking areas,
-sound, damage, and acceleration/braking body-pitch poses are future work.
+damage, and acceleration/braking body-pitch poses are future work.
 The stock wheels remain the car-specific prototype exports; the planned shared
 standard-size wheel library has not been implemented.
 
@@ -99,3 +99,22 @@ Releasing steering recentres promptly. This is prototype control tuning, not a
 validated comparison of real S13 and EK9 handling. Drivetrain, grip and braking
 parameters remain separate. `src/scene.h` contains shared projection and lamp
 selection math covered by the headless tests.
+
+## Engine sound
+
+Live procedural engine audio from the supplied `car_engine_sounds.zip`: SR20DET
+turbo for the S13 and B16B/VTEC for the Civic. RPM follows the drivetrain;
+throttle lifts during shifts, braking and the factory speed cut. The synth's
+turbo, lift-off and VTEC layers follow its supplied profiles. These are
+synthesised approximations, not recordings of the real cars.
+
+Press **M** to mute/unmute during driving. Garage is silent; pausing or losing
+focus fades the engine out. Audio runs on a dedicated device callback with
+atomic input snapshots, so rendering stalls do not starve a frame-polled stream.
+If no output device is available, the prototype continues with audio disabled.
+
+`build.ps1 -Test` includes offline sound checks and writes diagnostic WAVs under
+ignored `build/qa/`. `build/NumberZero.exe --audio-smoke-test` (optionally
+`--civic`) exercises the real output callback during a scripted drive.
+Ordinary `--smoke-test` stays silent and needs no output device.
+See `third_party/car_engine_synth/README.md` for provenance and the BOV fix.

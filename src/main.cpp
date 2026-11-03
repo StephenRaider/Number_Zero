@@ -2,6 +2,7 @@
 #include "rlgl.h"
 #include "vehicle.h"
 #include "scene.h"
+#include "engine_audio.h"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -197,21 +198,24 @@ static fs::path LocateAssets(){
  throw std::runtime_error("Cannot find assets/cars/catalog.json. Run from the Number_Zero folder.");
 }
 int main(int argc,char **argv){
- bool smoke=false;int smokeCar=0;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--civic")smokeCar=1;}
+ bool smoke=false,audioSmoke=false;int smokeCar=0;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--audio-smoke-test"){smoke=true;audioSmoke=true;}if(std::string(argv[i])=="--civic")smokeCar=1;}
  SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_VSYNC_HINT|(smoke?FLAG_WINDOW_HIDDEN:0));InitWindow(1280,720,"Number Zero | Highway Prototype");SetWindowMinSize(800,450);SetTargetFPS(60);SetExitKey(KEY_NULL);
  SetTraceLogLevel(LOG_WARNING);
  try{
  const auto assets=LocateAssets();auto root=assets.parent_path();fs::create_directories(root/"build/qa");
+ nz::EngineAudio audio(!smoke||audioSmoke);
+ if(audioSmoke&&!audio.Ready())throw std::runtime_error("Audio smoke test needs an available output device");
  ShaderProgram carShader(assets/"shaders/car.fs"),roadShader(assets/"shaders/road.fs");
  std::array<CarArt,2> art={LoadCar(assets,nz::Cars[0]),LoadCar(assets,nz::Cars[1])};CarRenderer car;
  RenderTexture2D target=LoadRenderTexture(Width,Height);SetTextureFilter(target.texture,TEXTURE_FILTER_POINT);
- Selection selected;selected.car=smokeCar;if(smokeCar)selected.paint=RGBA(42,89,149);nz::Vehicle vehicle;bool driving=false,paused=false,quit=false,heads=true,tails=true;
+ Selection selected;selected.car=smokeCar;if(smokeCar)selected.paint=RGBA(42,89,149);nz::Vehicle vehicle;bool driving=false,paused=false,quit=false,heads=true,tails=true,muted=false;
  double accumulator=0;int frame=0;float bestSpeed=0;const char *qaName=smokeCar?"civic":"silvia";
  while(!WindowShouldClose()&&!quit){
   frame++;framePress.fill(false);for(int key=GetKeyPressed();key>0;key=GetKeyPressed())if(key<(int)framePress.size())framePress[key]=true;float dt=std::min(GetFrameTime(),.1f);if(smoke)dt=1.f/60;
   float fit=std::min(GetScreenWidth()/(float)Width,GetScreenHeight()/(float)Height),scale=fit>=1?std::floor(fit):fit;
   Rectangle destination{(GetScreenWidth()-Width*scale)*.5f,(GetScreenHeight()-Height*scale)*.5f,Width*scale,Height*scale};Vector2 nativeMouse=GetMousePosition(),mouse{(nativeMouse.x-destination.x)/scale,(nativeMouse.y-destination.y)/scale};
   if(smoke&&frame==30){driving=true;vehicle=nz::Vehicle{};vehicle.rpm=nz::Cars[selected.car].idle;}
+  if(Pressed(KEY_M))muted=!muted;
   nz::Input input;
   if(driving){
    if(!smoke&&Pressed(KEY_ESCAPE))paused=!paused;
@@ -224,6 +228,7 @@ int main(int argc,char **argv){
    else{input.throttle=(IsKeyDown(KEY_W)||IsKeyDown(KEY_UP))?1:0;input.brake=(IsKeyDown(KEY_S)||IsKeyDown(KEY_DOWN)||IsKeyDown(KEY_SPACE))?1:0;input.steer=((IsKeyDown(KEY_D)||IsKeyDown(KEY_RIGHT))?1:0)-((IsKeyDown(KEY_A)||IsKeyDown(KEY_LEFT))?1:0);}
    if(!paused){accumulator+=dt;while(accumulator>=1./120.){nz::Step(vehicle,nz::Cars[selected.car],input,1./120.);accumulator-=1./120.;}}
   }
+  audio.Update(nz::DrivingSound(vehicle,selected.car,driving,paused,muted));
   bool brake=driving&&vehicle.brake>.1;auto env=MakeEnvironment(!driving,vehicle,heads,tails,brake);
   int pose=1;if(driving&&std::abs(vehicle.yaw)>.027)pose=vehicle.yaw>0?2:0;
   int wheel=driving?(vehicle.speed*3.6>75?8:(int)std::floor(vehicle.distance/(2*nz::Pi*nz::Cars[selected.car].radius)*8)%8):0;
@@ -231,13 +236,13 @@ int main(int argc,char **argv){
   Vector2 carAnchor=driving?Project(env.anchor,0,(float)vehicle.lateral):env.anchor;
   Vector2 origin{std::round(carAnchor.x-64),std::round(carAnchor.y-79)};float depth=driving?WorldToCamera(0,(float)vehicle.lateral,0).z:0;
   BeginTextureMode(target);ClearBackground(Ink);Road(roadShader,car,env,origin,depth);RoadFurniture(env);car.Draw(carShader,env,origin,depth);
-  if(driving){Hud(selected,vehicle,heads,tails);if(paused){DrawRectangle(0,0,Width,Height,RGBA(3,9,17,175));Box({172,119,296,114});Label("PAUSED",286,137,20,Mint);Label("ESC  RESUME",275,170,11);Label("TAB  GARAGE     R  RESET DRIVE",218,192,10,Muted);}}
+  if(driving){Hud(selected,vehicle,heads,tails);Label(!audio.Ready()?"AUDIO OFF":muted?"M  MUTED":"M  SOUND ON",155,40,8,Muted);if(paused){DrawRectangle(0,0,Width,Height,RGBA(3,9,17,175));Box({172,119,296,114});Label("PAUSED",286,137,20,Mint);Label("ESC  RESUME",275,170,11);Label("TAB  GARAGE     R  RESET DRIVE",218,192,10,Muted);}}
   else{bool start=false;Garage(selected,mouse,start,quit);if(start){driving=true;paused=false;accumulator=0;vehicle=nz::Vehicle{};vehicle.rpm=nz::Cars[selected.car].idle;}}
   EndTextureMode();BeginDrawing();ClearBackground(RGBA(5,9,14));DrawTexturePro(target.texture,{0,0,(float)Width,-(float)Height},destination,{0,0},0,WHITE);EndDrawing();
   bestSpeed=std::max(bestSpeed,(float)(vehicle.speed*3.6));
   if(smoke&&(frame==12||frame==580||frame==865)){std::string name=std::string(qaName)+(frame==12?"_garage.png":frame==580?"_driving.png":"_braking.png");Image capture=LoadImageFromTexture(target.texture);ImageFlipVertical(&capture);bool saved=ExportImage(capture,(root/"build/qa"/name).string().c_str());UnloadImage(capture);if(!saved)throw std::runtime_error("Could not save graphics test frame");}
-  if(smoke&&frame>=900){std::printf("GRAPHICS SMOKE %s: max %.1fkm/h, stopped %.2fkm/h, 0-100 %.2fs\n",qaName,bestSpeed,vehicle.speed*3.6,vehicle.timeTo100);if(bestSpeed<100||vehicle.speed>1)throw std::runtime_error("Graphics driving smoke test failed");quit=true;}
+  if(smoke&&frame>=900){if(audioSmoke){std::printf("AUDIO SMOKE: %llu samples generated on the device callback\n",(unsigned long long)audio.Samples());if(audio.Samples()<nz::AudioRate*5)throw std::runtime_error("Audio callback did not run continuously");}std::printf("GRAPHICS SMOKE %s: max %.1fkm/h, stopped %.2fkm/h, 0-100 %.2fs\n",qaName,bestSpeed,vehicle.speed*3.6,vehicle.timeTo100);if(bestSpeed<100||vehicle.speed>1)throw std::runtime_error("Graphics driving smoke test failed");quit=true;}
  }
- car.Close();UnloadRenderTexture(target);UnloadShader(carShader.value);UnloadShader(roadShader.value);CloseWindow();return 0;
+ audio.Close();car.Close();UnloadRenderTexture(target);UnloadShader(carShader.value);UnloadShader(roadShader.value);CloseWindow();return 0;
  }catch(const std::exception &e){std::fprintf(stderr,"ERROR: %s\n",e.what());CloseWindow();return 1;}
 }

@@ -15,3 +15,4 @@
   build.ps1 -Test for driving-model checks. Do not assume the stock-wheel
   exports implement the planned reusable standard-size wheel library or body
   squat/dive poses; see `assets/README.md` for current asset state.
+- Engine sound uses the supplied procedural synthesiser in third_party/car_engine_synth. Keep its DSP single-thread owned; publish game inputs through the atomic snapshot in engine_audio.h. M mutes; pause/garage fade out. build.ps1 -Test includes offline audio checks; --audio-smoke-test exercises the real output device.
