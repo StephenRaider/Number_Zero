@@ -9,7 +9,7 @@ uniform sampler2D carAlbedo;
 uniform sampler2D carFront;
 uniform vec2 resolution,screenAnchor,carOrigin;
 uniform float pixelsPerMetre,spritePixels,carDepth,propDepth,depthRange,sourcePixels,station,visibleAhead,gantry;
-uniform int lightCount,streetCount;
+uniform int lightCount,streetCount,layerMode;
 uniform vec3 lightPosition[32],lightColour[32];
 uniform float lightPower[32],lightRadius[32];
 float unpack16(float high,float low){return (round(high*255.)*256.+round(low*255.))/65535.;}
@@ -28,11 +28,15 @@ void main(){
  float w=(unpack16(depth.r,depth.g)-.5)*depthRange+propDepth;
  vec2 pixel=vec2(gl_FragCoord.x,resolution.y-gl_FragCoord.y);
  vec2 carUV=(pixel-carOrigin)/spritePixels;
- if(all(greaterThanEqual(carUV,vec2(0)))&&all(lessThan(carUV,vec2(1)))&&texture(carAlbedo,carUV).a>.5){
+ if(layerMode==3&&all(greaterThanEqual(carUV,vec2(0)))&&all(lessThan(carUV,vec2(1)))&&texture(carAlbedo,carUV).a>.5){
   vec4 front=texture(carFront,carUV);float carW=(unpack16(front.r,front.g)-.5)*5.2+carDepth;
   if(w<carW-.018)discard;
  }
  gl_FragDepth=clamp(.5-w/256.,.001,.999);
+ if(layerMode==2){
+  float encoded=round(clamp(w/256.+.5,0.,1.)*65535.);
+  finalColor=vec4(floor(encoded/256.)/255.,mod(encoded,256.)/255.,0.,base.a);return;
+ }
  vec4 encodedNormal=texture(normalMap,uv);vec2 xy=vec2(unpack16(encodedNormal.r,encodedNormal.g),unpack16(encodedNormal.b,encodedNormal.a))*2.-1.;
  vec3 normal=normalize(vec3(xy,depth.b*2.-1.));
  vec3 p=vec3((pixel.x-screenAnchor.x)/pixelsPerMetre,(screenAnchor.y-pixel.y)/pixelsPerMetre,w);

@@ -227,3 +227,27 @@ The driving HUD now follows the circular reference: a roughly 100-by-100 logical
 pixel footprint at the bottom-left, a muted copper outer rim, mint instruments,
 speed in the centre and RPM around the perimeter. Gear/pedals/status stay in
 the narrow left strip. There is no rectangular enclosing panel or car-name row.
+
+## Instruments and optional visual effects
+
+The RPM dial has a fully transparent face. At the shift/red-zone threshold all
+gauge numbers, speed and arcs turn amber. Instruments have restrained bloom;
+turbo cars also show a compact **BOOST %** dial beside the RPM ring. Boost is
+the drivetrain model's normalized spool/load value, not calibrated bar or PSI.
+Car head/tail-lamp bloom is slightly stronger while paint highlights stay sharp.
+
+Open **Esc / Pause** to compare **Tail-light trails** and **Background motion
+blur** independently. Click their checkboxes or press **1** / **2** while paused.
+Both start enabled and persist across garage visits during the session. Pause
+freezes trail history for direct before/after comparison. The menu leaves the
+car visible; Resume and Garage buttons are included.
+
+Trails follow the actual composed left/right lamp and depth masks in world
+space, strengthen under braking and fade within 0.14 seconds. Stopped/unlit cars
+do not create new streaks; resets and car changes clear history.
+
+Motion blur affects road and scenery in the travel direction, increasing mildly
+with speed. The car and instruments are composited sharply. Separate prop
+colour/depth layers preserve lamp/gantry occlusion, including blurred foreground
+props. `--effects-smoke-test` captures the four toggle combinations on a frozen
+frame, plus the amber red-zone gauge, and checks the compositor on the GPU.

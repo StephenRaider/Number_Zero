@@ -39,3 +39,13 @@
   before the car or forcing all lamp pixels into the foreground.
 - --scenery-smoke-test includes GPU occlusion checks and an outer-lane drive.
 - Raylib batches track only four auxiliary textures. The road pass explicitly binds car maps at units 5-7; the prop pass binds car depth at unit 5 via ShaderProgram.TextureSlot. Flush draws before releasing those units, and retain the encoded-depth dependency probe.
+
+- Visual effects: road/world, prop colour, encoded global prop depth and HUD have
+  separate targets. car_resolve.fs composites the sharp car against blurred
+  foreground props using depth; keep these paths consistent when changing layers.
+- Prop layerMode 0 is normal, 2 writes global depth, 3 is the occlusion probe.
+  The prop-colour target uses separate alpha blending (premultiplied RGB); the
+  encoded depth target uses overwrite blending, point sampling and no blur.
+- Pause toggles: 1 trails / 2 background blur. Trail simulation time freezes in
+  pause and trails render before solid props. --effects-smoke-test verifies the
+  compositor and captures comparisons; build.ps1 -Test includes trail state tests.

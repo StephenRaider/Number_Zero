@@ -18,7 +18,7 @@ struct HighwayRenderer {
   }
  }
  void Ground(ShaderProgram &shader){shader.Texture("roadSurface",road[0]);shader.Texture("roadPatched",road[1]);shader.Texture("roadShoulder",road[2]);shader.Texture("roadMarkings",road[3]);shader.Float("roadRepeat",highway_assets::RoadRepeat);}
- void Draw(ShaderProgram &shader,const Environment &env,const std::array<Texture2D,5> &car,Vector2 carOrigin,float carDepth){
+ void Draw(ShaderProgram &shader,const Environment &env,const std::array<Texture2D,5> &car,Vector2 carOrigin,float carDepth,int layerMode=0){
   if(env.garage)return;
   std::vector<Instance> instances;
   auto add=[&](int kind,float s,float l){
@@ -35,7 +35,7 @@ struct HighwayRenderer {
   a=(int)std::floor((env.distance+env.minS-32)/180);b=(int)std::ceil((env.distance+env.maxS+32)/180);
   for(int k=a;k<=b;k++)add(4,k*180.f+32-env.distance,0);
   std::sort(instances.begin(),instances.end(),[](const Instance&a,const Instance&b){return a.depth<b.depth;});
-  shader.Lights(env);shader.Vec2("resolution",{(float)Width,(float)Height});shader.Vec2("carOrigin",carOrigin);shader.Float("carDepth",carDepth);
+  shader.Lights(env);shader.Int("layerMode",layerMode);shader.Vec2("resolution",{(float)Width,(float)Height});shader.Vec2("carOrigin",carOrigin);shader.Float("carDepth",carDepth);
   rlDrawRenderBatchActive();rlEnableDepthTest();
   for(const auto &instance:instances){
    const auto &def=highway_assets::Props[instance.kind];const auto &maps=props[instance.kind].textures;
@@ -47,7 +47,7 @@ struct HighwayRenderer {
   }
   rlDrawRenderBatchActive();ShaderProgram::ClearSlot(5);rlDisableDepthTest();
   // Small optical halos are separate from solid geometry and cannot make the pole paint over the car.
-  for(const auto &instance:instances)if(instance.kind<2){
+  for(const auto &instance:instances)if(layerMode!=2&&instance.kind<2){
    auto head=instance.kind==0?highway_assets::RightHead:highway_assets::LeftHead;
    auto light=Project(env.anchor,instance.forward+head.forward,instance.lateral+head.lateral,head.height);
    float fade=std::clamp((nz::VisibleAhead-instance.forward)/8.f,0.f,1.f);
@@ -58,7 +58,7 @@ struct HighwayRenderer {
   const auto &def=highway_assets::Props[0];const auto &maps=props[0].textures;int n=def.canvas;
   auto probe=LoadRenderTexture(n,n);Image image=GenImageColor(128,128,WHITE);auto car=LoadTextureFromImage(image);UnloadImage(image);
   image=GenImageColor(128,128,RGBA(128,0,0));auto front=LoadTextureFromImage(image);UnloadImage(image);
-  env.anchor={def.anchorX,def.anchorY};env.garage=false;shader.Lights(env);shader.Float("spritePixels",(float)n);shader.Vec2("resolution",{(float)n,(float)n});shader.Vec2("carOrigin",{0,0});
+  env.anchor={def.anchorX,def.anchorY};env.garage=false;shader.Lights(env);shader.Int("layerMode",3);shader.Float("spritePixels",(float)n);shader.Vec2("resolution",{(float)n,(float)n});shader.Vec2("carOrigin",{0,0});
   shader.Float("propDepth",0);shader.Float("depthRange",def.depthRange);shader.Float("sourcePixels",(float)n);shader.Float("station",0);shader.Float("gantry",0);
   auto count=[&](float carW){
    shader.Float("carDepth",carW);BeginTextureMode(probe);ClearBackground(BLANK);rlEnableDepthTest();BeginShaderMode(shader.value);
