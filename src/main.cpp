@@ -58,6 +58,10 @@ struct ShaderProgram {
  void Int(const char *name,int v){int loc=At(name);if(loc>=0)SetShaderValue(value,loc,&v,SHADER_UNIFORM_INT);}
  void Vec2(const char *name,Vector2 v){int loc=At(name);if(loc>=0)SetShaderValue(value,loc,&v,SHADER_UNIFORM_VEC2);}
  void Texture(const char *name,Texture2D tex){int loc=At(name);if(loc>=0)SetShaderValueTexture(value,loc,tex);}
+ // Raylib's batch tracks four auxiliary samplers. Complex passes explicitly bind
+ // additional units above that range, then release them after the batch is flushed.
+ void TextureSlot(const char *name,Texture2D tex,int slot){Int(name,slot);rlActiveTextureSlot(slot);rlEnableTexture(tex.id);rlActiveTextureSlot(0);}
+ static void ClearSlot(int slot){rlActiveTextureSlot(slot);rlDisableTexture();rlActiveTextureSlot(0);}
  void Lights(const Environment &e){
   std::array<float,96> positions{},colours{};std::array<float,32> powers{},radii{};
   if(e.lights.size()>32)throw std::runtime_error("Light capacity exceeded");
@@ -70,6 +74,7 @@ struct ShaderProgram {
   Vec2("screenAnchor",e.anchor);Float("pixelsPerMetre",PixelsPerMetre);Float("spritePixels",128.f*PixelsPerMetre/26.f);Float("carYaw",e.yaw);Float("indicatorLeft",e.indicatorLeft);Float("indicatorRight",e.indicatorRight);Float("visibleAhead",nz::VisibleAhead);Float("beamReach",nz::BeamReach);Float("beamBase",nz::BeamBase);Float("beamSpread",nz::BeamSpread);Float("headlights",e.heads?1.f:0.f);Float("taillights",e.tails?1.f:0.f);Float("braking",e.brake?1.f:0.f);
  }
 };
+#include "highway.h"
 struct CarRenderer {
  std::array<std::vector<Color>,5> output;std::array<Texture2D,5> textures{};RenderTexture2D shaded{};
  int lastCar=-1,lastView=-1,lastPose=-1,lastFrame=-1,lastPitch=99;Color lastPaint{};bool lastHood=false,lastTwoTone=false;
@@ -162,7 +167,7 @@ static Environment MakeEnvironment(bool garage,const nz::Vehicle &v,bool heads,b
    float phase=side>0?12.f:0.f;
    auto [first,last]=nz::StreetRange(v.distance,minS,maxS,side);
    for(int k=first;k<=last;k++){
-    float s=(float)(k*24+phase-v.distance);e.lights.push_back({WorldToCamera(s,side*4.2f,5.4f),{1.f,.85f,.66f},2.4f,11.5f});
+    float s=(float)(k*24+phase-v.distance);e.lights.push_back({WorldToCamera(s+(side>0?highway_assets::RightHead.forward:highway_assets::LeftHead.forward),side*highway_assets::MountLateral+(side>0?highway_assets::RightHead.lateral:highway_assets::LeftHead.lateral),(side>0?highway_assets::RightHead.height:highway_assets::LeftHead.height)),{1.f,.85f,.66f},3.4f,11.5f});
    }
   }
   e.streetCount=(int)e.lights.size();
@@ -174,26 +179,9 @@ static Environment MakeEnvironment(bool garage,const nz::Vehicle &v,bool heads,b
  if(tails||brake)e.lights.push_back({lampCamera(-2,e.lateral,.45f),{1,.08f,.04f},brake?1.35f:.45f,3.5f});
  return e;
 }
-static void Road(ShaderProgram &shader,CarRenderer &car,const Environment &env,Vector2 origin,float depth){
+static void Road(ShaderProgram &shader,CarRenderer &car,HighwayRenderer &highway,const Environment &env,Vector2 origin,float depth){
  shader.Lights(env);shader.Vec2("resolution",{(float)Width,(float)Height});shader.Float("travelled",env.distance);shader.Float("garage",env.garage?1.f:0.f);shader.Float("playerLateral",env.lateral);shader.Vec2("carOrigin",origin);shader.Float("carDepth",depth);
- BeginShaderMode(shader.value);shader.Texture("carAlbedo",car.textures[0]);shader.Texture("carFront",car.textures[2]);shader.Texture("carBack",car.textures[3]);DrawRectangle(0,0,Width,Height,WHITE);EndShaderMode();
-}
-static void Quad(Vector2 a,Vector2 b,Vector2 c,Vector2 d,Color colour){DrawTriangle(a,b,c,colour);DrawTriangle(a,c,d,colour);}
-static void RoadFurniture(const Environment &e){
- if(e.garage)return;
- const int firstMarker=(int)std::floor((e.distance+e.minS)/5.)-1,lastMarker=(int)std::ceil((e.distance+e.maxS)/5.)+1;
- for(int k=firstMarker;k<=lastMarker;k++)for(int side:{-1,1}){
-  float s=(float)(k*5-e.distance);if(s+5>nz::VisibleAhead)continue;float l=side*8.0f;auto a=Project(e.anchor,s,l),b=Project(e.anchor,s+5,l),c=Project(e.anchor,s+5,l,.5f),d=Project(e.anchor,s,l,.5f);
-  float visibility=std::clamp((nz::VisibleAhead-s-5)/4.f,0.f,1.f);Quad(a,b,c,d,RGBA(40,48,56,(int)(255*visibility)));DrawLineEx(c,d,1,RGBA(91,102,111,(int)(255*visibility)));
-  Vector2 post=Project(e.anchor,s,l,.5f),bottom=Project(e.anchor,s,l);DrawLineEx(post,bottom,1,RGBA(107,119,121,(int)(255*visibility)));
- }
- const int firstPole=(int)std::floor((e.distance+e.minS)/24.)-2,lastPole=(int)std::ceil((e.distance+e.maxS)/24.)+2;
- for(int k=firstPole;k<=lastPole;k++)for(int side:{-1,1}){
-  float s=(float)(k*24+(side>0?12:0)-e.distance);if(s>nz::VisibleAhead)continue;float visibility=std::clamp((nz::VisibleAhead-s)/4.f,0.f,1.f);float l=side*8.3f;auto bottom=Project(e.anchor,s,l),top=Project(e.anchor,s,l,5.4f),end=Project(e.anchor,s,side*4.2f,5.4f);
-  if(bottom.x<-100||bottom.x>Width+100||bottom.y<-80||top.y>Height+100)continue;
-  DrawLineEx(bottom,top,2,RGBA(49,60,71,(int)(255*visibility)));DrawLineEx(top,end,2,RGBA(86,100,107,(int)(255*visibility)));
-  DrawCircleGradient((int)end.x,(int)end.y,12,RGBA(255,193,107,(int)(36*visibility)),BLANK);DrawRectangle((int)end.x-2,(int)end.y-1,5,2,RGBA(255,228,173,(int)(255*visibility)));
- }
+ BeginShaderMode(shader.value);highway.Ground(shader);shader.TextureSlot("carAlbedo",car.textures[0],5);shader.TextureSlot("carFront",car.textures[2],6);shader.TextureSlot("carBack",car.textures[3],7);DrawRectangle(0,0,Width,Height,WHITE);EndShaderMode();ShaderProgram::ClearSlot(5);ShaderProgram::ClearSlot(6);ShaderProgram::ClearSlot(7);
 }
 static void Label(const char *text,int x,int y,int size,Color color=Paper){DrawText(text,x,y,size,color);}
 static void Box(Rectangle r,Color color=Panel){DrawRectangleRec(r,color);DrawRectangleLinesEx(r,1,RGBA(49,65,79));}
@@ -268,14 +256,15 @@ static fs::path LocateAssets(){
  throw std::runtime_error("Cannot find assets/cars/catalog.json. Run from the Number_Zero folder.");
 }
 int main(int argc,char **argv){
- bool smoke=false,audioSmoke=false,resizeSmoke=false,manualSmoke=false,featureSmoke=false,glowSmoke=false,garageSmoke=false,blackPaint=false;int smokeCar=0,windowWidth=1280,windowHeight=720;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--resize-smoke-test"){smoke=true;resizeSmoke=true;}if(std::string(argv[i])=="--audio-smoke-test"){smoke=true;audioSmoke=true;}if(std::string(argv[i])=="--black")blackPaint=true;if(std::string(argv[i])=="--garage-smoke-test"){smoke=true;garageSmoke=true;}if(std::string(argv[i])=="--glow-smoke-test"){smoke=true;glowSmoke=true;}if(std::string(argv[i])=="--manual")manualSmoke=true;if(std::string(argv[i])=="--feature-smoke-test"){smoke=true;featureSmoke=true;}if(std::string(argv[i])=="--civic")smokeCar=1;if(std::string(argv[i])=="--ultrawide"){windowWidth=2560;windowHeight=1080;}if(std::string(argv[i])=="--superwide"){windowWidth=3840;windowHeight=1080;}if(std::string(argv[i])=="--tall"){windowWidth=960;windowHeight=900;}}
+ bool smoke=false,audioSmoke=false,resizeSmoke=false,manualSmoke=false,featureSmoke=false,glowSmoke=false,garageSmoke=false,blackPaint=false,scenerySmoke=false;int smokeCar=0,windowWidth=1280,windowHeight=720;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--resize-smoke-test"){smoke=true;resizeSmoke=true;}if(std::string(argv[i])=="--audio-smoke-test"){smoke=true;audioSmoke=true;}if(std::string(argv[i])=="--scenery-smoke-test"){smoke=true;scenerySmoke=true;}if(std::string(argv[i])=="--black")blackPaint=true;if(std::string(argv[i])=="--garage-smoke-test"){smoke=true;garageSmoke=true;}if(std::string(argv[i])=="--glow-smoke-test"){smoke=true;glowSmoke=true;}if(std::string(argv[i])=="--manual")manualSmoke=true;if(std::string(argv[i])=="--feature-smoke-test"){smoke=true;featureSmoke=true;}if(std::string(argv[i])=="--civic")smokeCar=1;if(std::string(argv[i])=="--ultrawide"){windowWidth=2560;windowHeight=1080;}if(std::string(argv[i])=="--superwide"){windowWidth=3840;windowHeight=1080;}if(std::string(argv[i])=="--tall"){windowWidth=960;windowHeight=900;}}
  SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_VSYNC_HINT|(smoke?FLAG_WINDOW_HIDDEN:0));InitWindow(windowWidth,windowHeight,"Number Zero | Highway Prototype");SetWindowMinSize(800,450);SetTargetFPS(60);SetExitKey(KEY_NULL);
  SetTraceLogLevel(LOG_WARNING);
  try{
  const auto assets=LocateAssets();auto root=assets.parent_path();fs::create_directories(root/"build/qa");
  nz::EngineAudio audio(!smoke||audioSmoke);
  if(audioSmoke&&!audio.Ready())throw std::runtime_error("Audio smoke test needs an available output device");
- ShaderProgram carShader(assets/"shaders/car.fs"),roadShader(assets/"shaders/road.fs"),resolveShader(assets/"shaders/car_resolve.fs"),glowShader(assets/"shaders/lamp_glow.fs");
+ ShaderProgram carShader(assets/"shaders/car.fs"),roadShader(assets/"shaders/road.fs"),resolveShader(assets/"shaders/car_resolve.fs"),glowShader(assets/"shaders/lamp_glow.fs"),propShader(assets/"shaders/highway_prop.fs");
+ HighwayRenderer highway(assets);
  std::array<CarArt,2> art={LoadCar(assets,nz::Cars[0]),LoadCar(assets,nz::Cars[1])};CarRenderer car;
  auto initialView=nz::MakeViewport(GetScreenWidth(),GetScreenHeight());Width=initialView.width;Height=initialView.height;
  RenderTexture2D target=LoadRenderTexture(Width,Height);SetTextureFilter(target.texture,TEXTURE_FILTER_POINT);
@@ -291,7 +280,7 @@ int main(int argc,char **argv){
   }
   float scale=(float)viewport.scale;sceneClock+=dt;
   Rectangle destination{(GetScreenWidth()-Width*scale)*.5f,(GetScreenHeight()-Height*scale)*.5f,Width*scale,Height*scale};Vector2 nativeMouse=GetMousePosition(),mouse{(nativeMouse.x-destination.x)/scale,(nativeMouse.y-destination.y)/scale};
-  if(smoke&&!garageSmoke&&frame==30){driving=true;vehicle=nz::Vehicle{};vehicle.automatic=!selected.manual;vehicle.rpm=nz::Cars[selected.car].idle;}
+  if(smoke&&!garageSmoke&&frame==30){driving=true;vehicle=nz::Vehicle{};if(scenerySmoke)vehicle.lateral=5.25;vehicle.automatic=!selected.manual;vehicle.rpm=nz::Cars[selected.car].idle;}
   if(Pressed(KEY_H))heads=!heads;
   if(Pressed(KEY_T))tails=!tails;
   if(Pressed(KEY_Z))indicator=indicator==-1?0:-1;
@@ -322,16 +311,17 @@ int main(int argc,char **argv){
   float spriteScale=PixelsPerMetre/26.f;
   Vector2 origin{std::round(carAnchor.x-64*spriteScale),std::round(carAnchor.y-79*spriteScale)};float depth=driving?WorldToCamera(0,(float)vehicle.lateral,0).z:0;
   car.Shade(carShader,env,origin,depth);
+  if(scenerySmoke&&frame==12)highway.ProbeOcclusion(propShader,env);
   if(glowSmoke&&(frame==12||frame==580))car.ProbeGlow(glowShader,env);
-  BeginTextureMode(target);ClearBackground(Ink);Road(roadShader,car,env,origin,depth);RoadFurniture(env);car.Draw(resolveShader,glowShader,env,origin);
+  BeginTextureMode(target);ClearBackground(Ink);Road(roadShader,car,highway,env,origin,depth);car.Draw(resolveShader,glowShader,env,origin);highway.Draw(propShader,env,car.textures,origin,depth);
   if(driving){Hud(selected,vehicle,heads,tails,audio.Ready(),muted,indicator,sceneClock);if(paused){DrawRectangle(0,0,Width,Height,RGBA(3,9,17,175));rlPushMatrix();rlTranslatef((Width-640)*.5f,(Height-360)*.5f,0);Box({172,119,296,114});Label("PAUSED",286,137,20,Mint);Label("ESC  RESUME",275,170,11);Label("TAB  GARAGE     R  RESET DRIVE",218,192,10,Muted);rlPopMatrix();}}
   else{bool start=false;Vector2 uiOffset{(Width-640)*.5f,(Height-360)*.5f};rlPushMatrix();rlTranslatef(uiOffset.x,uiOffset.y,0);Garage(selected,{mouse.x-uiOffset.x,mouse.y-uiOffset.y},start,quit,heads,indicator);rlPopMatrix();if(start){driving=true;paused=false;accumulator=0;vehicle=nz::Vehicle{};vehicle.automatic=!selected.manual;vehicle.rpm=nz::Cars[selected.car].idle;}}
   EndTextureMode();BeginDrawing();ClearBackground(RGBA(5,9,14));DrawTexturePro(target.texture,{0,0,(float)Width,-(float)Height},destination,{0,0},0,WHITE);EndDrawing();
   bestSpeed=std::max(bestSpeed,(float)(vehicle.speed*3.6));
-  if(smoke&&(frame==12||frame==580||frame==865||(garageSmoke&&(frame==90||frame==150||frame==210||frame==300||frame==450||frame==600))||(featureSmoke&&(frame==18||frame==230||frame==440||frame==650))||(resizeSmoke&&(frame==200||frame==360)))){std::string name=std::string(qaName)+(blackPaint?"_black":"")+"_"+std::to_string(Width)+"x"+std::to_string(Height)+(garageSmoke?"_orbit"+std::to_string(frame)+".png":frame==12?"_garage.png":frame==580?"_driving.png":frame==865?"_braking.png":"_frame"+std::to_string(frame)+".png");Image capture=LoadImageFromTexture(target.texture);ImageFlipVertical(&capture);bool saved=ExportImage(capture,(root/"build/qa"/name).string().c_str());UnloadImage(capture);if(!saved)throw std::runtime_error("Could not save graphics test frame");}
+  if(smoke&&(frame==12||frame==580||frame==865||(scenerySmoke&&(frame==120||frame==170||frame==280||frame==350||frame==480||frame==720))||(garageSmoke&&(frame==90||frame==150||frame==210||frame==300||frame==450||frame==600))||(featureSmoke&&(frame==18||frame==230||frame==440||frame==650))||(resizeSmoke&&(frame==200||frame==360)))){std::string name=std::string(qaName)+(blackPaint?"_black":"")+"_"+std::to_string(Width)+"x"+std::to_string(Height)+(garageSmoke?"_orbit"+std::to_string(frame)+".png":frame==12?"_garage.png":frame==580?"_driving.png":frame==865?"_braking.png":"_frame"+std::to_string(frame)+".png");Image capture=LoadImageFromTexture(target.texture);ImageFlipVertical(&capture);bool saved=ExportImage(capture,(root/"build/qa"/name).string().c_str());UnloadImage(capture);if(!saved)throw std::runtime_error("Could not save graphics test frame");}
   if(garageSmoke&&frame>=720){std::printf("GARAGE FINISH SMOKE %s complete\n",qaName);quit=true;}
   if(smoke&&!garageSmoke&&frame>=900){if(audioSmoke){std::printf("AUDIO SMOKE: %llu samples generated on the device callback\n",(unsigned long long)audio.Samples());if(audio.Samples()<nz::AudioRate*5)throw std::runtime_error("Audio callback did not run continuously");}std::printf("GRAPHICS SMOKE %s: max %.1fkm/h, stopped %.2fkm/h, 0-100 %.2fs\n",qaName,bestSpeed,vehicle.speed*3.6,vehicle.timeTo100);if(bestSpeed<100||vehicle.speed>1)throw std::runtime_error("Graphics driving smoke test failed");quit=true;}
  }
- audio.Close();car.Close();UnloadRenderTexture(target);UnloadShader(carShader.value);UnloadShader(roadShader.value);UnloadShader(resolveShader.value);UnloadShader(glowShader.value);CloseWindow();return 0;
+ audio.Close();car.Close();highway.Close();UnloadRenderTexture(target);UnloadShader(carShader.value);UnloadShader(roadShader.value);UnloadShader(resolveShader.value);UnloadShader(glowShader.value);UnloadShader(propShader.value);CloseWindow();return 0;
  }catch(const std::exception &e){std::fprintf(stderr,"ERROR: %s\n",e.what());CloseWindow();return 1;}
 }

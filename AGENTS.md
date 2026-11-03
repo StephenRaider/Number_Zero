@@ -30,3 +30,12 @@
   first, then minify its lit colour with car_resolve.fs. Lamp-only bloom is in
   lamp_glow.fs; --glow-smoke-test verifies on/off and brake intensity on the GPU.
 - Runtime depth-map alpha encodes finish (0 other, 128 paint, 255 glass); coverage and shadow visibility use albedo alpha. Keep this channel point sampled. Paint/glass specular widths and diffuse responses are independent in car.fs.
+
+- Highway assets are in assets/highway (credits included); source models/renders
+  remain in the experiment workspace. Generated layout.h defines real lamp-head
+  positions. Keep geometry and active light placement sourced from that metadata.
+- Road/car/props are separate layers. highway_prop.fs compares prop/car depth
+  per fragment and hardware-depth-tests props. Never return to drawing all lamps
+  before the car or forcing all lamp pixels into the foreground.
+- --scenery-smoke-test includes GPU occlusion checks and an outer-lane drive.
+- Raylib batches track only four auxiliary textures. The road pass explicitly binds car maps at units 5-7; the prop pass binds car depth at unit 5 via ShaderProgram.TextureSlot. Flush draws before releasing those units, and retain the encoded-depth dependency probe.

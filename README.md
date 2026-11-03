@@ -49,7 +49,7 @@ Press **F11** to toggle borderless fullscreen.
 - Fixed-120-Hz drivetrain, drag, rolling resistance, braking and lateral motion.
 - Speed, gear, RPM, pedal inputs and distance HUD.
 
-The road is currently an empty driving test: traffic, rivals, parking areas,
+The highway is currently a driving test. Traffic, rivals, parking areas,
 and damage are future work.
 The stock wheels remain the car-specific prototype exports; the planned shared
 standard-size wheel library has not been implemented.
@@ -200,3 +200,25 @@ road lighting are independent of this surface finish. Existing sprite cleanup,
 area coverage filtering and bulb-only bloom remain active.
 
 `--garage-smoke-test` captures a complete moving-light cycle; add `--black` and/or `--civic` to inspect high-contrast paint/glass reflections.
+
+## Asset highway and scenery depth
+
+The road uses the supplied Low road materials as two two-lane carriageways,
+with asphalt grain at its proper scale and separately spaced worn lane markings.
+Shoulders, four-metre guardrail modules, curved solar street lamps and periodic
+overhead sign gantries replace the procedural line scenery. Source attribution
+and modification notes are in `assets/highway/CREDITS.md`.
+
+Ground, car and props are separate layers. Lamp/rail/gantry colour, normal,
+front-depth and emission maps are rendered independently. The prop shader
+compares each covered fragment with the car's depth, then hardware depth-tests
+props against one another. A high lamp arm can cover the car while lower/behind
+geometry stays behind it; no single whole-sprite foreground flag is used.
+Street-light positions come from the exported lamp-head metadata and remain
+active beyond visible bounds while their lighting can still contribute.
+
+Only packed runtime textures, layout metadata and credits are in the checkout;
+source GLBs, Blender scenes and render/packing scripts stay in the experiment
+workspace. `--scenery-smoke-test` checks real GPU front/behind/split-depth cases
+and drives the outer lane beneath the lamp arms. It can be combined with
+`--civic`, `--manual`, `--ultrawide` or `--superwide`.

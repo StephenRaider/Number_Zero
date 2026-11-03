@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "road": {
+    "carriageway_width_m": 7,
+    "repeat_m": 27.0
+  },
+  "props": {
+    "lamp_right": {
+      "canvas": 256,
+      "anchor": [
+        128.0,
+        232
+      ],
+      "pixels_per_metre": 26.0,
+      "depth_range": 32.0,
+      "bounds": [
+        [
+          -3.764582633972168,
+          -0.29592353105545044,
+          0.0
+        ],
+        [
+          0.3186248242855072,
+          0.2959235608577728,
+          7.199999809265137
+        ]
+      ],
+      "light": [
+        -2.3990869522094727e-06,
+        -3.72792387008667,
+        7.138796806335449
+      ],
+      "maps": {
+        "albedo": "lamp_right_albedo.png",
+        "normal": "lamp_right_normal.png",
+        "depth": "lamp_right_depth.png",
+        "emit": "lamp_right_emit.png"
+      }
+    },
+    "lamp_left": {
+      "canvas": 256,
+      "anchor": [
+        128.0,
+        232
+      ],
+      "pixels_per_metre": 26.0,
+      "depth_range": 32.0,
+      "bounds": [
+        [
+          -0.3186248540878296,
+          -0.2959235608577728,
+          0.0
+        ],
+        [
+          3.764582633972168,
+          0.2959235608577728,
+          7.199999809265137
+        ]
+      ],
+      "light": [
+        2.514570951461792e-06,
+        3.72792387008667,
+        7.138796806335449
+      ],
+      "maps": {
+        "albedo": "lamp_left_albedo.png",
+        "normal": "lamp_left_normal.png",
+        "depth": "lamp_left_depth.png",
+        "emit": "lamp_left_emit.png"
+      }
+    },
+    "rail_right": {
+      "canvas": 128,
+      "anchor": [
+        64.0,
+        104
+      ],
+      "pixels_per_metre": 26.0,
+      "depth_range": 32.0,
+      "bounds": [
+        [
+          -0.12733781337738037,
+          -1.9999995231628418,
+          0.0
+        ],
+        [
+          0.1273370236158371,
+          2.000000476837158,
+          0.8036190271377563
+        ]
+      ],
+      "maps": {
+        "albedo": "rail_right_albedo.png",
+        "normal": "rail_right_normal.png",
+        "depth": "rail_right_depth.png",
+        "emit": "rail_right_emit.png"
+      }
+    },
+    "rail_left": {
+      "canvas": 128,
+      "anchor": [
+        64.0,
+        104
+      ],
+      "pixels_per_metre": 26.0,
+      "depth_range": 32.0,
+      "bounds": [
+        [
+          -0.12733696401119232,
+          -2.000000476837158,
+          0.0
+        ],
+        [
+          0.12733781337738037,
+          1.9999995231628418,
+          0.8036190271377563
+        ]
+      ],
+      "maps": {
+        "albedo": "rail_left_albedo.png",
+        "normal": "rail_left_normal.png",
+        "depth": "rail_left_depth.png",
+        "emit": "rail_left_emit.png"
+      }
+    },
+    "gantry": {
+      "canvas": 512,
+      "anchor": [
+        256.0,
+        400
+      ],
+      "pixels_per_metre": 26.0,
+      "depth_range": 32.0,
+      "bounds": [
+        [
+          -9.07546615600586,
+          -2.026329278945923,
+          0.0
+        ],
+        [
+          9.089428901672363,
+          2.71035099029541,
+          11.781781196594238
+        ]
+      ],
+      "maps": {
+        "albedo": "gantry_albedo.png",
+        "normal": "gantry_normal.png",
+        "depth": "gantry_depth.png",
+        "emit": "gantry_emit.png"
+      }
+    }
+  },
+  "files": {
+    "lane_markings.png": "4c6a693d0a73c732d935b883367be4e828e5d33425c462ee32cd591f0a75a002",
+    "asphalt.png": "820feb9f095abb842c9833282579fcb259187cb35c523cf2f6838675ecda9384",
+    "asphalt_patched.png": "b328fd56bdfe7658227c3c2e9cc06d321bb46598c969355bea15e1679f83e687",
+    "shoulder.png": "ef6138ad737210784eae09b4e255809d3963b383428b9d7296cd5fd15ae5ad8b",
+    "lamp_right_albedo.png": "8bf975b9457750d0f52143aef456e5991f4e7957cd78797d206e7b075c904d4d",
+    "lamp_right_normal.png": "9c2ffa796a4f50f4aab0ad527a43bf9cfe4c85939d2758d6ebf19bdd67171662",
+    "lamp_right_depth.png": "3dbc8fae9e3a1d91aa97c4619509d1255bac168d03d1ace7ccfbc35244893152",
+    "lamp_right_emit.png": "8989a651a8c43a7c46c63026c26aa021160a4c479ebc2f61dc9d3c8a14f09e37",
+    "lamp_left_albedo.png": "58299156486c6730d85f4dbaffb0e718fc07ccb7e957fae4865bea6d79357f80",
+    "lamp_left_normal.png": "5aecda9faa6d5124317bdefb5ec0ae16292660906f8f89bee317577e9d88dbba",
+    "lamp_left_depth.png": "1f95b06d91e45882f8a43ddd3c2e34cef8ecd7207b412f76ee6bf87ed7358e1b",
+    "lamp_left_emit.png": "4b0663796712990916e14b17e7c921a561bf2c0ad8147f370a2334b7bc01a057",
+    "rail_right_albedo.png": "93e262cfdfb5285c55acf9a195c475922a742ca2894acb2ecf8874d33b114959",
+    "rail_right_normal.png": "8e3457678cc262e6a90b1cf8a05aff972543b2f73ac98bb722ca5db8deba136c",
+    "rail_right_depth.png": "0089722d1d3821a8f529d72730143a779a682addf979abd45b8710908821b730",
+    "rail_right_emit.png": "c1bb079a3298e3eda500bba7f01ebf32dd4bc3ca023868bcd907a3769e96a845",
+    "rail_left_albedo.png": "eec28e4a843e02292e6d020ca5149da92669168a6a19c1ce7b3413cbc231ab3d",
+    "rail_left_normal.png": "39ddad4732face1ceadc107246eb192a1ec99ac2aa63e976eef6cba2a5247afe",
+    "rail_left_depth.png": "11fa1c370f66700153084f9f14917c0f4b56dc9655ca4e4d13f03e1871622966",
+    "rail_left_emit.png": "c1bb079a3298e3eda500bba7f01ebf32dd4bc3ca023868bcd907a3769e96a845",
+    "gantry_albedo.png": "730a82d1eebacdaa05e197e4e5b1fad772e7ddd10518a0c27ae051814b7a2b75",
+    "gantry_normal.png": "51c60f19800ce18426c46d79d2f07f6b4278a4c55e68ec9592900b1019718685",
+    "gantry_depth.png": "1ef786cd432831a85790d538411696afeadf55faa2e91eb60adb50b44a9c803a",
+    "gantry_emit.png": "f5df0628643ba99754cee39c30291c6fca5a9fe242838fbbb57dc7926aec76de"
+  }
+}

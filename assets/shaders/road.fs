@@ -18,6 +18,11 @@ uniform float taillights;
 uniform float braking;
 uniform vec2 carOrigin;
 uniform float carDepth;
+uniform sampler2D roadSurface;
+uniform sampler2D roadPatched;
+uniform sampler2D roadShoulder;
+uniform sampler2D roadMarkings;
+uniform float roadRepeat;
 uniform sampler2D carAlbedo;
 uniform sampler2D carFront;
 uniform sampler2D carBack;
@@ -68,14 +73,25 @@ void main(){
   float grid=min(abs(fract(absoluteS/2.)-.5),abs(fract(lateral/2.)-.5));
   if(grid<.015)base*=.7;
  }else{
-  if(abs(lateral)<7.2){
-   base=vec3(.205,.215,.24)*(.92+.12*noise);
-   for(int i=-1;i<=1;i++)if(abs(lateral-float(i)*3.5)<.055&&mod(absoluteS,9.)<3.)base=vec3(.77,.79,.76);
-   if(abs(abs(lateral)-6.9)<.07)base=vec3(.78,.68,.36);
-   for(int i=0;i<4;i++)if(abs(lateral-(-5.25+float(i)*3.5))<.8)base*=.94;
-  }else if(abs(lateral)<8.2)base=vec3(.25,.265,.29);
-  else base=vec3(.075,.105,.11)*(.8+.3*noise);
-  if(abs(abs(lateral)-7.65)<.18&&mod(absoluteS,5.)<.5)base=vec3(.66,.65,.52);
+  if(abs(lateral)<7.0){
+   vec2 roadUV=vec2((lateral+7.)/7.,absoluteS/10.5);
+   vec3 asphalt=texture(roadSurface,roadUV).rgb;
+   float section=hash(vec2(floor(absoluteS/roadRepeat),floor((lateral+7.)/7.)));
+   float wear=section>.72?.28:0.;
+   base=mix(asphalt,texture(roadPatched,roadUV).rgb,wear);
+   float paint=texture(roadMarkings,vec2(roadUV.x,absoluteS/roadRepeat)).r;
+   base=mix(base,vec3(.74,.75,.72),paint);
+   // Small dry wheel-track variation remains fixed in world space.
+   for(int lane=0;lane<4;lane++)if(abs(lateral-(-5.25+float(lane)*3.5))<.6)base*=.97;
+  }else if(abs(lateral)<8.2){
+   base=texture(roadShoulder,vec2(lateral*.7,absoluteS*.10)).rgb*.72;
+   if(abs(abs(lateral)-7.85)<.04)base*=.65;
+  }else{
+   // Quiet shoulder/embankment beyond the guardrail instead of a flat empty strip.
+   float drainage=.5+.5*sin(absoluteS*1.7+lateral*2.3);
+   base=vec3(.065,.087,.083)*(.85+.12*noise+.06*drainage);
+  }
+
  }
  vec3 lighting=vec3(.105,.12,.16);
  for(int i=0;i<32;i++){
