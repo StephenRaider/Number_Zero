@@ -91,7 +91,7 @@ unrelated work. There is no background auto-sync service.
 ## Prototype polish
 
 Driving faces northeast; steering right moves toward the right side of the road.
-Paint uses stronger clearcoat highlights with a narrow and a broad specular lobe.
+Paint uses a narrow clearcoat reflection; glazing has its own sharper finish.
 Fixed world-space street lamps have a smooth extended falloff and stay active
 beyond the viewport. Each lamp casts its own depth-map shadow; ambient and other
 lamps remain independent. Shadow rays intersect the car atlas before marching,
@@ -188,3 +188,15 @@ steps without blurring the full game image.
 Headlights and tail/brake lamps have a restrained Gaussian halo in a separate
 emission-only pass; it can spill over paint and road and follows each lamp switch.
 Braking strengthens the red halo. Bright paint and HUD elements do not bloom.
+
+## Glossy paint and glass
+
+Paint and glazing have distinct runtime finish identities, stored in the spare
+depth-texture alpha channel (albedo alpha still controls coverage). Paint uses
+a tight clearcoat highlight; glazing uses a sharper lobe and much lower diffuse
+response while retaining its dark grey base and a faint cool reflection.
+The broad secondary specular lobe has been removed. Street-light reach and
+road lighting are independent of this surface finish. Existing sprite cleanup,
+area coverage filtering and bulb-only bloom remain active.
+
+`--garage-smoke-test` captures a complete moving-light cycle; add `--black` and/or `--civic` to inspect high-contrast paint/glass reflections.

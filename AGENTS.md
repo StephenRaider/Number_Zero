@@ -29,3 +29,4 @@
 - Keep categorical normal/depth/mask maps point sampled. Shade the native car
   first, then minify its lit colour with car_resolve.fs. Lamp-only bloom is in
   lamp_glow.fs; --glow-smoke-test verifies on/off and brake intensity on the GPU.
+- Runtime depth-map alpha encodes finish (0 other, 128 paint, 255 glass); coverage and shadow visibility use albedo alpha. Keep this channel point sampled. Paint/glass specular widths and diffuse responses are independent in car.fs.

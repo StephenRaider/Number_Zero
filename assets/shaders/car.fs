@@ -62,6 +62,12 @@ void main(){
  vec3 normal=normalize(vec3(xy,sqrt(max(0.,1.-dot(xy,xy)))));
  vec2 pixel=carOrigin+fragTexCoord*spritePixels;
  vec3 p=vec3((pixel.x-screenAnchor.x)/pixelsPerMetre,(screenAnchor.y-pixel.y)/pixelsPerMetre,(unpack16(d.r,d.g)-.5)*5.2+carDepth);
+ // Material finish is independent of the base colour, including black paint and grey glazing.
+ float paint=step(.25,d.a)*(1.-step(.75,d.a)),glass=step(.75,d.a);
+ float diffuseResponse=mix(.72,.46,paint);diffuseResponse=mix(diffuseResponse,.045,glass);
+ float shininess=mix(150.,420.,paint);shininess=mix(shininess,850.,glass);
+ float specularStrength=mix(1.8,13.,paint);specularStrength=mix(specularStrength,20.,glass);
+ float fresnel=pow(1.-max(normal.z,0.),5.);
  vec3 diffuse=vec3(0),specular=vec3(0);
  for(int i=0;i<32;i++){
   if(i>=lightCount)break;
@@ -72,14 +78,18 @@ void main(){
   vec3 direction=normalize(delta);float lambert=max(0.,dot(normal,direction));
   if(lambert<=0.||occluded(p,lightPosition[i]))continue;
   vec3 colour=pow(lightColour[i],vec3(2.2));
-  diffuse+=colour*att*lambert*lightPower[i];
+  diffuse+=colour*att*lambert*lightPower[i]*diffuseResponse;
   vec3 halfway=normalize(direction+vec3(0,0,1));
-  float highlight=pow(max(0.,dot(normal,halfway)),90.0)*d.b*4.6 + pow(max(0.,dot(normal,halfway)),22.0)*d.b*.32;
+  // Point-source clearcoat: one narrow reflection, with no broad secondary specular wash.
+  float highlight=pow(max(0.,dot(normal,halfway)),shininess)*d.b*specularStrength*(.85+.95*fresnel);
   specular+=colour*att*highlight*lightPower[i];
  }
  float peak=max(diffuse.r,max(diffuse.g,diffuse.b));if(peak>0.)diffuse*=band(peak)/peak;
- float hemi=.13*(.55+.45*max(0.,dot(normal,vec3(0,.8660254,.5))));
- vec3 lit=pow(base.rgb,vec3(2.2))*(vec3(hemi,.97*hemi,1.13*hemi)+diffuse)+specular;
+ float hemi=.105*(.55+.45*max(0.,dot(normal,vec3(0,.8660254,.5))));
+ // A grey base and weak cool environment reflection keep glazing readable between small lamp glints.
+ float ambient=mix(hemi,.30,glass);
+ vec3 environment=glass*vec3(.012,.018,.028)*(.04+.96*fresnel);
+ vec3 lit=pow(base.rgb,vec3(2.2))*(vec3(ambient,.97*ambient,1.13*ambient)+diffuse)+specular+environment;
  lit+=emission(fragTexCoord)*1.1;
  finalColor=vec4(pow(max(lit,vec3(0)),vec3(1./2.2)),1.0);
 }
