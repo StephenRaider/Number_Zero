@@ -1,38 +1,86 @@
 # Number Zero
 
-Game prototype workspace for isometric highway racing and car discovery.
+A native Raylib highway-driving prototype with isometric pixel cars and dynamic
+lighting. Choose the Silvia S13 or Civic EK9, choose its paint, then drive a
+straight four-lane highway at night.
 
-This is the canonical local checkout of:
-https://github.com/StephenRaider/Number_Zero
+## Play on this machine
 
-## Contents
+Run `build/NumberZero.exe`, or build and launch with:
 
-- `src/`: game code, to be added when prototype implementation starts.
-- `assets/cars/`: runtime-ready 128 x 128 car layers, paint/hood masks, wheel
-  animation frames, placement metadata and asset manifests.
-- `assets/README.md`: runtime texture format and current asset limitations.
+```powershell
+.\build.ps1 -Run
+```
 
-The initial asset set contains the Nissan Silvia S13 and Honda Civic Type R EK9.
-The playable game and its build configuration have not been implemented yet.
+The executable finds the committed assets relative to its location. It needs no
+Blender, Python, browser, network connection or audio device.
 
-## Workspace boundary
+In the garage, select a car and paint swatch, or use the colour picker. The S13
+also offers two-tone paint, and either car can use a black bonnet. Click Start
+Night Drive or press Enter.
 
-Keep only game code, runtime assets/data, build configuration, necessary game
-support tools and relevant documentation in this repository.
+| Control | Action |
+| --- | --- |
+| W / Up | Accelerate |
+| S / Down / Space | Brake |
+| A / D or Left / Right | Continuous lateral steering |
+| H | Toggle headlights and beams |
+| T | Toggle tail lights; braking still activates brake lights |
+| Escape | Pause/resume; exit from garage |
+| Tab | Return to garage |
+| R | Reset the drive |
 
-Blender source models, rendering experiments, HTML relighting/customization labs,
-raw renders, diagnostics and research remain in the sibling
-`../Isometric pixel car racer/` workspace. They are not game dependencies.
-Only reviewed runtime exports are copied from that workspace into this one.
+Steering is continuous rather than lane snapping. Its response depends on speed,
+car setup and available tyre grip. The car settles after releasing steering.
+Five-speed gear ratios are simulated with automatic shifts for this prototype.
+The game pauses on focus loss. The window can be resized; rendering uses a
+640 x 360 canvas with nearest-neighbour integer scaling where possible.
 
-The experiment workspace provides `pipeline/export_game_assets.py` to export
-runtime car assets. Game code does not need Python, Blender or the experiment
-workspace to load the committed assets.
+## Implemented
 
-## Git workflow
+- Garage with both cars, paint selection, optional two-tone/black hood.
+- Scrolling straight highway, lane markings, barriers and street lamps.
+- GPU normal-map lighting, highlights, depth-aware self/ground shadows,
+  headlight beams, tail-light spill and brake-light emission.
+- Separate depth-composited body/wheel layers, steering poses and wheel spin.
+- Fixed-120-Hz drivetrain, drag, rolling resistance, braking and lateral motion.
+- Speed, gear, RPM, pedal inputs and distance HUD.
 
-Work in this Number_Zero folder for game implementation. Check the working tree
-and pull with `git pull --ff-only` before starting work when the tree is clean.
-Review and commit completed changes, then push to `origin/main`. Do not force-push
-or overwrite unrelated changes. Sync is performed through normal Git commits,
-pulls and pushes; there is no background auto-sync service.
+The road is currently an empty driving test: traffic, rivals, parking areas,
+sound, damage, and acceleration/braking body-pitch poses are future work.
+The stock wheels remain the car-specific prototype exports; the planned shared
+standard-size wheel library has not been implemented.
+
+## Build and verify
+
+The Windows x64 Raylib 5.5 static library and headers are included under
+`third_party/raylib`, with their license. `build.ps1` first uses the sibling
+`../toolchain/w64devkit/bin/g++.exe`, then falls back to `g++` on PATH.
+Use a Windows x64 MinGW-w64 C++17 compiler with this library.
+
+```powershell
+.\build.ps1 -Test
+.\build\NumberZero.exe --smoke-test
+.\build\NumberZero.exe --smoke-test --civic
+```
+
+`-Test` builds and runs deterministic drivetrain/handling tests. Graphics smoke
+tests create a hidden native window, run a scripted drive and brake sequence,
+and export garage/driving/braking frames to ignored `build/qa/`.
+See `docs/PERFORMANCE.md` for stock references, assumptions and measured model
+results. These results are simulation estimates, not factory performance claims.
+
+## Project layout
+
+- `src/main.cpp`: garage, native controls, rendering, highway and HUD.
+- `src/vehicle.h`: stock car data and fixed-step driving model.
+- `assets/cars/`: committed runtime car sprites, masks and manifests.
+- `assets/shaders/`: car relighting and lit road shaders.
+- `tests/vehicle_tests.cpp`: driving behaviour/performance checks.
+- `third_party/raylib/`: native graphics dependency and license.
+
+This checkout is synced to https://github.com/StephenRaider/Number_Zero.
+Keep Blender models, render experiments, HTML labs and intermediate outputs in
+`../Isometric pixel car racer/`. They are not runtime/build dependencies.
+Review, commit and push game changes here; use fast-forward pulls and preserve
+unrelated work. There is no background auto-sync service.

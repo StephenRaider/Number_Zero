@@ -10,3 +10,9 @@
 *.ps1 text eol=crlf
 *.png binary
 *.glb binary
+
+*.cpp text eol=lf
+*.h text eol=lf
+*.fs text eol=lf
+*.a binary
+third_party/** -whitespace

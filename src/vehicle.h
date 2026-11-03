@@ -1,0 +1,92 @@
+#pragma once
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <vector>
+
+namespace nz {
+constexpr double Pi=3.14159265358979323846;
+struct TorquePoint { double rpm,nm; };
+struct CarSpec {
+    const char *id,*name,*engine,*drive;
+    double mass,peakPS,peakNm,wheelbase,radius,finalDrive,efficiency,cdArea;
+    double idle,launchRpm,shiftRpm,redline,frontWeight,grip,brakeG,steerResponse;
+    bool frontDrive,turbo;
+    std::array<double,5> gears;
+    std::vector<TorquePoint> torque;
+};
+inline const std::array<CarSpec,2> Cars={{
+    {"nissan_silvia_s13","NISSAN SILVIA S13 K'S","SR20DET  /  2.0 TURBO","RWD",
+     1150,205,275,2.475,.3135,4.083,.85,.64,850,3400,7050,7500,.53,.95,.93,3.5,false,true,
+     {3.321,1.902,1.308,1.000,.759},
+     {{800,90},{1500,150},{2500,210},{3500,265},{4000,275},{5000,265},{6000,240},{6500,220},{7000,195},{7500,150}}},
+    {"honda_civic_ek9","HONDA CIVIC TYPE R EK9","B16B  /  1.6 VTEC","FWD",
+     1070,185,160,2.620,.29775,4.400,.87,.62,1000,5800,8450,8600,.62,1.00,.98,4.4,true,false,
+     {3.230,2.105,1.458,1.107,.848},
+     {{1000,80},{2000,104},{3000,118},{4500,128},{5500,136},{6000,145},{7000,155},{7500,160},{8000,159},{8200,158.4},{8500,150},{8600,140}}}
+}};
+inline double TorqueAt(const CarSpec &c,double rpm){
+    if(rpm<=c.torque.front().rpm)return c.torque.front().nm;
+    for(size_t i=1;i<c.torque.size();++i)if(rpm<=c.torque[i].rpm){
+        auto a=c.torque[i-1],b=c.torque[i];return a.nm+(b.nm-a.nm)*(rpm-a.rpm)/(b.rpm-a.rpm);
+    }
+    return c.torque.back().nm;
+}
+struct Input { double throttle=0,brake=0,steer=0; };
+struct Vehicle {
+    double speed=0,distance=0,lateral=1.75,lateralSpeed=0,rpm=900;
+    double throttle=0,brake=0,steering=0,boost=0,shiftTime=0,shiftCooldown=0,acceleration=0;
+    double yaw=0,elapsed=0,timeTo100=-1;
+    int gear=0,shifts=0;bool limiter=false;
+};
+inline double Approach(double value,double target,double rate,double dt){
+    return value+(target-value)*(1-std::exp(-rate*dt));
+}
+inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
+    in.throttle=std::clamp(in.throttle,0.0,1.0);in.brake=std::clamp(in.brake,0.0,1.0);in.steer=std::clamp(in.steer,-1.0,1.0);
+    const double mass=c.mass+75.; // One driver; catalogue curb mass already includes normal fluids.
+    v.elapsed+=dt;v.shiftTime=std::max(0.,v.shiftTime-dt);v.shiftCooldown=std::max(0.,v.shiftCooldown-dt);
+    v.throttle=Approach(v.throttle,in.brake>.05?0.:in.throttle,12.,dt);
+    v.brake=Approach(v.brake,in.brake,18.,dt);v.steering=Approach(v.steering,in.steer,c.steerResponse,dt);
+    const double wheelRpm=v.speed/(2*Pi*c.radius)*60;
+    double coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
+    if(v.shiftTime<=0 && v.shiftCooldown<=0){
+        if(coupledRpm>c.shiftRpm && v.gear<4 && v.throttle>.2){++v.gear;++v.shifts;v.shiftTime=.28;v.shiftCooldown=.48;}
+        else if(v.gear>0 && coupledRpm<2600 && wheelRpm*c.gears[v.gear-1]*c.finalDrive<c.shiftRpm*.92){--v.gear;v.shiftTime=.16;v.shiftCooldown=.5;}
+    }
+    coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
+    double engineRpm=std::max(c.idle,coupledRpm);
+    if(v.gear==0 && v.throttle>.05)engineRpm=std::max(engineRpm,c.idle+(c.launchRpm-c.idle)*v.throttle);
+    v.rpm=Approach(v.rpm,std::min(engineRpm,c.redline),20.,dt);
+    const double boostTarget=v.throttle*std::clamp((v.rpm-1600)/1700,0.,1.);
+    v.boost=Approach(v.boost,boostTarget,boostTarget>v.boost?4.:9.,dt);
+    double force=TorqueAt(c,v.rpm)*c.gears[v.gear]*c.finalDrive*c.efficiency/c.radius*v.throttle;
+    if(c.turbo)force*=.70+.30*v.boost;
+    if(v.shiftTime>0)force=0.;
+    if(coupledRpm>c.redline)force=0.;
+    v.limiter=v.speed*3.6>179.5;
+    force*=std::clamp((180.5-v.speed*3.6)/1.0,0.,1.0);
+    const double transfer=std::clamp(v.acceleration*.50/(9.81*c.wheelbase),-.18,.18);
+    const double drivenWeight=c.frontDrive?c.frontWeight-transfer:1-c.frontWeight+transfer;
+    force=std::min(force,c.grip*mass*9.81*std::clamp(drivenWeight,.25,.80));
+    const double aero=.5*1.225*c.cdArea*v.speed*v.speed;
+    const double rolling=v.speed>.005?.012*mass*9.81:0.;
+    const double engineBrake=(1-v.throttle)*std::min(v.speed/6.,1.)*(170.+v.rpm*.035);
+    const double braking=v.brake*c.brakeG*mass*9.81;
+    const double oldSpeed=v.speed;
+    v.acceleration=(force-aero-rolling-engineBrake-braking)/(mass*1.04); // Equivalent rotating wheel/driveline inertia.
+    v.speed=std::max(0.,v.speed+v.acceleration*dt);
+    v.distance+=(oldSpeed+v.speed)*.5*dt;
+    if(v.timeTo100<0 && oldSpeed<100./3.6 && v.speed>=100./3.6)v.timeTo100=v.elapsed;
+    const double speedGain=std::min(v.speed/7.,1.);
+    const double targetLateral=v.steering*std::min(v.speed*.115,4.8)*speedGain;
+    const double availableG=std::sqrt(std::max(.12,c.grip*c.grip-std::pow(std::clamp(v.acceleration/9.81,-c.grip,c.grip),2)));
+    const double maxLateralAcceleration=availableG*9.81;
+    const double desiredAcceleration=(targetLateral-v.lateralSpeed)*(c.frontDrive?4.8:4.0);
+    v.lateralSpeed+=std::clamp(desiredAcceleration,-maxLateralAcceleration,maxLateralAcceleration)*dt;
+    if(v.speed<.1)v.lateralSpeed=0;
+    v.lateral+=v.lateralSpeed*dt;
+    if(std::abs(v.lateral)>6.05){v.lateral=std::clamp(v.lateral,-6.05,6.05);v.lateralSpeed=0;v.speed=std::max(0.,v.speed-1.5*dt);}
+    v.yaw=std::atan2(v.lateralSpeed,std::max(4.,v.speed));
+}
+}
