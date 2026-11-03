@@ -227,28 +227,44 @@ static Vector2 DialPoint(Vector2 centre,float radius,float rpm,float maximum){
  return {centre.x+std::cos(angle)*radius,centre.y+std::sin(angle)*radius};
 }
 static void Hud(const Selection &s,const nz::Vehicle &v,bool heads,bool tails,bool audioReady,bool muted,int indicator,float clock){
- const auto &spec=nz::Cars[s.car];float x=(float)Width-210,y=(float)Height-122;
- DrawCircleGradient((int)x+114,(int)y+66,112,RGBA(4,10,17,210),BLANK);
- Label(spec.name,(int)x+1,(int)y+1,8,Paper);
- Vector2 centre{x+35,y+49};float maximum=(float)std::ceil(spec.redline/1000.)*1000;
- DrawRing(centre,27,28,135,405,48,RGBA(90,113,123));
- DrawRing(centre,27,29,135+270*(float)(spec.shiftRpm/maximum),405,16,RGBA(229,105,86));
- for(int tick=0;tick<=(int)(maximum/1000);tick++){
-  auto outer=DialPoint(centre,27,tick*1000.f,maximum),inner=DialPoint(centre,23,tick*1000.f,maximum);DrawLineEx(inner,outer,1,Paper);
-  auto pos=DialPoint(centre,18,tick*1000.f,maximum);const char *number=TextFormat("%d",tick);Label(number,(int)pos.x-MeasureText(number,7)/2,(int)pos.y-3,7,Muted);
+ const auto &spec=nz::Cars[s.car];const float left=12;
+ Vector2 centre{left+63,(float)Height-52};float maximum=(float)std::ceil(spec.redline/1000.)*1000;
+ const Color copper=RGBA(151,89,67,205),dim=RGBA(92,121,116,190),cool=RGBA(180,231,214);
+ auto centred=[&](const char *text,int y,int size,Color colour){Label(text,(int)centre.x-MeasureText(text,size)/2,y,size,colour);};
+ // Compact circular instrument, with a soft local backing instead of a surrounding panel.
+ DrawCircleGradient((int)centre.x,(int)centre.y,46,RGBA(3,10,14,195),BLANK);
+ DrawCircleV(centre,30,RGBA(8,20,24,168));
+ DrawRing(centre,33,34,0,360,96,copper);DrawRing(centre,30,31,135,405,72,RGBA(48,76,72,190));
+ float fraction=(float)std::clamp(v.rpm/maximum,0.,1.);
+ DrawRing(centre,30,31,135,135+270*fraction,64,v.rpm>=spec.shiftRpm?Amber:RGBA(102,196,171,210));
+ DrawRing(centre,32,34,135+270*(float)(spec.shiftRpm/maximum),405,20,RGBA(207,90,66,210));
+ for(int tick=0;tick<=(int)(maximum/250);tick++){
+  float rpm=tick*250.f;bool major=tick%4==0;
+  auto outer=DialPoint(centre,32,rpm,maximum),inner=DialPoint(centre,major?27.f:30.f,rpm,maximum);
+  Color colour=rpm>=spec.shiftRpm?RGBA(218,122,94):rpm<=v.rpm?cool:dim;
+  DrawLineEx(inner,outer,1,colour);
+  if(major){auto pos=DialPoint(centre,23,rpm,maximum);const char *number=TextFormat("%d",tick/4);Label(number,(int)pos.x-MeasureText(number,7)/2,(int)pos.y-3,7,colour);}
  }
- DrawLineEx(centre,DialPoint(centre,22,(float)std::clamp(v.rpm,0.,(double)maximum),maximum),1.5f,Mint);DrawCircleV(centre,2,Mint);
- const char *rpm=TextFormat("%.0f RPM",v.rpm);Label(rpm,(int)centre.x-MeasureText(rpm,8)/2,(int)y+80,8,Paper);
- Label(TextFormat("%03d",(int)std::lround(v.speed*3.6)),(int)x+84,(int)y+25,27,Paper);Label("km/h",(int)x+126,(int)y+55,8,Muted);
- Label(TextFormat("%d",v.gear+1),(int)x+174,(int)y+28,21,Mint);Label(v.automatic?"AUTO":"MAN",(int)x+172,(int)y+53,8,Muted);
- Label(TextFormat("%.2f km",v.distance/1000),(int)x+85,(int)y+71,9,Paper);
- for(int i=0;i<2;i++){int px=(int)x+176+i*12;DrawRectangle(px,(int)y+68,3,13,RGBA(47,60,68));int h=(int)(13*(i==0?v.throttle:v.brake));DrawRectangle(px,(int)y+81-h,3,h,i==0?Mint:RGBA(233,101,90));Label(i==0?"T":"B",px-1,(int)y+85,7,Muted);}
+ auto marker=DialPoint(centre,35,(float)std::clamp(v.rpm,0.,(double)maximum),maximum);DrawCircleV(marker,1.3f,Mint);
+ centred(TextFormat("%d",(int)std::lround(v.speed*3.6)),(int)centre.y-10,18,cool);
+ centred("km/h",(int)centre.y+9,7,Muted);centred("x1000",(int)centre.y+24,6,dim);
+ centred(TextFormat("%.2f km",v.distance/1000),(int)centre.y+39,7,Muted);
+ // Auxiliary strip mirrors the reference: gear and tiny pedal/status indicators beside the dial.
+ for(int i=0;i<2;i++){
+  int x=(int)left+2+i*8,y=(int)centre.y-31;DrawRectangle(x,y,2,13,RGBA(48,68,66));
+  int h=(int)(13*(i==0?v.throttle:v.brake));DrawRectangle(x,y+13-h,2,h,i==0?Mint:RGBA(220,115,88));
+ }
+ Label(TextFormat("%d",v.gear+1),(int)left+2,(int)centre.y-12,20,cool);
+ Label(v.automatic?"A":"M",(int)left+4,(int)centre.y+11,7,Muted);
+ Label("H",(int)left,(int)centre.y+24,7,heads?Mint:RGBA(54,71,70));
+ Label("T",(int)left+11,(int)centre.y+24,7,tails?Mint:RGBA(54,71,70));
+ Label("M",(int)left+4,(int)centre.y+36,7,!audioReady||muted?RGBA(218,122,94):dim);
  bool flash=std::fmod(clock,1.2f)<.56f;
- Label("<",(int)x+3,(int)y+98,10,flash&&(indicator==-1||indicator==2)?Amber:RGBA(55,68,75));Label(">",(int)x+20,(int)y+98,10,flash&&(indicator==1||indicator==2)?Amber:RGBA(55,68,75));
- Label(heads?"H ON":"H OFF",(int)x+43,(int)y+99,8,heads?Amber:Muted);Label(tails?"T ON":"T OFF",(int)x+86,(int)y+99,8,tails?Amber:Muted);Label(!audioReady?"AUDIO OFF":muted?"M MUTED":"M SOUND",(int)x+132,(int)y+99,8,Muted);
- if(v.limiter)Label("SPEED LIMITER",(int)x+84,(int)y+13,8,Amber);
- else if(!v.automatic&&v.rpm>spec.shiftRpm)Label("SHIFT UP  E",(int)x+84,(int)y+13,8,Amber);
- else if(std::abs(v.lateral)>5.9)Label("ROAD EDGE",(int)x+84,(int)y+13,8,Amber);
+ if(flash&&(indicator==-1||indicator==2))Label("<",(int)centre.x-17,(int)centre.y-43,8,Amber);
+ if(flash&&(indicator==1||indicator==2))Label(">",(int)centre.x+10,(int)centre.y-43,8,Amber);
+ if(v.limiter)Label("LIMIT",(int)left,(int)centre.y-45,7,Amber);
+ else if(!v.automatic&&v.rpm>spec.shiftRpm)Label("SHIFT",(int)left,(int)centre.y-45,7,Amber);
+ else if(std::abs(v.lateral)>5.9)Label("EDGE",(int)left,(int)centre.y-45,7,Amber);
 }
 static fs::path LocateAssets(){
  std::vector<fs::path> choices={fs::current_path()/"assets",fs::path(GetApplicationDirectory())/"../assets",fs::path(GetApplicationDirectory())/"assets"};

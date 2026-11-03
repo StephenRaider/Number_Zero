@@ -138,9 +138,9 @@ must use `nz::VisibleAhead` for its visibility too.
 Garage previews retain their original size; the studio key light orbits the
 car roughly once every 11.4 seconds.
 
-The compact borderless bottom-right cluster groups an RPM dial with redline
-markings, digital speed, gear, trip distance, tiny pedal ticks, lamp/audio status
-and warnings. It anchors to the current viewport when resizing.
+The compact bottom-left cluster combines central digital speed with an outer
+RPM ring, fine ticks and redline markings. A narrow auxiliary strip holds gear,
+tiny pedal ticks and lamp/audio status; trip distance sits just beneath the dial. It anchors to the current viewport when resizing.
 
 Graphics checks support `--ultrawide` (2560x1080), `--superwide` (3840x1080),
 and `--tall` (960x900), combined with `--smoke-test`. Use
@@ -222,3 +222,8 @@ source GLBs, Blender scenes and render/packing scripts stay in the experiment
 workspace. `--scenery-smoke-test` checks real GPU front/behind/split-depth cases
 and drives the outer lane beneath the lamp arms. It can be combined with
 `--civic`, `--manual`, `--ultrawide` or `--superwide`.
+
+The driving HUD now follows the circular reference: a roughly 100-by-100 logical
+pixel footprint at the bottom-left, a muted copper outer rim, mint instruments,
+speed in the centre and RPM around the perimeter. Gear/pedals/status stay in
+the narrow left strip. There is no rectangular enclosing panel or car-name row.
