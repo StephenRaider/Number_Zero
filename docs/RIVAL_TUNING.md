@@ -84,7 +84,12 @@ comparison are rival_baseline.csv and rival_predictive.csv. The files are
 ignored; source tools and this report are committed. A missing finish fails the
 benchmark rather than being reported as a Ferrari win.
 
-Live play writes build/qa/race_telemetry.csv at 4 Hz: session, race phase/time,
+Live races draw a fresh traffic seed at each garage start, R restart or Rematch,
+from a generator initialized with launch-time system/clock entropy. Consecutive
+seeds cannot repeat. Smoke tests retain seed 12345 for stable comparisons, and
+standalone tests continue to accept explicit seeds.
+
+Live play writes build/qa/race_telemetry.csv at 4 Hz: session, seed, race phase/time,
 both cars' speeds/distances, lead, throttle/brake, lateral position, target lane,
 front gap/closing speed, left/stay/right path scores, rejected predictions,
 gap-preparation state and contacts. Scores of -1e9 mean no permitted safe path

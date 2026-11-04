@@ -439,7 +439,7 @@ int main(int argc,char **argv){
  RenderTexture2D target=LoadRenderTexture(Width,Height);SetTextureFilter(target.texture,TEXTURE_FILTER_POINT);
  EffectLayers layers;layers.Resize(Width,Height);EffectSettings effects;nz::TailHistory trails;
  Selection selected;selected.manual=manualSmoke;selected.car=smokeCar;selected.RestorePaint();if(smokeCar==1)selected.paint=RGBA(42,89,149);if(blackPaint){selected.paint=RGBA(28,31,36);selected.twoTone=false;}nz::Vehicle vehicle;bool driving=false,paused=false,quit=false,heads=true,tails=true,muted=false;
- nz::RaceSession race;nz::RaceTelemetry raceTelemetry(root/"build/qa/race_telemetry.csv");Selection opponentChoice;opponentChoice.car=2;opponentChoice.paint=WHITE;opponentChoice.twoTone=false;opponentChoice.blackHood=false;
+ nz::RaceSeedSequence raceSeeds;nz::RaceSession race;nz::RaceTelemetry raceTelemetry(root/"build/qa/race_telemetry.csv");Selection opponentChoice;opponentChoice.car=2;opponentChoice.paint=WHITE;opponentChoice.twoTone=false;opponentChoice.blackHood=false;
  bool decalEditor=decalSmoke;int decalView=0,decalLayer=0;
  if(limiterDeleteSmoke)selected.limiterDeleted[selected.car]=true;
  const auto decalSave=root/"build/customisation.cfg";if(!smoke){LoadDecalSettings(decalSave,selected,decals);if(smokeCar)selected.SelectCar(smokeCar);if(manualSmoke)selected.manual=true;if(limiterDeleteSmoke)selected.limiterDeleted[selected.car]=true;}
@@ -512,7 +512,7 @@ int main(int argc,char **argv){
     if(Pressed(KEY_E)||(smoke&&vehicle.rpm>nz::Cars[selected.car].shiftRpm-100))nz::Shift(vehicle,nz::Cars[selected.car],1);
    }
    if(!trafficActive){
-    auto other=nz::RaceSession::Observer(race.opponent);traffic.Reset({vehicle.distance,vehicle.lateral,vehicle.speed},12345,raceMode?&other:nullptr);trafficActive=true;
+    auto other=nz::RaceSession::Observer(race.opponent);race.trafficSeed=raceMode&&!smoke?raceSeeds.Next():12345;traffic.Reset({vehicle.distance,vehicle.lateral,vehicle.speed},race.trafficSeed,raceMode?&other:nullptr);trafficActive=true;
     if(trafficSmoke&&!raceSmoke){vehicle.speed=28;for(size_t i=0;i<traffic.cars.size();i++){auto &a=traffic.cars[i];a.type=(int)i%5;a.station=vehicle.distance+10+(i%4)*8+(i/4)*30;a.cruise=a.speed=(78+(i%5)*4)/3.6;}}
    }
    if(raceSmoke&&frame==120&&(std::abs(vehicle.speed-nz::RollingSpeed)>.001||std::abs(race.opponent.speed-nz::RollingSpeed)>.001))throw std::runtime_error("Race rolling start did not hold both cars at 50km/h");

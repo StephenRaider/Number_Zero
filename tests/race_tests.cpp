@@ -3,6 +3,18 @@
 #include <stdexcept>
 static void Require(bool ok,const char *message){if(!ok)throw std::runtime_error(message);}
 int main(){try{
+ {
+  nz::RaceSeedSequence seeds(42),replay(42);std::uint32_t previous=0;bool differentLayout=false;
+  nz::TrafficWorld original;auto first=seeds.Next();Require(first==replay.Next(),"Seed sequence cannot be replayed");original.Reset({0,0,0},first);previous=first;
+  for(int i=0;i<100;i++){
+   auto next=seeds.Next();Require(next!=previous&&next==replay.Next(),"Rematch repeats its seed or deterministic replay differs");previous=next;
+   nz::TrafficWorld fresh,copy;fresh.Reset({0,0,0},next);copy.Reset({0,0,0},next);
+   Require(fresh.cars.size()==copy.cars.size(),"Recorded seed cannot reproduce traffic");
+   if(fresh.cars.size()!=original.cars.size())differentLayout=true;
+   for(size_t j=0;j<fresh.cars.size();j++){Require(fresh.cars[j].station==copy.cars[j].station&&fresh.cars[j].type==copy.cars[j].type&&fresh.cars[j].paint==copy.cars[j].paint,"Recorded seed changes layout");if(j<original.cars.size()&&fresh.cars[j].station!=original.cars[j].station)differentLayout=true;}
+  }
+  Require(differentLayout,"Fresh race seeds leave the same traffic layout");std::puts("PASS fresh race/rematch seeds and recorded-seed replay");
+ }
  for(const auto &spec:nz::Cars){
   nz::Vehicle player;nz::RaceSession race;race.Start(player,spec,false,true);nz::TrafficWorld traffic;auto other=nz::RaceSession::Observer(race.opponent);traffic.Reset(nz::RaceSession::Observer(player),42,&other);
   Require(player.speed==nz::RollingSpeed&&race.opponent.speed==nz::RollingSpeed&&player.distance==race.opponent.distance,"Unequal rolling start");

@@ -3,8 +3,25 @@
 #include "traffic.h"
 #include "scene.h"
 #include <limits>
+#include <random>
+#include <chrono>
 namespace nz {
 constexpr double RaceDistance=10000.,RollingSpeed=50./3.6;
+// Entropy is sampled once per launch; every race/rematch consumes a new seed.
+// Explicit construction keeps tests reproducible and does not expose seeds to AI.
+class RaceSeedSequence {
+ std::mt19937 generator;std::uint32_t previous=0;bool used=false;
+ static std::uint32_t Entropy(){
+  auto clock=std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  std::uint32_t seed=(std::uint32_t)clock^(std::uint32_t)((std::uint64_t)clock>>32);
+  try{std::random_device source;seed^=source();}catch(...){/* Clock entropy remains available. */}
+  return seed;
+ }
+public:
+ RaceSeedSequence():RaceSeedSequence(Entropy()){}
+ explicit RaceSeedSequence(std::uint32_t seed):generator(seed){}
+ std::uint32_t Next(){std::uint32_t next;do{next=generator();}while(used&&next==previous);used=true;previous=next;return next;}
+};
 struct SeenCar {double station,lateral,speed,lateralSpeed,length,width;};
 inline std::vector<SeenCar> ObserveRaceTraffic(const Vehicle &v,const std::vector<TrafficCar> &traffic,const TrafficPlayer &player){
  std::vector<SeenCar> seen;seen.reserve(16);
@@ -94,6 +111,7 @@ public:
 enum class RacePhase {Countdown,Racing,Finished};
 enum class RaceWinner {None,Player,Opponent,Tie};
 struct RaceSession {
+ std::uint32_t trafficSeed=12345;
  Vehicle opponent;RivalDriver driver;RacePhase phase=RacePhase::Countdown;RaceWinner winner=RaceWinner::None;
  double countdown=3,elapsed=0,startLine=0,opponentContactCooldown=0,playerFinish=-1,opponentFinish=-1;int opponentContacts=0;Input opponentInput{};
  static TrafficPlayer Observer(const Vehicle &v){return {v.distance,v.lateral,v.speed,4.485,1.976};}

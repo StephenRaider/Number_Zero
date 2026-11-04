@@ -58,6 +58,8 @@ Select **RACE / 10 KM** in the garage. Both cars roll side by side at 50 km/h
 through a three-second countdown; that distance is excluded from the race.
 After GO, the first car to cover 10 km wins. The HUD shows both distances,
 the lead in metres and elapsed time. A lit checkered stripe marks the finish.
+Each race gets a fresh traffic seed, including R resets and Rematch. The seed
+is recorded in the local race telemetry for troubleshooting.
 The result screen offers Rematch and Garage; R and Tab work too. Pause stops
 both racers and traffic.
 
