@@ -87,4 +87,3 @@ for key,car in pairs:
     (target/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');stats[key]=record
     print('CLEANED',key,len(record),'body views;',sum(r['colour_pixels'] for r in record),'supported colour speckles; non-paint details preserved',flush=True)
 (ROOT/'output/body-surface-cleanup-stats.json').write_text(json.dumps(stats,indent=2))
-
