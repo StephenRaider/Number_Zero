@@ -1,11 +1,12 @@
 #pragma once
 struct TrafficRenderer {
- struct Frame {std::array<Texture2D,5> textures{};std::vector<Color> albedo;std::vector<unsigned char> paint;};
+ struct Frame {std::array<Texture2D,5> textures{};std::vector<Color> albedo;std::vector<unsigned char> paint;std::vector<Color> geometry;Texture2D volume{};Vector4 bounds{0,0,1,1};};
  struct Actor {int id=0,lastType=-1,lastPose=-1,lastFrame=-1,lastPaint=-1;Texture2D albedo{};RenderTexture2D shaded{};Vector2 origin{};float depth=0,station=0;int type=0,pose=0,frame=0;bool brake=false;int indicator=0;};
  std::array<std::array<std::array<Frame,4>,3>,nz::TrafficTypes.size()> art;
  std::map<int,Actor> actors;std::vector<int> visible;int totalDrawn=0,totalWarnings=0;
- ShaderProgram composite,shadow;
- explicit TrafficRenderer(const fs::path &assets):composite(assets/"shaders/traffic_composite.fs"),shadow(assets/"shaders/traffic_shadow.fs"){
+ ShaderProgram composite;RenderTexture2D shadowAtlas{};
+ explicit TrafficRenderer(const fs::path &assets):composite(assets/"shaders/traffic_composite.fs"){
+  shadowAtlas=LoadRenderTexture(1024,2048);SetTextureFilter(shadowAtlas.texture,TEXTURE_FILTER_POINT);SetTextureWrap(shadowAtlas.texture,TEXTURE_WRAP_CLAMP);
   const char *kinds[]={"albedo","normal","pack","pack2","emit"};
   for(int type=0;type<(int)nz::TrafficTypes.size();type++)for(int pose=0;pose<3;pose++)for(int frame=0;frame<4;frame++){
    auto &a=art[type][pose][frame];
@@ -16,6 +17,8 @@ struct TrafficRenderer {
     a.textures[k]=LoadTextureFromImage(im);SetTextureFilter(a.textures[k],TEXTURE_FILTER_POINT);SetTextureWrap(a.textures[k],TEXTURE_WRAP_CLAMP);
     if(k==0){a.albedo.resize(256*256);std::memcpy(a.albedo.data(),im.data,a.albedo.size()*sizeof(Color));}
     if(k==2){a.paint.resize(256*256);auto data=(Color*)im.data;for(int i=0;i<256*256;i++)a.paint[i]=data[i].a==128;}
+    if(k==2){a.geometry.resize(256*256);auto pixels=(Color*)im.data;for(int i=0;i<256*256;i++)a.geometry[i]={pixels[i].r,pixels[i].g,0,0};}
+    if(k==3){auto pixels=(Color*)im.data;for(int i=0;i<256*256;i++){if(pixels[i].a<128)a.geometry[i]={0,0,0,0};else{a.geometry[i].b=pixels[i].g;a.geometry[i].a=pixels[i].b;}}int x0=256,y0=256,x1=0,y1=0;for(int i=0;i<256*256;i++)if(a.geometry[i].r||a.geometry[i].g){x0=std::min(x0,i%256);y0=std::min(y0,i/256);x1=std::max(x1,i%256+1);y1=std::max(y1,i/256+1);}a.bounds={(float)x0/256,(float)y0/256,(float)x1/256,(float)y1/256};Image volume{a.geometry.data(),256,256,1,PIXELFORMAT_UNCOMPRESSED_R8G8B8A8};a.volume=LoadTextureFromImage(volume);SetTextureFilter(a.volume,TEXTURE_FILTER_POINT);}
     UnloadImage(im);
    }
   }
@@ -23,32 +26,39 @@ struct TrafficRenderer {
  void Prepare(const nz::TrafficWorld &world,const nz::Vehicle &player,ShaderProgram &shader,const Environment &env){
   visible.clear();for(auto it=actors.begin();it!=actors.end();){bool live=std::any_of(world.cars.begin(),world.cars.end(),[&](const nz::TrafficCar &a){return a.id==it->first;});if(!live){UnloadTexture(it->second.albedo);UnloadRenderTexture(it->second.shaded);it=actors.erase(it);}else ++it;}
   for(const auto &car:world.cars){
-   float station=(float)(car.station-player.distance);if(station>=nz::VisibleAhead||station<-18)continue;
+   float station=(float)(car.station-player.distance);if(station>=nz::VisibleAhead+35.f||station<-28)continue;
    auto anchor=Project(env.anchor,station,(float)car.lateral);float scale=PixelsPerMetre/26.f,size=256*scale;Vector2 origin{std::round(anchor.x-128*scale),std::round(anchor.y-170*scale)};
-   if(origin.x+size<0||origin.y+size<0||origin.x>Width||origin.y>Height)continue;
+   if(origin.x+size< -PixelsPerMetre*9||origin.y+size< -PixelsPerMetre*9||origin.x>Width+PixelsPerMetre*9||origin.y>Height+PixelsPerMetre*9)continue;
    auto &a=actors[car.id];if(a.id==0){a.id=car.id;Image blank=GenImageColor(256,256,BLANK);a.albedo=LoadTextureFromImage(blank);UnloadImage(blank);SetTextureFilter(a.albedo,TEXTURE_FILTER_POINT);a.shaded=LoadRenderTexture(256,256);SetTextureFilter(a.shaded.texture,TEXTURE_FILTER_POINT);}
    int pose=car.lateralSpeed>.15?2:car.lateralSpeed<-.15?0:1,frame=car.speed>1?(int)(car.distance/(2*nz::Pi*.31)*4)%4:0;const auto &maps=art[car.type][pose][frame];
    if(a.lastType!=car.type||a.lastPose!=pose||a.lastFrame!=frame||a.lastPaint!=car.paint){auto pixels=maps.albedo;const auto &finish=nz::GetTrafficPaint(car.type,car.paint);Color paint{finish.r,finish.g,finish.b,255};for(size_t i=0;i<pixels.size();i++)if(maps.paint[i]){pixels[i].r=(unsigned char)(pixels[i].r*paint.r/255);pixels[i].g=(unsigned char)(pixels[i].g*paint.g/255);pixels[i].b=(unsigned char)(pixels[i].b*paint.b/255);}UpdateTexture(a.albedo,pixels.data());a.lastType=car.type;a.lastPose=pose;a.lastFrame=frame;a.lastPaint=car.paint;}
    a.origin=origin;a.station=station;a.depth=WorldToCamera(station,(float)car.lateral,0).z;a.type=car.type;a.pose=pose;a.frame=frame;a.brake=car.braking;a.indicator=car.indicator;
    Environment lighting=env;lighting.heads=lighting.tails=true;lighting.brake=car.braking;bool flash=std::fmod(world.clock,1.15)<.53;lighting.indicatorLeft=car.indicator<0&&flash?1.f:0.f;lighting.indicatorRight=car.indicator>0&&flash?1.f:0.f;
+   // Match the player's small local head/tail point lights, with anchors scaled
+   // to this car rather than inheriting only the player's nearby lamp spill.
+   const auto &spec=nz::TrafficTypes[car.type];float yaw=(pose-1)*3.f*(float)nz::Pi/180.f;
+   auto spill=[&](float forward,float side,float height,Vector3 colour,float power,float radius){
+    if(lighting.lights.size()>=32)return;
+    auto point=WorldToCamera(station+forward*std::cos(yaw)-side*std::sin(yaw),(float)car.lateral+forward*std::sin(yaw)+side*std::cos(yaw),height);
+    lighting.lights.push_back({point,colour,power,radius});
+   };
+   for(int side:{-1,1})spill((float)spec.length*.45f,side*(float)spec.width*.33f,.5f,{1,.88f,.65f},.42f,3.2f);
+   spill(-(float)spec.length*.45f,0,.45f,{1,.08f,.04f},car.braking?1.35f:.45f,3.5f);
    shader.Lights(lighting);shader.Vec2("carOrigin",origin);shader.Float("carDepth",a.depth);shader.Float("sourcePixels",256);shader.Float("depthRange",12);shader.Float("spritePixels",size);
    BeginTextureMode(a.shaded);ClearBackground(BLANK);BeginShaderMode(shader.value);shader.Texture("normalMap",maps.textures[1]);shader.Texture("depthMap",maps.textures[2]);shader.Texture("auxiliaryMap",maps.textures[3]);shader.Texture("emissionMap",maps.textures[4]);DrawTexture(a.albedo,0,0,WHITE);EndShaderMode();EndTextureMode();visible.push_back(car.id);
   }
+  BeginTextureMode(shadowAtlas);ClearBackground(BLANK);rlSetBlendFactors(RL_ONE,RL_ZERO,RL_FUNC_ADD);BeginBlendMode(BLEND_CUSTOM);
+  for(size_t i=0;i<visible.size();i++){const auto &a=actors.at(visible[i]);DrawTexture(art[a.type][a.pose][a.frame].volume,(int)(i%4)*256,(int)(i/4)*256,WHITE);}
+  EndBlendMode();EndTextureMode();
  }
- void RoadLights(ShaderProgram &shader,const nz::TrafficWorld &world,const nz::Vehicle &player){
+ void RoadLights(ShaderProgram &shader,const nz::TrafficWorld &world,const nz::Vehicle &player,bool enabled){
   std::array<float,48> beams{};int count=0;
   for(const auto &a:world.cars){float s=(float)(a.station-player.distance);if(s< -44||s>nz::VisibleAhead||count==12)continue;beams[count*4]=s;beams[count*4+1]=(float)a.lateral;beams[count*4+2]=(float)std::atan2(a.lateralSpeed,std::max(a.speed,4.));beams[count*4+3]=(float)nz::TrafficTypes[a.type].length*.5f;++count;}
+  std::array<float,112> volumes{},bounds{};int actorsCount=enabled?(int)visible.size():0;
+  for(int i=0;i<actorsCount;i++){const auto &a=actors.at(visible[i]);volumes[i*4]=a.origin.x;volumes[i*4+1]=a.origin.y;volumes[i*4+2]=a.depth;volumes[i*4+3]=(float)i;const auto &box=art[a.type][a.pose][a.frame].bounds;bounds[i*4]=box.x;bounds[i*4+1]=box.y;bounds[i*4+2]=box.z;bounds[i*4+3]=box.w;}
+  shader.Int("trafficShadowCount",actorsCount);int volumeLoc=shader.At("trafficOccluder[0]");if(volumeLoc>=0&&actorsCount)SetShaderValueV(shader.value,volumeLoc,volumes.data(),SHADER_UNIFORM_VEC4,actorsCount);
+  int boundsLoc=shader.At("trafficBounds[0]");if(boundsLoc>=0&&actorsCount)SetShaderValueV(shader.value,boundsLoc,bounds.data(),SHADER_UNIFORM_VEC4,actorsCount);
   shader.Int("trafficCount",count);int loc=shader.At("trafficBeam[0]");if(loc>=0&&count)SetShaderValueV(shader.value,loc,beams.data(),SHADER_UNIFORM_VEC4,count);
- }
- void Shadows(const Environment &env,const nz::TrafficWorld &world,const nz::Vehicle &player){
-  (void)world;(void)player;
-  shadow.Lights(env);shadow.Vec2("resolution",{(float)Width,(float)Height});
-  for(int id:visible){const auto &a=actors.at(id);const auto &maps=art[a.type][a.pose][a.frame];
-   float size=256*PixelsPerMetre/26.f,pad=PixelsPerMetre*9;
-   shadow.Vec2("carOrigin",a.origin);shadow.Float("spritePixels",size);shadow.Float("carDepth",a.depth);shadow.Float("station",a.station);
-   BeginShaderMode(shadow.value);shadow.Texture("carAlbedo",maps.textures[0]);shadow.Texture("carFront",maps.textures[2]);shadow.Texture("carBack",maps.textures[3]);
-   DrawRectangleRec({a.origin.x-pad,a.origin.y-pad,size+2*pad,size+2*pad},WHITE);EndShaderMode();
-  }
  }
  void Draw(int mode){
   if(visible.empty())return;
@@ -58,7 +68,7 @@ struct TrafficRenderer {
   }rlDrawRenderBatchActive();rlDisableDepthTest();
  }
  void Glow(ShaderProgram &glow,const nz::TrafficWorld &world,const Environment &env){
-  rlSetBlendFactorsSeparate(RL_ONE,RL_ONE,RL_ZERO,RL_ONE,RL_FUNC_ADD,RL_FUNC_ADD);BeginBlendMode(BLEND_CUSTOM_SEPARATE);for(int id:visible){const auto &a=actors.at(id);const auto &maps=art[a.type][a.pose][a.frame];Environment e=env;e.heads=e.tails=true;e.brake=a.brake;bool flash=std::fmod(world.clock,1.15)<.53;e.indicatorLeft=a.indicator<0&&flash?1.f:0;e.indicatorRight=a.indicator>0&&flash?1.f:0;glow.Lights(e);float fade=std::clamp((nz::VisibleAhead-a.station)/8.f,0.f,1.f);glow.Float("headlights",fade);glow.Float("taillights",fade);glow.Float("braking",a.brake?fade:0);glow.Float("indicatorLeft",e.indicatorLeft*fade);glow.Float("indicatorRight",e.indicatorRight*fade);float size=256*PixelsPerMetre/26.f;glow.Float("spritePixels",size);BeginShaderMode(glow.value);DrawTexturePro(maps.textures[4],{0,0,256,256},{a.origin.x-6,a.origin.y-6,size+12,size+12},{0,0},0,WHITE);EndShaderMode();}EndBlendMode();
+  rlSetBlendFactorsSeparate(RL_ONE,RL_ONE,RL_ZERO,RL_ONE,RL_FUNC_ADD,RL_FUNC_ADD);BeginBlendMode(BLEND_CUSTOM_SEPARATE);for(int id:visible){const auto &a=actors.at(id);const auto &maps=art[a.type][a.pose][a.frame];Environment e=env;e.heads=e.tails=true;e.brake=a.brake;bool flash=std::fmod(world.clock,1.15)<.53;e.indicatorLeft=a.indicator<0&&flash?1.f:0;e.indicatorRight=a.indicator>0&&flash?1.f:0;glow.Lights(e);float size=256*PixelsPerMetre/26.f;glow.Float("spritePixels",size);BeginShaderMode(glow.value);DrawTexturePro(maps.textures[4],{0,0,256,256},{a.origin.x-6,a.origin.y-6,size+12,size+12},{0,0},0,WHITE);EndShaderMode();}EndBlendMode();
  }
  void Warnings(const nz::TrafficWorld &world,const nz::Vehicle &player,const Environment &env){
   std::array<const nz::TrafficCar*,4> nearest{};std::array<double,4> strength{};
@@ -75,6 +85,32 @@ struct TrafficRenderer {
    DrawRectangle((int)p.x-1,(int)p.y-6,2,4,RGBA(26,28,30,alpha));DrawPixel((int)p.x,(int)p.y,RGBA(26,28,30,alpha));++totalWarnings;
   }
  }
+ void ProbeLighting(ShaderProgram &road){
+  constexpr int n=64;float scale=PixelsPerMetre/26.f;Vector2 anchor{32,48};
+  auto target=LoadRenderTexture(n,n);Image alpha=GenImageColor(128,128,BLANK),front=GenImageColor(128,128,BLANK),back=GenImageColor(128,128,BLANK),volume=GenImageColor(256,256,BLANK);
+  auto encoded=[](float value){unsigned v=(unsigned)std::lround(value*65535);return std::pair<int,int>{v/256,v%256};};
+  auto pf=encoded(.5f+1.f/5.2f),pb=encoded(.5f-1.f/5.2f),tf=encoded(.5f+1.f/12.f),tb=encoded(.5f-1.f/12.f);
+  for(int y=55;y<79;y++)for(int x=48;x<80;x++){
+   ImageDrawPixel(&alpha,x,y,WHITE);ImageDrawPixel(&front,x,y,RGBA(pf.first,pf.second,0));ImageDrawPixel(&back,x,y,RGBA(0,pb.first,pb.second));
+   ImageDrawPixel(&volume,x+64,y+91,RGBA(tf.first,tf.second,tb.first,tb.second));
+  }
+  auto a=LoadTextureFromImage(alpha),f=LoadTextureFromImage(front),b=LoadTextureFromImage(back),v=LoadTextureFromImage(volume);UnloadImage(alpha);UnloadImage(front);UnloadImage(back);UnloadImage(volume);
+  BeginTextureMode(shadowAtlas);ClearBackground(BLANK);rlSetBlendFactors(RL_ONE,RL_ZERO,RL_FUNC_ADD);BeginBlendMode(BLEND_CUSTOM);DrawTexture(v,0,0,WHITE);EndBlendMode();EndTextureMode();
+  Environment env{};env.anchor=anchor;env.lights={{WorldToCamera(-3,-3,5),{1,.85f,.66f},.7f,18},{WorldToCamera(4,4,5),{.65f,.8f,1},.3f,18}};env.streetCount=2;
+  road.Lights(env);road.Vec2("resolution",{n,n});road.Float("roadRepeat",15);road.Float("carDepth",0);road.Int("shadowProbe",1);road.Vec4("carBounds",{48.f/128,55.f/128,80.f/128,79.f/128});
+  Vector4 box{112.f/256,146.f/256,144.f/256,170.f/256};int boxLoc=road.At("trafficBounds[0]");SetShaderValueV(road.value,boxLoc,&box,SHADER_UNIFORM_VEC4,1);
+  std::array<float,4> actor{{anchor.x-128*scale,anchor.y-170*scale,0,0}};int loc=road.At("trafficOccluder[0]");SetShaderValueV(road.value,loc,actor.data(),SHADER_UNIFORM_VEC4,1);
+  auto render=[&](int mode){
+   road.Vec2("carOrigin",mode==1?Vector2{anchor.x-64*scale,anchor.y-79*scale}:Vector2{-9999,-9999});road.Int("trafficShadowCount",mode==2?1:0);
+   BeginTextureMode(target);ClearBackground(BLANK);BeginShaderMode(road.value);road.TextureSlot("carAlbedo",a,5);road.TextureSlot("carFront",f,6);road.TextureSlot("carBack",b,7);road.TextureSlot("trafficGeometry",shadowAtlas.texture,8);DrawRectangle(0,0,n,n,WHITE);EndShaderMode();for(int slot=5;slot<=8;slot++)ShaderProgram::ClearSlot(slot);EndTextureMode();
+   Image im=LoadImageFromTexture(target.texture);ImageFormat(&im,PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);std::vector<Color> result(n*n);std::memcpy(result.data(),im.data,result.size()*sizeof(Color));UnloadImage(im);return result;
+  };
+  auto clear=render(0),player=render(1),traffic=render(2);int shadowed=0,different=0;
+  for(int i=0;i<n*n;i++){shadowed+=player[i].r+player[i].g+player[i].b+3<clear[i].r+clear[i].g+clear[i].b;different+=std::abs((int)player[i].r-traffic[i].r)+std::abs((int)player[i].g-traffic[i].g)+std::abs((int)player[i].b-traffic[i].b)>3;}
+  if(shadowed<8||different>8)throw std::runtime_error("Traffic/player per-light shadow parity failed: "+std::to_string(shadowed)+" shadow pixels, "+std::to_string(different)+" mismatches");
+  road.Int("shadowProbe",0);road.Int("trafficShadowCount",0);UnloadTexture(a);UnloadTexture(f);UnloadTexture(b);UnloadTexture(v);UnloadRenderTexture(target);
+  std::printf("SHARED CAR LIGHTING PROBE: %d shadow pixels; %d player/traffic mismatches; same per-light attenuation and ambient\n",shadowed,different);
+ }
  void ProbeDepth(){
   auto target=LoadRenderTexture(16,16);Image im=GenImageColor(16,16,RGBA(128,0,0));auto depth=LoadTextureFromImage(im);UnloadImage(im);
   im=GenImageColor(16,16,WHITE);auto colour=LoadTextureFromImage(im);UnloadImage(im);
@@ -86,7 +122,9 @@ struct TrafficRenderer {
   }
   BeginTextureMode(target);ClearBackground(BLANK);rlEnableDepthTest();draw(2,WHITE,2);rlDrawRenderBatchActive();rlDisableDepthTest();EndTextureMode();Image result=LoadImageFromTexture(target.texture);Color pixel=GetImageColor(result,8,8);UnloadImage(result);
   float decoded=((pixel.r*256.f+pixel.g)/65535.f-.5f)*256;if(std::abs(decoded-2)>.006f)throw std::runtime_error("Traffic global depth encoding differs from the player compositor");
+  composite.Int("layerMode",0);composite.Float("station",nz::VisibleAhead+4.f);
+  BeginTextureMode(target);ClearBackground(BLANK);draw(2,WHITE,0);EndTextureMode();result=LoadImageFromTexture(target.texture);pixel=GetImageColor(result,8,8);UnloadImage(result);if(pixel.a!=255)throw std::runtime_error("Traffic still fades its geometry alpha at the horizon");
   UnloadTexture(depth);UnloadTexture(colour);UnloadRenderTexture(target);std::puts("TRAFFIC DEPTH PROBE: order-independent colour and encoded global depth pass");
  }
- void Close(){for(auto &row:art)for(auto &poses:row)for(auto &frame:poses)for(auto tex:frame.textures)UnloadTexture(tex);for(auto &entry:actors){UnloadTexture(entry.second.albedo);UnloadRenderTexture(entry.second.shaded);}UnloadShader(composite.value);UnloadShader(shadow.value);}
+ void Close(){for(auto &row:art)for(auto &poses:row)for(auto &frame:poses){for(auto tex:frame.textures)UnloadTexture(tex);UnloadTexture(frame.volume);}for(auto &entry:actors){UnloadTexture(entry.second.albedo);UnloadRenderTexture(entry.second.shaded);}UnloadShader(composite.value);UnloadRenderTexture(shadowAtlas);}
 };

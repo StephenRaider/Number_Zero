@@ -21,7 +21,7 @@ void main(){
  colour*=fragColor;
  if(colour.a<.02)discard;
  float w=(unpack16(texture(frontMap,depthUV).rg)-.5)*12.+baseDepth;gl_FragDepth=clamp(.5-w/256.,.001,.999);
- float fade=1.-smoothstep(visibleAhead-8.,visibleAhead,station);
- if(layerMode==2){float encoded=round(clamp(w/256.+.5,0.,1.)*65535.);finalColor=vec4(floor(encoded/256.)/255.,mod(encoded,256.)/255.,0.,colour.a*fade);}
- else finalColor=vec4(colour.rgb,colour.a*fade);
+
+ if(layerMode==2){float encoded=round(clamp(w/256.+.5,0.,1.)*65535.);finalColor=vec4(floor(encoded/256.)/255.,mod(encoded,256.)/255.,0.,colour.a);}
+ else finalColor=vec4(colour.rgb,colour.a);
 }

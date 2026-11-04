@@ -28,6 +28,9 @@ uniform float roadRepeat;
 uniform sampler2D carAlbedo;
 uniform sampler2D carFront;
 uniform sampler2D carBack;
+uniform sampler2D trafficGeometry;
+uniform int trafficShadowCount,shadowProbe;
+uniform vec4 trafficOccluder[28],trafficBounds[28],carBounds;
 uniform int lightCount;
 uniform int streetCount;
 uniform vec3 lightPosition[32];
@@ -36,30 +39,40 @@ uniform float lightPower[32];
 uniform float lightRadius[32];
 float unpack16(float high,float low){return (round(high*255.)*256.+round(low*255.))/65535.;}
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-bool shadow(vec3 p,vec3 lamp){
- vec3 delta=lamp-p;
- vec2 uv0=(screenAnchor+vec2(p.x,-p.y)*pixelsPerMetre-carOrigin)/spritePixels,duv=vec2(delta.x,-delta.y)*pixelsPerMetre/spritePixels;
+bool shadow(vec3 p,vec3 lamp,int actor){
+ vec3 delta=lamp-p;bool player=actor<0;
+ vec2 origin=player?carOrigin:trafficOccluder[actor].xy;
+ float size=player?spritePixels:256.*pixelsPerMetre/26.;
+ float baseDepth=player?carDepth:trafficOccluder[actor].z;
+ float range=player?5.2:12.,nativeSize=player?128.:256.;
+ vec2 uv0=(screenAnchor+vec2(p.x,-p.y)*pixelsPerMetre-origin)/size,duv=vec2(delta.x,-delta.y)*pixelsPerMetre/size;
+ vec4 bounds=player?carBounds:trafficBounds[actor];
  float enter=0.,leave=1.;
  for(int axis=0;axis<2;axis++){
-  if(abs(duv[axis])<.000001){if(uv0[axis]<0.||uv0[axis]>1.)return false;}
-  else{float a=-uv0[axis]/duv[axis],b=(1.-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
+  if(abs(duv[axis])<.000001){if(uv0[axis]<bounds[axis]||uv0[axis]>bounds[axis+2])return false;}
+  else{float a=(bounds[axis]-uv0[axis])/duv[axis],b=(bounds[axis+2]-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
  }
  if(leave<=enter)return false;
- float count=ceil(clamp(length(duv)*(leave-enter)*128.*1.25,4.,64.));
+ float count=ceil(clamp(length(duv)*(leave-enter)*nativeSize*1.25,4.,64.));
  for(int k=0;k<64;k++){
   if(float(k)>=count)break;
-  float t=mix(enter,leave,(float(k)+.5)/count);
-  if(t*length(delta)<.035)continue;
-  vec2 uv=uv0+duv*t;
-  if(texture(carAlbedo,uv).a<.5)continue;
-  vec4 a=texture(carFront,uv),b=texture(carBack,uv);
-  float front=(unpack16(a.r,a.g)-.5)*5.2+carDepth;
-  float back=(unpack16(b.g,b.b)-.5)*5.2+carDepth;
-  float ray=p.z+delta.z*t;
-  if(ray<front-.045&&ray>back-.025)return true;
+  float t=mix(enter,leave,(float(k)+.5)/count);if(t*length(delta)<.035)continue;
+  vec2 uv=uv0+duv*t;float front,back;
+  if(player){
+   if(texture(carAlbedo,uv).a<.5)continue;
+   front=unpack16(texture(carFront,uv).r,texture(carFront,uv).g);
+   back=unpack16(texture(carBack,uv).g,texture(carBack,uv).b);
+  }else{
+   float cell=trafficOccluder[actor].w;
+   vec2 atlas=(vec2(mod(cell,4.),floor(cell/4.))*256.+uv*256.)/vec2(1024,2048);
+   vec4 depths=texture(trafficGeometry,vec2(atlas.x,1.-atlas.y));
+   front=unpack16(depths.r,depths.g);if(front==0.)continue;
+   back=unpack16(depths.b,depths.a);
+  }
+  front=(front-.5)*range+baseDepth;back=(back-.5)*range+baseDepth;
+  float ray=p.z+delta.z*t;if(ray<front-.045&&ray>back-.025)return true;
  }
  return false;
-
 }
 void main(){
  vec2 pixel=vec2(gl_FragCoord.x,resolution.y-gl_FragCoord.y);
@@ -103,9 +116,15 @@ void main(){
   if(i<streetCount){float tail=max(0.,1.-d2/(lightRadius[i]*lightRadius[i]*4.84));a+=.14*tail*tail;}
   if(a*lightPower[i]<.0001)continue;
   float diff=max(0.,dot(normal,normalize(delta)));
-  float visibility=i<streetCount&&shadow(p,lightPosition[i])?.20:1.;
+  bool blocked=false;
+  if(i<streetCount){
+   blocked=shadow(p,lightPosition[i],-1);
+   for(int actor=0;actor<28;actor++){if(actor>=trafficShadowCount||blocked)break;blocked=shadow(p,lightPosition[i],actor);}
+  }
+  float visibility=blocked?.20:1.;
   lighting+=pow(lightColour[i],vec3(2.2))*a*lightPower[i]*diff*visibility;
  }
+ if(shadowProbe>0){finalColor=vec4(lighting,1);return;}
  vec3 lit=pow(base,vec3(2.2))*lighting;
  if(headlights>.5){
   vec2 offset=vec2(s,lateral-playerLateral);
@@ -129,7 +148,7 @@ void main(){
   lit+=pow(base,vec3(2.2))*vec3(1.1,1.03,.83)*beam*.65;
  }
  // Same longitudinal visibility for every display. Extra width cannot reveal earlier hazards.
- if(garage<.5)lit=mix(lit,vec3(.0012,.0020,.0035),smoothstep(visibleAhead-8.,visibleAhead,s));
+ // Horizon haze is applied once after opaque world compositing.
  // Mild blue ambient falloff keeps the outer scene quiet without hiding the road.
  float vignette=1.-.22*pow(length((pixel/resolution-.5)*vec2(1.,.8)),1.5);
  finalColor=vec4(pow(max(lit,vec3(0)),vec3(1./2.2))*vignette,1.);

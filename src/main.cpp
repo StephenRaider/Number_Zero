@@ -74,6 +74,7 @@ struct ShaderProgram {
  void Float(const char *name,float v){int loc=At(name);if(loc>=0)SetShaderValue(value,loc,&v,SHADER_UNIFORM_FLOAT);}
  void Int(const char *name,int v){int loc=At(name);if(loc>=0)SetShaderValue(value,loc,&v,SHADER_UNIFORM_INT);}
  void Vec2(const char *name,Vector2 v){int loc=At(name);if(loc>=0)SetShaderValue(value,loc,&v,SHADER_UNIFORM_VEC2);}
+ void Vec4(const char *name,Vector4 v){int loc=At(name);if(loc>=0)SetShaderValue(value,loc,&v,SHADER_UNIFORM_VEC4);}
  void Texture(const char *name,Texture2D tex){int loc=At(name);if(loc>=0)SetShaderValueTexture(value,loc,tex);}
  // Raylib's batch tracks four auxiliary samplers. Complex passes explicitly bind
  // additional units above that range, then release them after the batch is flushed.
@@ -93,6 +94,7 @@ struct ShaderProgram {
 };
 #include "highway.h"
 struct CarRenderer {
+ Vector4 shadowBounds{0,0,1,1};
  std::array<std::vector<Color>,5> output;std::array<Texture2D,5> textures{};RenderTexture2D shaded{};
  std::array<nz::DecalPlacement,3> lastDecals{};int decalPixels=0;
  int lastCar=-1,lastView=-1,lastPose=-1,lastFrame=-1,lastPitch=99;Color lastPaint{};bool lastHood=false,lastTwoTone=false,lastRaised=true;
@@ -150,6 +152,8 @@ struct CarRenderer {
    for(int y=0;y<128;y++)for(int x=0;x<64;x++)for(int m=0;m<5;m++)std::swap(output[m][y*128+x],output[m][y*128+127-x]);
    for(int i=0;i<PixelCount;i++){unsigned nx=65535u-(output[1][i].r*256u+output[1][i].g);output[1][i].r=(unsigned char)(nx/256);output[1][i].g=(unsigned char)(nx%256);}
   }
+  int x0=128,y0=128,x1=0,y1=0;for(int i=0;i<PixelCount;i++)if(output[0][i].a>127){x0=std::min(x0,i%128);y0=std::min(y0,i/128);x1=std::max(x1,i%128+1);y1=std::max(y1,i/128+1);}
+  shadowBounds={(float)x0/128,(float)y0/128,(float)x1/128,(float)y1/128};
   for(int i=0;i<5;i++)UpdateTexture(textures[i],output[i].data());
  }
  std::array<nz::TrailPoint,2> TailSources(Vector2 origin,Vector2 anchor)const{
@@ -262,9 +266,9 @@ static Environment MakeEnvironment(bool garage,const nz::Vehicle &v,bool heads,b
  if(tails||brake)e.lights.push_back({lampCamera(-2,e.lateral,.45f),{1,.08f,.04f},brake?1.35f:.45f,3.5f});
  return e;
 }
-static void Road(ShaderProgram &shader,CarRenderer &car,HighwayRenderer &highway,const Environment &env,Vector2 origin,float depth){
- shader.Lights(env);shader.Vec2("resolution",{(float)Width,(float)Height});shader.Float("travelled",env.distance);shader.Float("garage",env.garage?1.f:0.f);shader.Float("playerLateral",env.lateral);shader.Vec2("carOrigin",origin);shader.Float("carDepth",depth);
- BeginShaderMode(shader.value);highway.Ground(shader);shader.TextureSlot("carAlbedo",car.textures[0],5);shader.TextureSlot("carFront",car.textures[2],6);shader.TextureSlot("carBack",car.textures[3],7);DrawRectangle(0,0,Width,Height,WHITE);EndShaderMode();ShaderProgram::ClearSlot(5);ShaderProgram::ClearSlot(6);ShaderProgram::ClearSlot(7);
+static void Road(ShaderProgram &shader,CarRenderer &car,HighwayRenderer &highway,const Environment &env,Vector2 origin,float depth,Texture2D trafficGeometry){
+ shader.Lights(env);shader.Vec2("resolution",{(float)Width,(float)Height});shader.Float("travelled",env.distance);shader.Float("garage",env.garage?1.f:0.f);shader.Float("playerLateral",env.lateral);shader.Vec4("carBounds",car.shadowBounds);shader.Vec2("carOrigin",origin);shader.Float("carDepth",depth);
+ BeginShaderMode(shader.value);highway.Ground(shader);shader.TextureSlot("carAlbedo",car.textures[0],5);shader.TextureSlot("carFront",car.textures[2],6);shader.TextureSlot("carBack",car.textures[3],7);shader.TextureSlot("trafficGeometry",trafficGeometry,8);DrawRectangle(0,0,Width,Height,WHITE);EndShaderMode();ShaderProgram::ClearSlot(8);ShaderProgram::ClearSlot(5);ShaderProgram::ClearSlot(6);ShaderProgram::ClearSlot(7);
 }
 static void Label(const char *text,int x,int y,int size,Color color=Paper){DrawText(text,x,y,size,color);}
 static void Box(Rectangle r,Color color=Panel){DrawRectangleRec(r,color);DrawRectangleLinesEx(r,1,RGBA(49,65,79));}
@@ -498,15 +502,14 @@ int main(int argc,char **argv){
   Vector2 origin{std::round(carAnchor.x-64*spriteScale),std::round(carAnchor.y-79*spriteScale)};float depth=driving?WorldToCamera(0,(float)vehicle.lateral,0).z:0;
   car.Shade(carShader,env,origin,depth);
   if(effectsSmoke&&frame==12)car.ProbeComposite(resolveShader);
-  if(trafficSmoke&&frame==12)trafficRenderer.ProbeDepth();
+  if(trafficSmoke&&frame==12){trafficRenderer.ProbeDepth();trafficRenderer.ProbeLighting(roadShader);}
   if(scenerySmoke&&frame==12)highway.ProbeOcclusion(propShader,env);
   if(glowSmoke&&(frame==12||frame==580))car.ProbeGlow(glowShader,env);
   if(!driving){trails.Clear();trafficActive=false;}else if(!paused)trails.Update(vehicle,selected.car,tails,brake,car.TailSources(origin,carAnchor));
   bool showTraffic=driving&&(!smoke||trafficSmoke);if(showTraffic)trafficRenderer.Prepare(traffic,vehicle,carShader,env);
-  trafficRenderer.RoadLights(roadShader,showTraffic?traffic:nz::TrafficWorld{},vehicle);
+  trafficRenderer.RoadLights(roadShader,showTraffic?traffic:nz::TrafficWorld{},vehicle,showTraffic);
   Vector2 blur=MotionPixels(vehicle,driving&&effects.motionBlur);
-  BeginTextureMode(layers.world);ClearBackground(Ink);if(env.studio)StudioBackdrop();else Road(roadShader,car,highway,env,origin,depth);
-  if(showTraffic)trafficRenderer.Shadows(env,traffic,vehicle);
+  BeginTextureMode(layers.world);ClearBackground(Ink);if(env.studio)StudioBackdrop();else Road(roadShader,car,highway,env,origin,depth,trafficRenderer.shadowAtlas.texture);
   if(driving&&effects.trails)DrawTrails(trails,env,vehicle);
   EndTextureMode();
   BeginTextureMode(layers.props);ClearBackground(BLANK);
@@ -518,7 +521,7 @@ int main(int argc,char **argv){
   nz::Vehicle instruments=vehicle;if(effectsSmoke&&frame==584)instruments.rpm=nz::Cars[selected.car].redline;
   BeginTextureMode(layers.hud);ClearBackground(BLANK);if(driving)Hud(selected,instruments,heads,tails,audio.Ready(),muted,indicator,sceneClock);EndTextureMode();
   BeginTextureMode(target);ClearBackground(Ink);
-  motionShader.Vec2("resolution",{(float)Width,(float)Height});motionShader.Vec2("blurPixels",blur);
+  motionShader.Vec2("resolution",{(float)Width,(float)Height});motionShader.Vec2("blurPixels",blur);motionShader.Vec2("screenAnchor",env.anchor);motionShader.Float("pixelsPerMetre",PixelsPerMetre);motionShader.Float("visibleAhead",nz::VisibleAhead);motionShader.Float("driving",driving?1.f:0.f);
   BeginShaderMode(motionShader.value);Layer(layers.world.texture);EndShaderMode();
   car.Draw(resolveShader,glowShader,env,origin,layers.props.texture,layers.depth.texture,blur,depth);
   if(driving){

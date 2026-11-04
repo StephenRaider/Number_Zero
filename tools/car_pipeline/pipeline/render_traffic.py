@@ -19,7 +19,7 @@ def emission(m,rgb,image=None):
   t=nt.nodes.new('ShaderNodeTexImage');t.image=image;nt.links.new(t.outputs['Color'],e.inputs[0])
 
 for key,filename,length,width in MODELS:
- if args and key not in args:continue
+ if any(not a.startswith('--') for a in args) and key not in args:continue
  out=ROOT/'output/traffic'/key;out.mkdir(parents=True,exist_ok=True)
  bpy.ops.wm.read_factory_settings(use_empty=True);bpy.ops.import_scene.gltf(filepath=str(SOURCES/filename));sc=bpy.context.scene
  meshes=[o for o in sc.objects if o.type=='MESH']
@@ -28,11 +28,14 @@ for key,filename,length,width in MODELS:
  for o in meshes:
   mat=o.matrix_world.copy();o.animation_data_clear();o.parent=None;o.matrix_world=Matrix.Identity(4);o.data=o.data.copy();o.data.transform(mat)
  points=[v.co for o in meshes for v in o.data.vertices];lo=Vector([min(p[i] for p in points) for i in range(3)]);hi=Vector([max(p[i] for p in points) for i in range(3)]);centre=Vector(((lo.x+hi.x)/2,(lo.y+hi.y)/2,lo.z));scale=Vector((width/(hi.x-lo.x),length/(hi.y-lo.y),heights[key]/(hi.z-lo.z)))
+ # Transform imported split normals with the inverse transpose too. Editing
+ # vertices alone leaves glTF custom normals facing the old model direction.
+ signs=Vector((-1,-1,1)) if flip[key] else Vector((1,1,1))
+ normal_transform=Matrix.Diagonal(scale*signs).inverted().transposed()
  for o in meshes:
-  for v in o.data.vertices:
-   v.co=(v.co-centre)*scale
-   if flip[key]:v.co.x=-v.co.x;v.co.y=-v.co.y
-  o.data.update()
+  normals=[n.vector.copy() for n in o.data.corner_normals]
+  for v in o.data.vertices:v.co=((v.co-centre)*scale)*signs
+  o.data.normals_split_custom_set([(normal_transform@n).normalized() for n in normals]);o.data.update()
  # Source naming varies; explicit material identities keep paint out of glass and lamps.
  records={};category={}
  for m in list(bpy.data.materials):
@@ -99,6 +102,7 @@ for key,filename,length,width in MODELS:
     if o.material_slots[poly.material_index].material.name=='material_0' and all(i in selected for i in poly.vertices):poly.material_index=slot
  assert len(wheel_centres)==4,(key,'Missing road wheel')
  base={o.name:[v.co.copy() for v in o.data.vertices] for o in meshes}
+ base_normals={o.name:[n.vector.copy() for n in o.data.corner_normals] for o in meshes}
  print('VALIDATED WHEELS',key,len(wheel_centres),sum(map(len,wheel_vertices.values())),flush=True)
  sc.render.engine='CYCLES';sc.cycles.samples=1;sc.cycles.use_denoising=False;sc.cycles.use_adaptive_sampling=False;sc.cycles.filter_width=.01;sc.render.film_transparent=True;sc.render.dither_intensity=0;sc.render.resolution_x=N*SS;sc.render.resolution_y=N*SS;sc.render.resolution_percentage=100;sc.render.image_settings.file_format='PNG';sc.view_settings.view_transform='Standard';sc.view_settings.look='None';sc.view_settings.exposure=0;sc.view_settings.gamma=1
  data=bpy.data.cameras.new('Traffic orthographic');data.type='ORTHO';data.ortho_scale=N/PPM;data.shift_y=42/N;cam=bpy.data.objects.new('Traffic camera',data);sc.collection.objects.link(cam);sc.camera=cam
@@ -120,8 +124,14 @@ for key,filename,length,width in MODELS:
      else:
       v.co=yaw@p
       assert (v.co-yaw@p).length<1e-7
-    o.data.update()
-   for kind in ['albedo','nx','ny','depth','far','emit','finish']:
+    ellipse=Matrix.Diagonal(Vector((1,radius_y/radius_z,1)))@spin@Matrix.Diagonal(Vector((1,radius_z/radius_y,1)))
+    transformed=[]
+    for loop,n in zip(o.data.loops,base_normals[o.name]):
+     c=wheel_vertices[o.name].get(loop.vertex_index)
+     transform=yaw if c is None else yaw@(steer if c.y<0 else Matrix.Identity(3))@ellipse
+     transformed.append((transform.inverted().transposed()@n).normalized())
+    o.data.normals_split_custom_set(transformed);o.data.update()
+   for kind in (['nx','ny'] if '--normal-only' in args else ['albedo','nx','ny','depth','far','emit','finish']):
     cam.rotation_euler=(M if kind!='far' else M@Matrix.Rotation(math.pi,3,'Y')).to_euler();cam.location=B*(30 if kind!='far' else -30)
     sc.view_settings.view_transform='Standard' if kind=='albedo' else 'Raw';sc.render.image_settings.color_depth='16' if kind in guides else '8';sc.render.image_settings.color_mode='BW' if kind in guides else 'RGBA';sc.view_layers[0].material_override=guides.get(kind)
     if kind in ['albedo','emit','finish']:

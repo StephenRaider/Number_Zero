@@ -19,9 +19,14 @@ Per-model manifest.json records physical size, anchor, native scale and hashes.
 Wheel animation uses reviewed per-model axle centres and material/geometry gates.
 Only road-wheel vertices rotate; lamps, badges, steering wheels, spare wheels and
 bodywork remain fixed across spin frames. Rotation compensates for source tyre
-aspect ratio, keeping contact height stable. Traffic ground shadows ray-cast the
-front/back sprite depths toward the actual street lamps; there are no blob ellipses.
+aspect ratio, keeping contact height stable. Traffic ground shadows use the same per-light road shader as the player, reading
+front/back depths from a point-sampled atlas; there are no blob or dark overlays.
 
 Swift repair: wheel01 is explicitly charcoal rubber while rim_chrome remains
 silver. Small fitted rear lenses are inset to the actual narrower rear body,
 removing the protruding floating corner pieces from the earlier export.
+
+Normals are inverse-transpose transformed with model scale/orientation and updated
+with wheel spin/steer/body poses. The normal-only repair preserves all albedo,
+emission, depth and coverage data. Traffic geometry keeps its coverage and lamp glow has no separate distance ramp;
+the common world horizon haze controls their appearance at the end of the road.

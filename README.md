@@ -497,3 +497,31 @@ render, verify and sound-check commands with explicit external workspace paths.
 Raw models, Blender scenes, caches, diagnostics and HTML experiments still stay
 outside this game checkout. This versioned code folder is the deliberate exception
 to the earlier experiment-only pipeline layout.
+
+## Shared traffic lighting and horizon
+
+Traffic cars and scenery no longer ramp their own sprite/depth/glow opacity near
+the horizon. They keep opaque geometry and move through one longitudinal haze
+applied after opaque world composition (with blur enabled or disabled). Culling
+retains a padded contributor range beyond the horizon. The shared visible driving
+corridor is unchanged across aspect ratios; the one-second traffic alert remains.
+
+Traffic and player now cast road shadows through the SAME road shader. A native
+point-sampled geometry atlas supplies traffic front/back depths at texture slot 8;
+player maps keep slots 5-7. Each streetlight loses the same 80% direct contribution
+when blocked, with ambient and other lights preserved. Shadowed lights are unioned
+rather than stacking black overlays. Both paths clip rays to occupied geometry
+bounds, preserving marching precision despite different canvas sizes. The old
+traffic_shadow.fs overlay is removed.
+
+Traffic still shares car.fs for paint/glass response and self-shadowing. Its own
+head/tail/brake light spill now uses player-equivalent settings anchored to vehicle
+dimensions, within the existing light budget. Imported traffic split normals are
+properly inverse-transpose transformed during scale/flip and rotated during body,
+steering and wheel animation. Corrected normal maps retain original colour, lamps,
+depth, masks and silhouettes.
+
+The traffic smoke test checks opaque geometry beyond the horizon and compares
+identical player/traffic shadow volumes on the GPU: 1944 shadowed pixels, zero
+mismatches in the synthetic two-light scene. Existing depth/foreground compositing,
+scenery occlusion, glow, blur-toggle and widescreen checks also apply.

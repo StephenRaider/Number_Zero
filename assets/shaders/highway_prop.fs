@@ -56,6 +56,6 @@ void main(){
  vec3 albedo=base.rgb/max(base.a,.0001);
  float emitter=texture(emissionMap,uv).r;
  vec3 lit=pow(clamp(albedo,0.,1.),vec3(2.2))*lighting+specular+emitter*vec3(1.8,1.35,.72);
- float fade=1.-smoothstep(visibleAhead-8.,visibleAhead,station);
- finalColor=vec4(pow(max(lit,vec3(0)),vec3(1./2.2)),base.a*fade);
+
+ finalColor=vec4(pow(max(lit,vec3(0)),vec3(1./2.2)),base.a);
 }

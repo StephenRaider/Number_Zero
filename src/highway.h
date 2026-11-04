@@ -22,7 +22,7 @@ struct HighwayRenderer {
   if(env.garage)return;
   std::vector<Instance> instances;
   auto add=[&](int kind,float s,float l){
-   if(s>=nz::VisibleAhead)return;
+   if(s>=nz::VisibleAhead+32.f)return;
    auto anchor=Project(env.anchor,s,l);const auto &def=highway_assets::Props[kind];float scale=PixelsPerMetre/26.f;
    Rectangle bounds{anchor.x-def.anchorX*scale,anchor.y-def.anchorY*scale,def.canvas*scale,def.canvas*scale};
    if(bounds.x+bounds.width<0||bounds.y+bounds.height<0||bounds.x>Width||bounds.y>Height)return;
@@ -50,8 +50,7 @@ struct HighwayRenderer {
   for(const auto &instance:instances)if(layerMode!=2&&instance.kind<2){
    auto head=instance.kind==0?highway_assets::RightHead:highway_assets::LeftHead;
    auto light=Project(env.anchor,instance.forward+head.forward,instance.lateral+head.lateral,head.height);
-   float fade=std::clamp((nz::VisibleAhead-instance.forward)/8.f,0.f,1.f);
-   DrawCircleGradient((int)light.x,(int)light.y,5,RGBA(255,226,177,(int)(28*fade)),BLANK);
+   DrawCircleGradient((int)light.x,(int)light.y,5,RGBA(255,226,177,28),BLANK);
   }
  }
  void ProbeOcclusion(ShaderProgram &shader,Environment env){
