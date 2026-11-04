@@ -34,16 +34,21 @@ class TrafficWorld {
  // The stream moves with ordinary traffic; faster driving consumes more groups.
  static constexpr double BandLength=480.,StreamSpeed=24.;
  std::set<std::pair<std::int64_t,int>> emitted;
+ bool hasSecond=false;TrafficPlayer second{};
  static std::uint32_t LayoutHash(std::int64_t band,std::uint32_t seed){
   std::uint64_t v=(std::uint64_t)band+0x9e3779b97f4a7c15ull+seed;
   v=(v^(v>>30))*0xbf58476d1ce4e5b9ull;v=(v^(v>>27))*0x94d049bb133111ebull;
   return (std::uint32_t)(v^(v>>31));
  }
- void Populate(const TrafficPlayer &player,bool initial=false){
+ void Populate(const TrafficPlayer &player,bool initial=false,const TrafficPlayer *other=nullptr){
   const double origin=streamOrigin+StreamSpeed*clock;
   auto first=(std::int64_t)std::floor((player.station-origin-170)/BandLength);
   auto last=(std::int64_t)std::floor((player.station-origin+420)/BandLength);
-  for(auto it=emitted.begin();it!=emitted.end();)if(it->first<first-2||it->first>last+2)it=emitted.erase(it);else ++it;
+  for(auto it=emitted.begin();it!=emitted.end();){
+   bool keep=it->first>=first-2&&it->first<=last+2;
+   if(other){auto band=(std::int64_t)std::floor((other->station-origin)/BandLength);keep=keep||(it->first>=band-3&&it->first<=band+3);}
+   if(!keep)it=emitted.erase(it);else ++it;
+  }
   for(auto band=first;band<=last;band++){
    std::uint32_t state=LayoutHash(band,layoutSeed);
    auto random=[&](){state=1664525u*state+1013904223u;return (state>>8)/16777216.;};
@@ -56,7 +61,8 @@ class TrafficWorld {
     auto key=std::make_pair(band,slot);double relative=station-player.station;
     if(emitted.count(key)||relative< -170||relative>420)continue;
     if(initial?std::abs(relative)<35:(relative> -90&&relative<110))continue;
-    if(cars.size()>=28)continue;
+    if(other){double delta=station-other->station;if(initial?std::abs(delta)<35:(delta> -90&&delta<110))continue;}
+    if(cars.size()>=(hasSecond?56u:28u))continue;
     if(Add(lane,station,player))emitted.insert(key);
    }
   }
@@ -68,6 +74,7 @@ class TrafficWorld {
   auto add=[&](double station,double speed,double length){double delta=station-subject.station,gap=std::abs(delta)-(length+spec.length)*.5;if(delta>=0&&gap<result.front){result.front=gap;result.frontSpeed=speed;}if(delta<0&&gap<result.rear){result.rear=gap;result.rearSpeed=speed;}};
   for(const auto &a:cars)if(a.id!=subject.id&&Occupies(a,lane))add(a.station,a.speed,TrafficTypes[a.type].length);
   if(withPlayer&&std::abs(player.lateral-LaneCentres[lane])<(player.width+spec.width)*.5+.10)add(player.station,player.speed,player.length);
+  if(withPlayer&&hasSecond&&std::abs(second.lateral-LaneCentres[lane])<(second.width+spec.width)*.5+.10)add(second.station,second.speed,second.length);
   return result;
  }
  bool Safe(const TrafficCar &a,int lane,const TrafficPlayer &player)const{
@@ -86,14 +93,15 @@ class TrafficWorld {
  }
 public:
  std::vector<TrafficCar> cars;double clock=0;int laneChanges=0,contacts=0;
- void Reset(const TrafficPlayer &player,std::uint32_t seed=12345){
+ void Reset(const TrafficPlayer &player,std::uint32_t seed=12345,const TrafficPlayer *other=nullptr){
   cars.clear();rng=seed;nextId=1;clock=contactCooldown=0;laneChanges=contacts=0;streamOrigin=player.station;layoutSeed=seed;emitted.clear();
-  Populate(player,true);
+  hasSecond=other!=nullptr;if(other)second=*other;Populate(player,true,other);if(other)Populate(*other,true,&player);
  }
- void Step(const TrafficPlayer &player,double dt){
+ void Step(const TrafficPlayer &player,double dt,const TrafficPlayer *other=nullptr){
+  hasSecond=other!=nullptr;if(other)second=*other;
   clock+=dt;contactCooldown=std::max(0.,contactCooldown-dt);
-  cars.erase(std::remove_if(cars.begin(),cars.end(),[&](const TrafficCar&a){return a.station<player.station-170||a.station>player.station+450;}),cars.end());
-  Populate(player);
+  cars.erase(std::remove_if(cars.begin(),cars.end(),[&](const TrafficCar&a){return (a.station<player.station-170||a.station>player.station+450)&&(!other||(a.station<other->station-170||a.station>other->station+450));}),cars.end());
+  Populate(player,false,other);if(other)Populate(*other,false,&player);
   std::vector<double> acceleration(cars.size());
   for(size_t i=0;i<cars.size();i++){
    auto &a=cars[i];a.decision-=dt;auto gap=Neighbours(a,a.lane,player);
@@ -127,7 +135,8 @@ public:
    if(gap.front<.3){a.station-=.3-gap.front;a.speed=std::min(a.speed,gap.frontSpeed);a.braking=true;}
   }
  }
- bool ResolveContact(Vehicle &player){
+ bool ResolveContact(Vehicle &player,double *racerCooldown=nullptr,int *racerContacts=nullptr){
+  double &cooldown=racerCooldown?*racerCooldown:contactCooldown;
   bool contact=false;for(auto &a:cars){const auto &spec=TrafficTypes[a.type];double halfLength=(4.5+spec.length)*.5,halfWidth=(1.95+spec.width)*.5;
    if(std::abs(player.distance-a.station)>=halfLength||std::abs(player.lateral-a.lateral)>=halfWidth)continue;
    contact=true;double longitudinal=halfLength-std::abs(player.distance-a.station),lateral=halfWidth-std::abs(player.lateral-a.lateral);
@@ -137,10 +146,10 @@ public:
    }else{
     double separated=a.lateral+(player.lateral<a.lateral?-1:1)*(halfWidth+.03);
     if(separated< -6.05||separated>6.05){player.distance=a.station-halfLength-.08;player.speed=std::min(player.speed,a.speed);}else player.lateral=separated;
-    player.lateralSpeed=0;if(contactCooldown<=0)player.speed*=.88;a.braking=true;
+    player.lateralSpeed=0;if(cooldown<=0)player.speed*=.88;a.braking=true;
    }
   }
-  if(contact&&contactCooldown<=0){++contacts;contactCooldown=.5;}return contact;
+  if(contact&&cooldown<=0){if(racerContacts)++*racerContacts;else ++contacts;cooldown=.5;}return contact;
  }
 };
 }

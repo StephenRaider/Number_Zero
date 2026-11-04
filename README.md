@@ -1,8 +1,8 @@
 # Number Zero
 
 A native Raylib highway-driving prototype with isometric pixel cars and dynamic
-lighting. Choose the Silvia S13 or Civic EK9, choose its paint, then drive a
-straight four-lane highway at night.
+lighting. Choose a Silvia S13, Civic EK9, Testarossa or Supra SZ and its paint,
+then drive or race along a straight four-lane highway at night.
 
 ## Play on this machine
 
@@ -14,8 +14,8 @@ The executable finds the committed assets relative to its location. It needs no
 Blender, Python, browser, network connection or audio device.
 
 In the garage, select a car and paint swatch, or use the colour picker. The S13
-also offers two-tone paint, and either car can use a black bonnet. Click Start
-Night Drive or press Enter.
+also offers two-tone paint, and each car can use a black bonnet. Choose DRIVE
+or RACE / 10 KM, then click Start or press Enter.
 
 | Control | Action |
 | --- | --- |
@@ -26,7 +26,7 @@ Night Drive or press Enter.
 | T | Toggle tail lights; braking still activates brake lights |
 | Escape | Pause/resume; exit from garage |
 | Tab | Return to garage |
-| R | Reset the drive |
+| R | Reset the drive / restart the race |
 
 Steering is continuous rather than lane snapping. Its response depends on speed,
 car setup and available tyre grip. The car settles after releasing steering.
@@ -39,7 +39,7 @@ Press **F11** to toggle borderless fullscreen.
 
 ## Implemented
 
-- Garage with both cars, paint selection, optional two-tone/black hood.
+- Garage with four cars, paint selection, layered decals and optional two-tone/black hood.
 - Scrolling straight highway, lane markings, barriers and street lamps.
 - GPU normal-map lighting, highlights, depth-aware self/ground shadows,
   headlight beams, tail-light spill and brake-light emission.
@@ -47,10 +47,34 @@ Press **F11** to toggle borderless fullscreen.
 - Fixed-120-Hz drivetrain, drag, rolling resistance, braking and lateral motion.
 - Speed, gear, RPM, pedal inputs and distance HUD.
 
-The highway is currently a driving test with ordinary traffic. Rivals, parking areas,
-and damage are future work.
+Drive mode is free driving with ordinary traffic. Race mode adds one white
+Testarossa opponent. Parking areas and damage are future work.
 The stock wheels remain the car-specific prototype exports; the planned shared
 standard-size wheel library has not been implemented.
+
+## Race mode
+
+Select **RACE / 10 KM** in the garage. Both cars roll side by side at 50 km/h
+through a three-second countdown; that distance is excluded from the race.
+After GO, the first car to cover 10 km wins. The HUD shows both distances,
+the lead in metres and elapsed time. A lit checkered stripe marks the finish.
+The result screen offers Rematch and Garage; R and Tab work too. Pause stops
+both racers and traffic.
+
+The white Testarossa uses the same stock vehicle physics, automatic gearbox,
+brakes and collision rules as the player. Its driver reacts about every 120 ms,
+sees only traffic within the shared forward visibility range (42.5 m) and 25 m
+behind, and tries the first safe adjacent lane when blocked. It cannot read
+traffic generation seeds, lane-density patterns or future spawns. Its clear-road
+cruising target is 235 km/h; there is no catch-up boost. It can hesitate or make
+contact, rather than driving perfectly. Traffic remains simulated around both
+racers even when they separate, so the leader still has to weave.
+
+`--race` opens the garage with Race selected. `--race-smoke-test` verifies the
+rolling start, rival rendering and result UI (with an accelerated finish setup).
+`tests/race_tests.cpp` separately runs six complete 10 km simulations, checks
+local-only perception, traffic coverage, rolling-start equality and same-step
+finish ordering.
 
 ## Build and verify
 
@@ -73,6 +97,8 @@ g++ -std=c++17 -O2 -Wall -Wextra -Isrc tests/trail_tests.cpp -o build/trail_test
 ./build/vehicle_tests.exe
 ./build/audio_tests.exe
 ./build/trail_tests.exe
+g++ -std=c++17 -O2 -Wall -Wextra -Isrc tests/race_tests.cpp -o build/race_tests.exe
+./build/race_tests.exe
 ```
 
 Graphics smoke tests create a hidden native window, run a scripted drive and
@@ -81,6 +107,7 @@ brake sequence, and export captures under ignored `build/qa/`:
 ```text
 ./build/NumberZero.exe --smoke-test
 ./build/NumberZero.exe --smoke-test --civic
+./build/NumberZero.exe --race-smoke-test --testarossa --ultrawide
 ```
 
 See `docs/PERFORMANCE.md` for stock references, assumptions and measured model
@@ -90,6 +117,7 @@ results. These results are simulation estimates, not factory performance claims.
 
 - `src/main.cpp`: garage, native controls, rendering, highway and HUD.
 - `src/vehicle.h`: stock car data and fixed-step driving model.
+- `src/race.h`: rolling start, reactive rival driver and 10 km race rules.
 - `assets/cars/`: committed runtime car sprites, masks and manifests.
 - `assets/shaders/`: car relighting and lit road shaders.
 - `tests/vehicle_tests.cpp`: driving behaviour/performance checks.

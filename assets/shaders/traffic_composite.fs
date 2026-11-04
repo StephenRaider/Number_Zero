@@ -3,7 +3,7 @@ in vec2 fragTexCoord;
 in vec4 fragColor;
 out vec4 finalColor;
 uniform sampler2D texture0,frontMap;
-uniform float nativeSize,spritePixels,baseDepth,station,visibleAhead;
+uniform float nativeSize,spritePixels,baseDepth,station,visibleAhead,geometryRange;
 uniform int layerMode;
 float unpack16(vec2 v){return (round(v.x*255.)*256.+round(v.y*255.))/65535.;}
 void main(){
@@ -20,7 +20,7 @@ void main(){
  }
  colour*=fragColor;
  if(colour.a<.02)discard;
- float w=(unpack16(texture(frontMap,depthUV).rg)-.5)*12.+baseDepth;gl_FragDepth=clamp(.5-w/256.,.001,.999);
+ float w=(unpack16(texture(frontMap,depthUV).rg)-.5)*geometryRange+baseDepth;gl_FragDepth=clamp(.5-w/256.,.001,.999);
 
  if(layerMode==2){float encoded=round(clamp(w/256.+.5,0.,1.)*65535.);finalColor=vec4(floor(encoded/256.)/255.,mod(encoded,256.)/255.,0.,colour.a);}
  else finalColor=vec4(colour.rgb,colour.a);

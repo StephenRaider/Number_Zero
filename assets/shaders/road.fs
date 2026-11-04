@@ -9,7 +9,8 @@ uniform float travelled;
 uniform float garage;
 uniform float playerLateral;
 uniform float carYaw;
-uniform float visibleAhead;
+uniform float visibleAhead,raceFinishStation;
+uniform int raceMode;
 uniform float beamReach;
 uniform float beamBase;
 uniform float beamSpread;
@@ -30,7 +31,7 @@ uniform sampler2D carFront;
 uniform sampler2D carBack;
 uniform sampler2D trafficGeometry;
 uniform int trafficShadowCount,shadowProbe;
-uniform vec4 trafficOccluder[28],trafficBounds[28],carBounds;
+uniform vec4 trafficOccluder[32],trafficBounds[32],carBounds;
 uniform int lightCount;
 uniform int streetCount;
 uniform vec3 lightPosition[32];
@@ -108,6 +109,10 @@ void main(){
   }
 
  }
+ if(garage<.5&&raceMode>0&&abs(lateral)<7.&&abs(s-raceFinishStation)<.6){
+  float checker=mod(floor((lateral+7.)*2.)+floor((s-raceFinishStation+.6)*2.),2.);
+  base=mix(vec3(.055,.065,.075),vec3(.68,.70,.67),checker);
+ }
  vec3 lighting=vec3(.105,.12,.16);
  for(int i=0;i<32;i++){
   if(i>=lightCount)break;
@@ -119,7 +124,7 @@ void main(){
   bool blocked=false;
   if(i<streetCount){
    blocked=shadow(p,lightPosition[i],-1);
-   for(int actor=0;actor<28;actor++){if(actor>=trafficShadowCount||blocked)break;blocked=shadow(p,lightPosition[i],actor);}
+   for(int actor=0;actor<32;actor++){if(actor>=trafficShadowCount||blocked)break;blocked=shadow(p,lightPosition[i],actor);}
   }
   float visibility=blocked?.20:1.;
   lighting+=pow(lightColour[i],vec3(2.2))*a*lightPower[i]*diff*visibility;

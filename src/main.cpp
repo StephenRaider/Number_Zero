@@ -3,6 +3,7 @@
 #include "vehicle.h"
 #include "trail_history.h"
 #include "traffic.h"
+#include "race.h"
 #include "scene.h"
 #include "decal_projection.h"
 #include "engine_audio.h"
@@ -282,8 +283,8 @@ static bool Toggle(Rectangle r,const char *text,bool &value,Vector2 mouse){
  if(CheckCollisionPointRec(mouse,r)&&IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){value=!value;return true;}return false;
 }
 #include "decal_editor.h"
-static void Garage(Selection &s,Vector2 mouse,bool &start,bool &quit,bool &heads,int &indicator,bool &decalEditor){
- DrawRectangle(0,0,640,57,RGBA(9,15,23,235));Label("NUMBER ZERO",24,16,23);Label("NIGHT DRIVE  /  PROTOTYPE 01",25,42,9,Mint);
+static void Garage(Selection &s,Vector2 mouse,bool &start,bool &quit,bool &heads,int &indicator,bool &decalEditor,bool &raceMode){
+ DrawRectangle(0,0,640,57,RGBA(9,15,23,235));Label("NUMBER ZERO",24,16,23);Label(raceMode?"ROLLING RACE  /  10 KM":"NIGHT DRIVE  /  PROTOTYPE 01",25,42,9,Mint);
  Label("CHOOSE YOUR CAR",381,73,10,Muted);
  for(int i=0;i<(int)nz::Cars.size();i++){
   Rectangle r{378.f,91.f+i*26,240,24};Box(r,s.car==i?RGBA(36,58,65):Panel);
@@ -301,9 +302,11 @@ static void Garage(Selection &s,Vector2 mouse,bool &start,bool &quit,bool &heads
  DrawRectangleLinesEx(square,1,RGBA(62,78,89));Label(TextFormat("#%02X%02X%02X",s.paint.r,s.paint.g,s.paint.b),381,291,9,Muted);
  if(s.car==0)Toggle({443,291,102,13},"Two-tone",s.twoTone,mouse);
  Toggle({537,291,80,13},"Black hood",s.blackHood,mouse);
- if(Button({378,316,240,27},"START NIGHT DRIVE   [ENTER]",mouse,true)||Pressed(KEY_ENTER))start=true;
+ if(Button({378,316,240,27},raceMode?"START 10 KM RACE   [ENTER]":"START NIGHT DRIVE   [ENTER]",mouse,true)||Pressed(KEY_ENTER))start=true;
  Label("ORBITING STUDIO LIGHT",25,75,9,Muted);
  if(Button({25,94,108,20},"DECALS / GRAPHICS",mouse))decalEditor=true;
+ if(Button({25,121,103,19},"DRIVE",mouse,!raceMode))raceMode=false;
+ if(Button({135,121,103,19},"RACE / 10 KM",mouse,raceMode))raceMode=true;
  if(Button({25,252,77,18},heads?"H LIGHTS ON":"H LIGHTS OFF",mouse,heads))heads=!heads;
  if(Button({106,252,64,18},"Z LEFT",mouse,indicator==-1))indicator=indicator==-1?0:-1;
  if(Button({174,252,64,18},"X HAZARD",mouse,indicator==2))indicator=indicator==2?0:2;
@@ -362,6 +365,26 @@ static void Hud(const Selection &s,const nz::Vehicle &v,bool heads,bool tails,bo
  else if(!v.automatic&&v.rpm>spec.shiftRpm)Label("SHIFT",(int)left,(int)centre.y-45,7,Amber);
  else if(std::abs(v.lateral)>5.9)Label("EDGE",(int)left,(int)centre.y-45,7,Amber);
 }
+static void RaceHud(const nz::RaceSession &race,const nz::Vehicle &player,Vector2 mouse,bool &retry,bool &garage){
+ float x=Width*.5f-130;double progress=race.PlayerProgress(player),other=race.OpponentProgress();
+ DrawRectangle((int)x-8,8,276,47,RGBA(9,16,24,215));
+ Label("10 KM  /  WHITE TESTAROSSA",(int)x,13,9,Paper);
+ Label(TextFormat("YOU %.2f    RIVAL %.2f km",progress/1000,other/1000),(int)x,27,9,Mint);
+ double gap=race.opponent.distance-player.distance;
+ Label(TextFormat("%s %.0f m  |  %.1f s",gap>=0?"RIVAL AHEAD":"YOU LEAD",std::abs(gap),race.elapsed),(int)x,40,8,Muted);
+ if(race.phase==nz::RacePhase::Countdown){
+  Label(TextFormat("%d",(int)std::ceil(race.countdown)),Width/2-9,Height/2-28,36,Amber);Label("ROLLING START  /  50 KM/H",Width/2-89,Height/2+14,10,Paper);
+ }else if(race.elapsed<.85){Label("GO",Width/2-19,Height/2-24,30,Mint);}
+ if(race.phase==nz::RacePhase::Finished){
+  float bx=Width*.5f-145,by=Height*.5f-69;Box({bx,by,290,139},RGBA(11,20,29,248));
+  const char *result=race.winner==nz::RaceWinner::Player?"YOU WIN":race.winner==nz::RaceWinner::Tie?"PHOTO FINISH / TIE":"TESTAROSSA WINS";
+  Label(result,(int)bx+18,(int)by+15,21,race.winner==nz::RaceWinner::Player?Mint:Amber);
+  double time=race.winner==nz::RaceWinner::Player?race.playerFinish:race.opponentFinish;
+  Label(TextFormat("10.00 KM FINISH  /  %.2f SEC",time),(int)bx+18,(int)by+46,10,Paper);
+  Label("R REMATCH   /   TAB GARAGE",(int)bx+18,(int)by+67,9,Muted);
+  retry=Button({bx+18,by+93,118,26},"REMATCH",mouse,true);garage=Button({bx+147,by+93,124,26},"GARAGE",mouse);
+ }
+}
 static void PauseMenu(EffectSettings &effects,Vector2 mouse,bool &paused,bool &driving,double &accumulator){
  float x=(float)Width-258,y=16;
  DrawRectangle(0,0,Width,Height,RGBA(3,9,17,22));Box({x,y,242,170},RGBA(12,21,30,238));
@@ -401,7 +424,7 @@ static fs::path LocateAssets(){
  throw std::runtime_error("Cannot find assets/cars/catalog.json. Run from the Number_Zero folder.");
 }
 int main(int argc,char **argv){
- bool limiterDeleteSmoke=false,trafficSmoke=false,decalSmoke=false,smoke=false,audioSmoke=false,resizeSmoke=false,manualSmoke=false,featureSmoke=false,glowSmoke=false,garageSmoke=false,blackPaint=false,scenerySmoke=false,effectsSmoke=false;int smokeCar=0,windowWidth=1280,windowHeight=720;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--traffic-smoke-test"){smoke=true;trafficSmoke=true;}if(std::string(argv[i])=="--decal-smoke-test"){smoke=true;decalSmoke=true;}if(std::string(argv[i])=="--resize-smoke-test"){smoke=true;resizeSmoke=true;}if(std::string(argv[i])=="--audio-smoke-test"){smoke=true;audioSmoke=true;}if(std::string(argv[i])=="--effects-smoke-test"){smoke=true;effectsSmoke=true;}if(std::string(argv[i])=="--scenery-smoke-test"){smoke=true;scenerySmoke=true;}if(std::string(argv[i])=="--black")blackPaint=true;if(std::string(argv[i])=="--garage-smoke-test"){smoke=true;garageSmoke=true;}if(std::string(argv[i])=="--glow-smoke-test"){smoke=true;glowSmoke=true;}if(std::string(argv[i])=="--manual")manualSmoke=true;if(std::string(argv[i])=="--limiter-delete")limiterDeleteSmoke=true;if(std::string(argv[i])=="--feature-smoke-test"){smoke=true;featureSmoke=true;}if(std::string(argv[i])=="--civic")smokeCar=1;if(std::string(argv[i])=="--testarossa")smokeCar=2;if(std::string(argv[i])=="--supra")smokeCar=3;if(std::string(argv[i])=="--ultrawide"){windowWidth=2560;windowHeight=1080;}if(std::string(argv[i])=="--superwide"){windowWidth=3840;windowHeight=1080;}if(std::string(argv[i])=="--tall"){windowWidth=960;windowHeight=900;}}
+ bool raceMode=false,raceSmoke=false,limiterDeleteSmoke=false,trafficSmoke=false,decalSmoke=false,smoke=false,audioSmoke=false,resizeSmoke=false,manualSmoke=false,featureSmoke=false,glowSmoke=false,garageSmoke=false,blackPaint=false,scenerySmoke=false,effectsSmoke=false;int smokeCar=0,windowWidth=1280,windowHeight=720;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--race")raceMode=true;if(std::string(argv[i])=="--race-smoke-test"){smoke=true;trafficSmoke=true;raceSmoke=true;raceMode=true;}if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--traffic-smoke-test"){smoke=true;trafficSmoke=true;}if(std::string(argv[i])=="--decal-smoke-test"){smoke=true;decalSmoke=true;}if(std::string(argv[i])=="--resize-smoke-test"){smoke=true;resizeSmoke=true;}if(std::string(argv[i])=="--audio-smoke-test"){smoke=true;audioSmoke=true;}if(std::string(argv[i])=="--effects-smoke-test"){smoke=true;effectsSmoke=true;}if(std::string(argv[i])=="--scenery-smoke-test"){smoke=true;scenerySmoke=true;}if(std::string(argv[i])=="--black")blackPaint=true;if(std::string(argv[i])=="--garage-smoke-test"){smoke=true;garageSmoke=true;}if(std::string(argv[i])=="--glow-smoke-test"){smoke=true;glowSmoke=true;}if(std::string(argv[i])=="--manual")manualSmoke=true;if(std::string(argv[i])=="--limiter-delete")limiterDeleteSmoke=true;if(std::string(argv[i])=="--feature-smoke-test"){smoke=true;featureSmoke=true;}if(std::string(argv[i])=="--civic")smokeCar=1;if(std::string(argv[i])=="--testarossa")smokeCar=2;if(std::string(argv[i])=="--supra")smokeCar=3;if(std::string(argv[i])=="--ultrawide"){windowWidth=2560;windowHeight=1080;}if(std::string(argv[i])=="--superwide"){windowWidth=3840;windowHeight=1080;}if(std::string(argv[i])=="--tall"){windowWidth=960;windowHeight=900;}}
  SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_VSYNC_HINT|(smoke?FLAG_WINDOW_HIDDEN:0));InitWindow(windowWidth,windowHeight,"Number Zero | Highway Prototype");SetWindowMinSize(800,450);SetTargetFPS(60);SetExitKey(KEY_NULL);
  SetTraceLogLevel(LOG_WARNING);
  try{
@@ -410,11 +433,12 @@ int main(int argc,char **argv){
  if(audioSmoke&&!audio.Ready())throw std::runtime_error("Audio smoke test needs an available output device");
  ShaderProgram carShader(assets/"shaders/car.fs"),roadShader(assets/"shaders/road.fs"),resolveShader(assets/"shaders/car_resolve.fs"),glowShader(assets/"shaders/lamp_glow.fs"),propShader(assets/"shaders/highway_prop.fs"),motionShader(assets/"shaders/motion_blur.fs"),hudGlowShader(assets/"shaders/hud_glow.fs");
  HighwayRenderer highway(assets);DecalLibrary decals(assets);TrafficRenderer trafficRenderer(assets);nz::TrafficWorld traffic;bool trafficActive=false;
- std::array<CarArt,nz::Cars.size()> art;for(size_t i=0;i<art.size();i++)art[i]=LoadCar(assets,nz::Cars[i]);CarRenderer car;
+ std::array<CarArt,nz::Cars.size()> art;for(size_t i=0;i<art.size();i++)art[i]=LoadCar(assets,nz::Cars[i]);CarRenderer car,opponentCar;
  auto initialView=nz::MakeViewport(GetScreenWidth(),GetScreenHeight());Width=initialView.width;Height=initialView.height;
  RenderTexture2D target=LoadRenderTexture(Width,Height);SetTextureFilter(target.texture,TEXTURE_FILTER_POINT);
  EffectLayers layers;layers.Resize(Width,Height);EffectSettings effects;nz::TailHistory trails;
  Selection selected;selected.manual=manualSmoke;selected.car=smokeCar;selected.RestorePaint();if(smokeCar==1)selected.paint=RGBA(42,89,149);if(blackPaint){selected.paint=RGBA(28,31,36);selected.twoTone=false;}nz::Vehicle vehicle;bool driving=false,paused=false,quit=false,heads=true,tails=true,muted=false;
+ nz::RaceSession race;Selection opponentChoice;opponentChoice.car=2;opponentChoice.paint=WHITE;opponentChoice.twoTone=false;opponentChoice.blackHood=false;
  bool decalEditor=decalSmoke;int decalView=0,decalLayer=0;
  if(limiterDeleteSmoke)selected.limiterDeleted[selected.car]=true;
  const auto decalSave=root/"build/customisation.cfg";if(!smoke){LoadDecalSettings(decalSave,selected,decals);if(smokeCar)selected.SelectCar(smokeCar);if(manualSmoke)selected.manual=true;if(limiterDeleteSmoke)selected.limiterDeleted[selected.car]=true;}
@@ -464,7 +488,7 @@ int main(int argc,char **argv){
   }
   float scale=(float)viewport.scale;sceneClock+=dt;
   Rectangle destination{(GetScreenWidth()-Width*scale)*.5f,(GetScreenHeight()-Height*scale)*.5f,Width*scale,Height*scale};Vector2 nativeMouse=GetMousePosition(),mouse{(nativeMouse.x-destination.x)/scale,(nativeMouse.y-destination.y)/scale};
-  if(smoke&&!garageSmoke&&!decalSmoke&&frame==30){driving=true;vehicle=nz::Vehicle{};if(scenerySmoke)vehicle.lateral=5.25;vehicle.automatic=!selected.manual;vehicle.speedLimiterDeleted=selected.limiterDeleted[selected.car];vehicle.rpm=nz::Cars[selected.car].idle;}
+  if(smoke&&!garageSmoke&&!decalSmoke&&frame==30){driving=true;vehicle=nz::Vehicle{};if(scenerySmoke)vehicle.lateral=5.25;vehicle.automatic=!selected.manual;vehicle.speedLimiterDeleted=selected.limiterDeleted[selected.car];vehicle.rpm=nz::Cars[selected.car].idle;if(raceMode)race.Start(vehicle,nz::Cars[selected.car],!selected.manual,selected.limiterDeleted[selected.car]);}
   if(Pressed(KEY_H))heads=!heads;
   if(Pressed(KEY_T))tails=!tails;
   if(Pressed(KEY_Z))indicator=indicator==-1?0:-1;
@@ -479,15 +503,24 @@ int main(int argc,char **argv){
    if(!smoke&&Pressed(KEY_ESCAPE))paused=!paused;
    if(!smoke&&!IsWindowFocused())paused=true;
    if(Pressed(KEY_TAB)){driving=false;paused=false;accumulator=0;}
-   if(Pressed(KEY_R)){trails.Clear();trafficActive=false;vehicle=nz::Vehicle{};vehicle.automatic=!selected.manual;vehicle.speedLimiterDeleted=selected.limiterDeleted[selected.car];vehicle.rpm=nz::Cars[selected.car].idle;}
+   if(Pressed(KEY_R)){trails.Clear();trafficActive=false;vehicle=nz::Vehicle{};vehicle.automatic=!selected.manual;vehicle.speedLimiterDeleted=selected.limiterDeleted[selected.car];vehicle.rpm=nz::Cars[selected.car].idle;if(raceMode)race.Start(vehicle,nz::Cars[selected.car],!selected.manual,selected.limiterDeleted[selected.car]);}
    if(smoke){double t=(frame-30)/60.;double cutoff=selected.car==2?8.:10.;input.throttle=t<cutoff?1:0;input.brake=t>=cutoff?1:0;input.steer=t>3&&t<4?.65:t>6&&t<7?-.65:0;}
    else{input.throttle=(IsKeyDown(KEY_W)||IsKeyDown(KEY_UP))?1:0;input.brake=(IsKeyDown(KEY_S)||IsKeyDown(KEY_DOWN)||IsKeyDown(KEY_SPACE))?1:0;input.steer=((IsKeyDown(KEY_D)||IsKeyDown(KEY_RIGHT))?1:0)-((IsKeyDown(KEY_A)||IsKeyDown(KEY_LEFT))?1:0);}
-   if(!paused&&!vehicle.automatic){
+   if(!paused&&!vehicle.automatic&&(!raceMode||race.phase==nz::RacePhase::Racing)){
     if(Pressed(KEY_Q))nz::Shift(vehicle,nz::Cars[selected.car],-1);
     if(Pressed(KEY_E)||(smoke&&vehicle.rpm>nz::Cars[selected.car].shiftRpm-100))nz::Shift(vehicle,nz::Cars[selected.car],1);
    }
-   if(!trafficActive){traffic.Reset({vehicle.distance,vehicle.lateral,vehicle.speed});trafficActive=true;if(trafficSmoke){vehicle.speed=28;for(size_t i=0;i<traffic.cars.size();i++){auto &a=traffic.cars[i];a.type=(int)i%5;a.station=vehicle.distance+10+(i%4)*8+(i/4)*30;a.cruise=a.speed=(78+(i%5)*4)/3.6;}}}
-   if(!paused){accumulator+=dt;while(accumulator>=1./120.){nz::Step(vehicle,nz::Cars[selected.car],input,1./120.);if(!smoke||trafficSmoke){traffic.Step({vehicle.distance,vehicle.lateral,vehicle.speed},1./120.);if(traffic.ResolveContact(vehicle))trails.Clear();}accumulator-=1./120.;}}
+   if(!trafficActive){
+    auto other=nz::RaceSession::Observer(race.opponent);traffic.Reset({vehicle.distance,vehicle.lateral,vehicle.speed},12345,raceMode?&other:nullptr);trafficActive=true;
+    if(trafficSmoke&&!raceSmoke){vehicle.speed=28;for(size_t i=0;i<traffic.cars.size();i++){auto &a=traffic.cars[i];a.type=(int)i%5;a.station=vehicle.distance+10+(i%4)*8+(i/4)*30;a.cruise=a.speed=(78+(i%5)*4)/3.6;}}
+   }
+   if(raceSmoke&&frame==120&&(std::abs(vehicle.speed-nz::RollingSpeed)>.001||std::abs(race.opponent.speed-nz::RollingSpeed)>.001))throw std::runtime_error("Race rolling start did not hold both cars at 50km/h");
+   if(raceSmoke&&frame==820&&race.phase==nz::RacePhase::Racing){vehicle.distance=race.startLine+nz::RaceDistance-.1;vehicle.speed=30;race.opponent.distance=vehicle.distance-20;race.opponent.speed=20;}
+   if(!paused){accumulator+=dt;while(accumulator>=1./120.){
+    if(raceMode)race.Step(vehicle,nz::Cars[selected.car],input,traffic,1./120.);
+    else{nz::Step(vehicle,nz::Cars[selected.car],input,1./120.);if(!smoke||trafficSmoke){traffic.Step({vehicle.distance,vehicle.lateral,vehicle.speed},1./120.);if(traffic.ResolveContact(vehicle))trails.Clear();}}
+    accumulator-=1./120.;
+   }}
   }
   if(decalSmoke){decalView=frame<45?0:1;if(frame==90){decalEditor=false;driving=true;vehicle.automatic=!selected.manual;vehicle.speedLimiterDeleted=selected.limiterDeleted[selected.car];}if(frame==120)vehicle.pitch=1.5;}
   audio.Update(nz::DrivingSound(vehicle,selected.car,driving,paused,muted));
@@ -507,6 +540,19 @@ int main(int argc,char **argv){
   if(glowSmoke&&(frame==12||frame==580))car.ProbeGlow(glowShader,env);
   if(!driving){trails.Clear();trafficActive=false;}else if(!paused)trails.Update(vehicle,selected.car,tails,brake,car.TailSources(origin,carAnchor));
   bool showTraffic=driving&&(!smoke||trafficSmoke);if(showTraffic)trafficRenderer.Prepare(traffic,vehicle,carShader,env);
+  Environment rivalLight=env;Vector2 rivalOrigin{};float rivalDepth=0,rivalStation=(float)(race.opponent.distance-vehicle.distance);bool showRival=driving&&raceMode;
+  if(showRival){
+   rivalLight.heads=rivalLight.tails=true;rivalLight.brake=race.opponent.brake>.1;rivalLight.indicatorLeft=rivalLight.indicatorRight=0;rivalLight.yaw=nz::SpriteYaw(race.opponent.yaw);
+   auto local=[&](float forward,float side,Vector3 colour,float power,float radius){if(rivalLight.lights.size()<32){float yaw=rivalLight.yaw;rivalLight.lights.push_back({WorldToCamera(rivalStation+forward*std::cos(yaw)-side*std::sin(yaw),(float)race.opponent.lateral+forward*std::sin(yaw)+side*std::cos(yaw),.5f),colour,power,radius});}};
+   for(int side:{-1,1})local(2,side*.56f,{1,.88f,.65f},.42f,3.2f);
+   local(-2,0,{1,.08f,.04f},rivalLight.brake?1.35f:.45f,3.5f);
+   auto a=Project(env.anchor,rivalStation,(float)race.opponent.lateral);rivalOrigin={std::round(a.x-64*spriteScale),std::round(a.y-79*spriteScale)};rivalDepth=WorldToCamera(rivalStation,(float)race.opponent.lateral,0).z;
+   if(rivalStation> -28&&rivalStation<nz::VisibleAhead+35){int rp=rivalLight.yaw>0?2:rivalLight.yaw<0?0:1;int rw=race.opponent.speed*3.6>75?8:(int)std::floor(race.opponent.distance/(2*nz::Pi*nz::Cars[2].radius)*8)%8;
+    opponentCar.Compose(art[2],opponentChoice,1,rp,rw,std::clamp((int)std::lround(race.opponent.pitch/1.5),-2,2),decals,true);opponentCar.Shade(carShader,rivalLight,rivalOrigin,rivalDepth);
+   }
+  }
+  trafficRenderer.Opponent(opponentCar,rivalLight,rivalOrigin,rivalDepth,rivalStation,(float)race.opponent.lateral,rivalLight.yaw,showRival);
+  roadShader.Int("raceMode",driving&&raceMode&&race.phase!=nz::RacePhase::Countdown?1:0);roadShader.Float("raceFinishStation",(float)(race.startLine+nz::RaceDistance-vehicle.distance));
   trafficRenderer.RoadLights(roadShader,showTraffic?traffic:nz::TrafficWorld{},vehicle,showTraffic);
   Vector2 blur=MotionPixels(vehicle,driving&&effects.motionBlur);
   BeginTextureMode(layers.world);ClearBackground(Ink);if(env.studio)StudioBackdrop();else Road(roadShader,car,highway,env,origin,depth,trafficRenderer.shadowAtlas.texture);
@@ -528,18 +574,23 @@ int main(int argc,char **argv){
    hudGlowShader.Vec2("resolution",{(float)Width,(float)Height});BeginBlendMode(BLEND_ADDITIVE);BeginShaderMode(hudGlowShader.value);Layer(layers.hud.texture);EndShaderMode();EndBlendMode();
    Hud(selected,instruments,heads,tails,audio.Ready(),muted,indicator,sceneClock);
    if(showTraffic)trafficRenderer.Warnings(traffic,vehicle,env);
+   if(raceMode){bool retry=false,garage=false;RaceHud(race,vehicle,mouse,retry,garage);
+    if(retry){race.Start(vehicle,nz::Cars[selected.car],!selected.manual,selected.limiterDeleted[selected.car]);trafficActive=false;trails.Clear();accumulator=0;}
+    if(garage){driving=false;paused=false;trafficActive=false;accumulator=0;}
+   }
    if(paused)PauseMenu(effects,mouse,paused,driving,accumulator);
   }
-  else{bool start=false;Vector2 uiOffset{(Width-640)*.5f,(Height-360)*.5f};rlPushMatrix();rlTranslatef(uiOffset.x,uiOffset.y,0);if(decalEditor){bool done=DecalEditor(selected,decals,decalView,decalLayer,{mouse.x-uiOffset.x,mouse.y-uiOffset.y},dt);if(done){decalEditor=false;if(!smoke)SaveDecalSettings(decalSave,selected,decals);}}else Garage(selected,{mouse.x-uiOffset.x,mouse.y-uiOffset.y},start,quit,heads,indicator,decalEditor);rlPopMatrix();if(start){if(!smoke)SaveDecalSettings(decalSave,selected,decals);driving=true;paused=false;accumulator=0;vehicle=nz::Vehicle{};vehicle.automatic=!selected.manual;vehicle.speedLimiterDeleted=selected.limiterDeleted[selected.car];vehicle.rpm=nz::Cars[selected.car].idle;}}
+  else{bool start=false;Vector2 uiOffset{(Width-640)*.5f,(Height-360)*.5f};rlPushMatrix();rlTranslatef(uiOffset.x,uiOffset.y,0);if(decalEditor){bool done=DecalEditor(selected,decals,decalView,decalLayer,{mouse.x-uiOffset.x,mouse.y-uiOffset.y},dt);if(done){decalEditor=false;if(!smoke)SaveDecalSettings(decalSave,selected,decals);}}else Garage(selected,{mouse.x-uiOffset.x,mouse.y-uiOffset.y},start,quit,heads,indicator,decalEditor,raceMode);rlPopMatrix();if(start){if(!smoke)SaveDecalSettings(decalSave,selected,decals);driving=true;paused=false;accumulator=0;vehicle=nz::Vehicle{};vehicle.automatic=!selected.manual;vehicle.speedLimiterDeleted=selected.limiterDeleted[selected.car];vehicle.rpm=nz::Cars[selected.car].idle;if(raceMode)race.Start(vehicle,nz::Cars[selected.car],!selected.manual,selected.limiterDeleted[selected.car]);}}
   EndTextureMode();BeginDrawing();ClearBackground(RGBA(5,9,14));DrawTexturePro(target.texture,{0,0,(float)Width,-(float)Height},destination,{0,0},0,WHITE);EndDrawing();
   bestSpeed=std::max(bestSpeed,(float)(vehicle.speed*3.6));
   if(smoke&&(frame==12||(trafficSmoke&&(frame==180||frame==450||frame==800))||(decalSmoke&&(frame==60||frame==180))||frame==580||frame==865||(effectsSmoke&&frame>=580&&frame<=584)||(scenerySmoke&&(frame==120||frame==170||frame==280||frame==350||frame==480||frame==720))||(garageSmoke&&(frame==90||frame==150||frame==210||frame==300||frame==450||frame==600))||(featureSmoke&&(frame==18||frame==230||frame==440||frame==650))||(resizeSmoke&&(frame==200||frame==360)))){std::string name=std::string(qaName)+(blackPaint?"_black":"")+"_"+std::to_string(Width)+"x"+std::to_string(Height)+(garageSmoke?"_orbit"+std::to_string(frame)+".png":frame==12?"_garage.png":frame==580&&!effectsSmoke?"_driving.png":frame==865?"_braking.png":"_frame"+std::to_string(frame)+".png");Image capture=LoadImageFromTexture(target.texture);ImageFlipVertical(&capture);bool saved=ExportImage(capture,(root/"build/qa"/name).string().c_str());UnloadImage(capture);if(!saved)throw std::runtime_error("Could not save graphics test frame");}
   if(decalSmoke&&frame>=180){std::printf("DECAL EDITOR SMOKE %s complete\n",qaName);quit=true;}
   if(garageSmoke&&frame>=720){std::printf("GARAGE FINISH SMOKE %s complete\n",qaName);quit=true;}
-  if(trafficSmoke&&frame>=900){if(trafficRenderer.totalWarnings<1)throw std::runtime_error("Traffic entry warnings were never drawn");if(trafficRenderer.totalDrawn<50)throw std::runtime_error("Traffic was not rendered");std::printf("TRAFFIC GRAPHICS: %d actor passes, %d lane changes, %d contacts, %d warnings\n",trafficRenderer.totalDrawn,traffic.laneChanges,traffic.contacts,trafficRenderer.totalWarnings);quit=true;}
+  if(raceSmoke&&frame>=900){if(trafficRenderer.rivalDrawn<50||race.phase!=nz::RacePhase::Finished||race.winner!=nz::RaceWinner::Player)throw std::runtime_error("Race renderer/result smoke failed");std::printf("RACE SMOKE: rolling start, white rival (%d passes), traffic and 10km result pass\n",trafficRenderer.rivalDrawn);quit=true;}
+  if(trafficSmoke&&!raceSmoke&&frame>=900){if(trafficRenderer.totalWarnings<1)throw std::runtime_error("Traffic entry warnings were never drawn");if(trafficRenderer.totalDrawn<50)throw std::runtime_error("Traffic was not rendered");std::printf("TRAFFIC GRAPHICS: %d actor passes, %d lane changes, %d contacts, %d warnings\n",trafficRenderer.totalDrawn,traffic.laneChanges,traffic.contacts,trafficRenderer.totalWarnings);quit=true;}
   if(smoke&&!garageSmoke&&!decalSmoke&&!trafficSmoke&&frame>=900){if(audioSmoke){std::printf("AUDIO SMOKE: %llu samples generated on the device callback\n",(unsigned long long)audio.Samples());if(audio.Samples()<nz::AudioRate*5)throw std::runtime_error("Audio callback did not run continuously");}std::printf("GRAPHICS SMOKE %s: max %.1fkm/h, stopped %.2fkm/h, 0-100 %.2fs\n",qaName,bestSpeed,vehicle.speed*3.6,vehicle.timeTo100);if(bestSpeed<100||vehicle.speed>1)throw std::runtime_error("Graphics driving smoke test failed");quit=true;}
  }
  if(!smoke)SaveDecalSettings(decalSave,selected,decals);
- audio.Close();trafficRenderer.Close();decals.Close();car.Close();highway.Close();layers.Close();UnloadRenderTexture(target);UnloadShader(carShader.value);UnloadShader(roadShader.value);UnloadShader(resolveShader.value);UnloadShader(glowShader.value);UnloadShader(propShader.value);UnloadShader(motionShader.value);UnloadShader(hudGlowShader.value);CloseWindow();return 0;
+ audio.Close();opponentCar.Close();trafficRenderer.Close();decals.Close();car.Close();highway.Close();layers.Close();UnloadRenderTexture(target);UnloadShader(carShader.value);UnloadShader(roadShader.value);UnloadShader(resolveShader.value);UnloadShader(glowShader.value);UnloadShader(propShader.value);UnloadShader(motionShader.value);UnloadShader(hudGlowShader.value);CloseWindow();return 0;
  }catch(const std::exception &e){std::fprintf(stderr,"ERROR: %s\n",e.what());CloseWindow();return 1;}
 }
