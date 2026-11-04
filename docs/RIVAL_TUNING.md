@@ -29,7 +29,26 @@ close together and reject every prediction because their initial positions
 were already inside the preferred clearance. Predictions now allow increasing
 an existing small clearance while retaining the physical collision envelope.
 
+## Traffic retention across a race gap
+
+Traffic remains alive throughout the corridor from the trailing racer to the
+leader, not just in two disconnected windows around them. Spawn history covers
+the same corridor, so cars generated for the leader are still present when the
+follower arrives. Only traffic behind both racers or ahead of both retention
+limits is removed. The population budget grows by stream band with separation
+and remains capped; single-car Drive keeps its previous 28-car budget.
+
+The previous two-window cleanup deleted traffic between the racers while
+retaining its emitted-slot history. This caused empty road for the follower
+once the lead grew to roughly a kilometre. Multi-minute regression runs now
+check both lead directions at 1-3.6 km gaps over three seeds, retaining roughly
+3 cars per 145 m ahead of the trailing racer, including quiet stretches. A
+separate test verifies a specific car survives between both local windows.
+
 ## Reproducible comparisons
+
+The table below was captured at commit 4fe1191, before the subsequent traffic
+retention fix. It records that tuning comparison rather than current race times.
 
 Both cars were driven by the same version of the local driver, using a stock,
 limited Civic against the stock Testarossa, six fixed traffic seeds and rolling

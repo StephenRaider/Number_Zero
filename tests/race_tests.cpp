@@ -83,7 +83,7 @@ int main(){try{
  for(unsigned seed:{11u,42u,197u,7u,12345u,901u}){
   nz::Vehicle player;nz::RaceSession race;race.Start(player,nz::Cars[0],true,false);nz::TrafficWorld traffic;auto other=nz::RaceSession::Observer(race.opponent);traffic.Reset(nz::RaceSession::Observer(player),seed,&other);
   for(int tick=0;tick<120*420&&race.phase!=nz::RacePhase::Finished;tick++){
-   race.Step(player,nz::Cars[0],{1,0,0},traffic,1./120.);Require(traffic.cars.size()<=56,"Two-racer traffic population is unbounded");Require(race.opponent.speed>=0&&std::abs(race.opponent.lateral)<=6.05,"Opponent leaves the road or reverses");
+   race.Step(player,nz::Cars[0],{1,0,0},traffic,1./120.);auto rival=nz::RaceSession::Observer(race.opponent);Require(traffic.cars.size()<=nz::TrafficWorld::PopulationLimit(nz::RaceSession::Observer(player),&rival),"Two-racer traffic population is unbounded");Require(race.opponent.speed>=0&&std::abs(race.opponent.lateral)<=6.05,"Opponent leaves the road or reverses");
   }
   Require(race.phase==nz::RacePhase::Finished&&race.OpponentProgress()==nz::RaceDistance,"Opponent fails to complete 10km");Require(race.driver.laneChanges>=5,"Opponent does not weave through traffic");Require(race.opponentContacts<=6,"Opponent repeatedly crashes into traffic");totalContacts+=race.opponentContacts;
   std::printf("PASS 10km seed %u: %.1fs, %d lane changes, %d contacts\n",seed,race.elapsed,race.driver.laneChanges,race.opponentContacts);

@@ -59,6 +59,32 @@ int main(){try{
   std::printf("Spatial traffic %.0fkm/h: %.2f cars per 150m, %.1f%% empty samples\n",kmh,total/samples,100.*empty/samples);
  }
  Require(density[1]>density[0]*.8&&density[2]>density[1]*.8&&density[2]<density[1]*1.2,"Traffic density changes materially with player speed");
+ // Traffic passed by the leader must survive outside both local windows,
+ // until the follower reaches it. Otherwise emitted slots turn into empty road.
+ {
+  nz::TrafficWorld stream;nz::TrafficPlayer back{0,-1.75,50},front{1200,1.75,65};stream.Reset(back,42,&front);
+  nz::TrafficCar bridge;bridge.id=100000;bridge.station=600;bridge.speed=bridge.cruise=25;bridge.lane=bridge.targetLane=0;bridge.lateral=nz::LaneCentres[0];bridge.decision=10;stream.cars.push_back(bridge);
+  stream.Step(back,1./60.,&front);
+  Require(std::any_of(stream.cars.begin(),stream.cars.end(),[](const nz::TrafficCar &a){return a.id==100000;}),"Leader-passed traffic deleted between racers");
+ }
+ for(bool playerLeads:{false,true}){
+  double nearTotal=0;int samples=0,quiet=0;
+  for(unsigned seed:{11u,42u,197u}){
+   nz::TrafficWorld stream;nz::TrafficPlayer p{0,-1.75,50},r{0,1.75,65};if(playerLeads)std::swap(p.speed,r.speed);stream.Reset(p,seed,&r);
+   for(int tick=0;tick<60*240;tick++){
+    p.station+=p.speed/60.;r.station+=r.speed/60.;stream.Step(p,1./60.,&r);
+    Require(stream.cars.size()<=nz::TrafficWorld::PopulationLimit(p,&r),"Separated-racer traffic exceeds distance-based budget");
+    if(tick>=60*70&&tick%30==0){
+     double station=std::min(p.station,r.station);int count=0;for(const auto &a:stream.cars)if(a.station>station+5&&a.station<station+150)++count;
+     nearTotal+=count;++samples;quiet+=count==0;
+    }
+   }
+  }
+  double density=nearTotal/samples;
+  Require(density>2.1&&density<4.5,"Trailing racer loses traffic after the gap exceeds 1000m");
+  Require(quiet>0,"Separated-racer traffic loses quiet stretches");
+  std::printf("PASS %s leads: trailing density %.2f / 145m with gaps 1-3.6km; quiet samples %d\n",playerLeads?"player":"rival",density,quiet);
+ }
  nz::Vehicle v;v.distance=60;v.lateral=nz::LaneCentres[0];v.speed=40;nz::TrafficWorld impact;impact.Reset({0,0,0});impact.cars.resize(1);impact.cars[0].station=62;impact.cars[0].lateral=v.lateral;impact.cars[0].speed=20;
  Require(impact.ResolveContact(v)&&v.speed<=20&&v.distance<60,"Traffic collision did not constrain player");
  v.distance=impact.cars[0].station;v.lateral=6.05;v.speed=30;impact.cars[0].lateral=5.25;
