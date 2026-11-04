@@ -15,3 +15,9 @@ experiment workspace. Source files were supplied in D:/Cars for game:
 2001_toyota_crown_comfort_s10.glb, 1995_-_1998_toyota_hiace_h1.glb,
 mitsubishi_fuso_rosa.glb. This folder contains runtime exports only.
 Per-model manifest.json records physical size, anchor, native scale and hashes.
+
+Wheel animation uses reviewed per-model axle centres and material/geometry gates.
+Only road-wheel vertices rotate; lamps, badges, steering wheels, spare wheels and
+bodywork remain fixed across spin frames. Rotation compensates for source tyre
+aspect ratio, keeping contact height stable. Traffic ground shadows ray-cast the
+front/back sprite depths toward the actual street lamps; there are no blob ellipses.

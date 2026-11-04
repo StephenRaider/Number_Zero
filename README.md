@@ -47,7 +47,7 @@ Press **F11** to toggle borderless fullscreen.
 - Fixed-120-Hz drivetrain, drag, rolling resistance, braking and lateral motion.
 - Speed, gear, RPM, pedal inputs and distance HUD.
 
-The highway is currently a driving test. Traffic, rivals, parking areas,
+The highway is currently a driving test with ordinary traffic. Rivals, parking areas,
 and damage are future work.
 The stock wheels remain the car-specific prototype exports; the planned shared
 standard-size wheel library has not been implemented.
@@ -374,3 +374,8 @@ the player; no damage system or game-over is introduced in this prototype.
 keep traffic disabled for stable comparisons. Standalone `tests/traffic_tests.cpp`
 checks speed caps, signalling, gradual movement, non-overlap, all five types,
 bounded populations, deterministic seeds and player contact over a long drive.
+
+Traffic wheel phases are checked to leave body pixels stationary outside the four
+wheel regions. Reviewed axle pivots and tyre aspect correction prevent orbiting
+parts and wheel-hop. Traffic shadows use front/back depth rays to each contributing
+streetlight, replacing the earlier fixed screen-space ellipses.

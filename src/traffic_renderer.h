@@ -4,9 +4,9 @@ struct TrafficRenderer {
  struct Actor {int id=0,lastType=-1,lastPose=-1,lastFrame=-1,lastPaint=-1;Texture2D albedo{};RenderTexture2D shaded{};Vector2 origin{};float depth=0,station=0;int type=0,pose=0,frame=0;bool brake=false;int indicator=0;};
  std::array<std::array<std::array<Frame,4>,3>,nz::TrafficTypes.size()> art;
  std::map<int,Actor> actors;std::vector<int> visible;int totalDrawn=0;
- ShaderProgram composite;
+ ShaderProgram composite,shadow;
  static const std::array<Color,8> &Colours(){static const std::array<Color,8> colours{{{225,228,222,255},{166,176,186,255},{44,53,66,255},{55,84,111,255},{150,42,42,255},{191,178,141,255},{211,184,76,255},{62,108,93,255}}};return colours;}
- explicit TrafficRenderer(const fs::path &assets):composite(assets/"shaders/traffic_composite.fs"){
+ explicit TrafficRenderer(const fs::path &assets):composite(assets/"shaders/traffic_composite.fs"),shadow(assets/"shaders/traffic_shadow.fs"){
   const char *kinds[]={"albedo","normal","pack","pack2","emit"};
   for(int type=0;type<(int)nz::TrafficTypes.size();type++)for(int pose=0;pose<3;pose++)for(int frame=0;frame<4;frame++){
    auto &a=art[type][pose][frame];
@@ -42,7 +42,14 @@ struct TrafficRenderer {
   shader.Int("trafficCount",count);int loc=shader.At("trafficBeam[0]");if(loc>=0&&count)SetShaderValueV(shader.value,loc,beams.data(),SHADER_UNIFORM_VEC4,count);
  }
  void Shadows(const Environment &env,const nz::TrafficWorld &world,const nz::Vehicle &player){
-  for(int id:visible){auto it=std::find_if(world.cars.begin(),world.cars.end(),[&](const nz::TrafficCar&a){return a.id==id;});if(it==world.cars.end())continue;const auto &s=nz::TrafficTypes[it->type];auto p=Project(env.anchor,(float)(it->station-player.distance),(float)it->lateral);float fade=std::clamp((nz::VisibleAhead-(float)(it->station-player.distance))/8.f,0.f,1.f);DrawEllipse((int)p.x,(int)p.y,(float)(s.length*.44*PixelsPerMetre),(float)(s.width*.35*PixelsPerMetre),RGBA(4,7,10,(int)(68*fade)));}
+  (void)world;(void)player;
+  shadow.Lights(env);shadow.Vec2("resolution",{(float)Width,(float)Height});
+  for(int id:visible){const auto &a=actors.at(id);const auto &maps=art[a.type][a.pose][a.frame];
+   float size=256*PixelsPerMetre/26.f,pad=PixelsPerMetre*9;
+   shadow.Vec2("carOrigin",a.origin);shadow.Float("spritePixels",size);shadow.Float("carDepth",a.depth);shadow.Float("station",a.station);
+   BeginShaderMode(shadow.value);shadow.Texture("carAlbedo",maps.textures[0]);shadow.Texture("carFront",maps.textures[2]);shadow.Texture("carBack",maps.textures[3]);
+   DrawRectangleRec({a.origin.x-pad,a.origin.y-pad,size+2*pad,size+2*pad},WHITE);EndShaderMode();
+  }
  }
  void Draw(int mode){
   if(visible.empty())return;
@@ -67,5 +74,5 @@ struct TrafficRenderer {
   float decoded=((pixel.r*256.f+pixel.g)/65535.f-.5f)*256;if(std::abs(decoded-2)>.006f)throw std::runtime_error("Traffic global depth encoding differs from the player compositor");
   UnloadTexture(depth);UnloadTexture(colour);UnloadRenderTexture(target);std::puts("TRAFFIC DEPTH PROBE: order-independent colour and encoded global depth pass");
  }
- void Close(){for(auto &row:art)for(auto &poses:row)for(auto &frame:poses)for(auto tex:frame.textures)UnloadTexture(tex);for(auto &entry:actors){UnloadTexture(entry.second.albedo);UnloadRenderTexture(entry.second.shaded);}UnloadShader(composite.value);}
+ void Close(){for(auto &row:art)for(auto &poses:row)for(auto &frame:poses)for(auto tex:frame.textures)UnloadTexture(tex);for(auto &entry:actors){UnloadTexture(entry.second.albedo);UnloadRenderTexture(entry.second.shaded);}UnloadShader(composite.value);UnloadShader(shadow.value);}
 };
