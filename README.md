@@ -349,3 +349,28 @@ Tail trails ignore centre lamps/engine-bay details and use the outer rear lamps,
 including the exact sprite placement offset at the current render scale.
 
 The driving camera is shifted 4.5 m farther ahead of the car (about one car length), keeping the same zoom. The shared visibility corridor is 42.5 m ahead / 1.5 m behind on every display.
+
+
+## Highway traffic
+
+All four lanes now flow in the player's direction. The traffic-only pool is
+Corolla X Assista, Swift, Crown Comfort, Hiace and Fuso Rosa. These models are
+independent of the garage roster; later eligible racer models can join the pool.
+Traffic uses three steering views and four wheel phases, without squat samples.
+Paint variants reuse those exports. Vehicles share the dynamic street lighting,
+headlight cones, lamp glow and scene blur, with per-pixel traffic/prop/player depth.
+
+The prototype road limit is **100 km/h**. Most drivers prefer 90-100 km/h,
+with slower vehicles and occasional slower cars; traffic never exceeds the limit.
+Drivers follow safe gaps, brake for vehicles including the player, signal for
+1.3 seconds, and take 3.8 seconds to cross a lane (4.6 van / 5.0 minibus).
+They reserve/check gaps ahead and behind, rather than changing lanes at random.
+Spawning is outside the common visible corridor, with persistent offscreen
+simulation and bounded recycling. Basic bumper/side contact slows and separates
+the player; no damage system or game-over is introduced in this prototype.
+
+`--traffic-smoke-test` runs a populated rendering/contact scenario; combine with
+`--testarossa`, `--civic` or viewport flags. Existing isolated graphics smoke tests
+keep traffic disabled for stable comparisons. Standalone `tests/traffic_tests.cpp`
+checks speed caps, signalling, gradual movement, non-overlap, all five types,
+bounded populations, deterministic seeds and player contact over a long drive.

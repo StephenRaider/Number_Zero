@@ -1,0 +1,24 @@
+{
+  "cars": [
+    {
+      "id": "corolla",
+      "manifest": "corolla/manifest.json"
+    },
+    {
+      "id": "swift",
+      "manifest": "swift/manifest.json"
+    },
+    {
+      "id": "crown",
+      "manifest": "crown/manifest.json"
+    },
+    {
+      "id": "hiace",
+      "manifest": "hiace/manifest.json"
+    },
+    {
+      "id": "rosa",
+      "manifest": "rosa/manifest.json"
+    }
+  ]
+}

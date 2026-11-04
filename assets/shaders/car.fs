@@ -10,6 +10,7 @@ uniform sampler2D emissionMap;
 uniform vec2 screenAnchor;
 uniform float pixelsPerMetre;
 uniform float spritePixels;
+uniform float sourcePixels,depthRange;
 uniform vec2 carOrigin;
 uniform float carDepth;
 uniform int lightCount;
@@ -39,7 +40,7 @@ bool occluded(vec3 p,vec3 lamp){
   else{float a=-uv0[axis]/duv[axis],b=(1.-uv0[axis])/duv[axis];enter=max(enter,min(a,b));leave=min(leave,max(a,b));}
  }
  if(leave<=enter)return false;
- float count=ceil(clamp(length(duv)*(leave-enter)*128.*1.25,4.,40.));
+ float count=ceil(clamp(length(duv)*(leave-enter)*sourcePixels*1.25,4.,40.));
  for(int k=0;k<40;k++){
   if(float(k)>=count)break;
   float t=mix(enter,leave,(float(k)+.5)/count);
@@ -47,8 +48,8 @@ bool occluded(vec3 p,vec3 lamp){
   vec2 uv=uv0+duv*t;
   if(texture(texture0,uv).a<.5)continue;
   vec4 a=texture(depthMap,uv),b=texture(auxiliaryMap,uv);
-  float front=(unpack16(a.r,a.g)-.5)*5.2+carDepth;
-  float back=(unpack16(b.g,b.b)-.5)*5.2+carDepth;
+  float front=(unpack16(a.r,a.g)-.5)*depthRange+carDepth;
+  float back=(unpack16(b.g,b.b)-.5)*depthRange+carDepth;
   float ray=p.z+delta.z*t;
   if(ray<front-.045&&ray>back-.025)return true;
  }
@@ -62,7 +63,7 @@ void main(){
  vec2 xy=vec2(unpack16(n.r,n.g),unpack16(n.b,a.r))*2.0-1.0;
  vec3 normal=normalize(vec3(xy,sqrt(max(0.,1.-dot(xy,xy)))));
  vec2 pixel=carOrigin+fragTexCoord*spritePixels;
- vec3 p=vec3((pixel.x-screenAnchor.x)/pixelsPerMetre,(screenAnchor.y-pixel.y)/pixelsPerMetre,(unpack16(d.r,d.g)-.5)*5.2+carDepth);
+ vec3 p=vec3((pixel.x-screenAnchor.x)/pixelsPerMetre,(screenAnchor.y-pixel.y)/pixelsPerMetre,(unpack16(d.r,d.g)-.5)*depthRange+carDepth);
  // Material finish is independent of the base colour, including black paint and grey glazing.
  float paint=step(.25,d.a)*(1.-step(.75,d.a)),glass=step(.75,d.a);
  float diffuseResponse=mix(.72,.46,paint);diffuseResponse=mix(diffuseResponse,.045,glass);

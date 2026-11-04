@@ -14,6 +14,8 @@ uniform float beamReach;
 uniform float beamBase;
 uniform float beamSpread;
 uniform float headlights;
+uniform int trafficCount;
+uniform vec4 trafficBeam[12];
 uniform float taillights;
 uniform float braking;
 uniform vec2 carOrigin;
@@ -115,6 +117,16 @@ void main(){
    float beam=(exp(-left*left*2.)+exp(-right*right*2.))*pow(1.-ahead/beamReach,1.6)*smoothstep(0.,.25,ahead);
    lit+=pow(base,vec3(2.2))*vec3(1.2,1.06,.75)*beam*1.3;
   }
+ }
+ for(int i=0;i<12;i++){
+  if(i>=trafficCount)break;
+  vec2 delta=vec2(s-trafficBeam[i].x,lateral-trafficBeam[i].y);float yaw=trafficBeam[i].z;
+  float ahead=dot(delta,vec2(cos(yaw),sin(yaw)))-trafficBeam[i].w;
+  if(ahead<=0.||ahead>=32.)continue;
+  float across=dot(delta,vec2(-sin(yaw),cos(yaw))),width=.24+ahead*.12;
+  float a=(across-.56)/width,b=(across+.56)/width;
+  float beam=(exp(-a*a*2.)+exp(-b*b*2.))*pow(1.-ahead/32.,1.6)*smoothstep(0.,.25,ahead);
+  lit+=pow(base,vec3(2.2))*vec3(1.1,1.03,.83)*beam*.65;
  }
  // Same longitudinal visibility for every display. Extra width cannot reveal earlier hazards.
  if(garage<.5)lit=mix(lit,vec3(.0012,.0020,.0035),smoothstep(visibleAhead-8.,visibleAhead,s));
