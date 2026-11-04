@@ -599,3 +599,12 @@ It now measures about 5.08 s to 60 mph with TCS off; the floored Ferrari is abou
 6.35 s, game-assist about 5.84 s and a scripted feathered Ferrari about 5.17 s.
 Driver technique is now part of the result. See docs/TRACTION.md for scope and
 current limitations, and docs/PERFORMANCE.md for historical/current measurements.
+
+
+## Racer contact
+
+Player/rival bumps now share impact momentum according to mass, with grip-limited
+resistance to gentle side pressure. Hard hits still move either car. Matched-speed
+rubbing no longer applies a repeated forward-speed penalty, and road-edge contact
+keeps both racers within bounds. Traffic collision penalties are unchanged.
+See docs/CONTACT_PHYSICS.md and tests/racer_contact_tests.cpp for verification.

@@ -161,3 +161,8 @@ so that race cannot retrospectively establish how much of the lead came from
 blocking versus traffic incidents. Future analysis should use the new contact
 categories and proximity/decision timeline rather than attribute every speed
 loss or lead change to ordinary traffic mistakes.
+
+Racer contact now uses symmetric mass/tyre-supported impulses rather than equal
+side displacement plus per-overlap speed loss. See [CONTACT_PHYSICS.md](CONTACT_PHYSICS.md)
+for the tuning contract and controlled push checks. The diagnostic counters and
+traffic collision response remain separate from that change.

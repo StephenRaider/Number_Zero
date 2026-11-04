@@ -1,6 +1,7 @@
 #pragma once
 #include "vehicle.h"
 #include "traffic.h"
+#include "racer_contact.h"
 #include "scene.h"
 #include <limits>
 #include <random>
@@ -145,15 +146,8 @@ struct RaceSession {
   elapsed+=dt;
   if(playerFinish>=0||opponentFinish>=0){phase=RacePhase::Finished;if(playerFinish>=0&&opponentFinish>=0)winner=std::abs(playerFinish-opponentFinish)<1e-7?RaceWinner::Tie:playerFinish<opponentFinish?RaceWinner::Player:RaceWinner::Opponent;else winner=playerFinish>=0?RaceWinner::Player:RaceWinner::Opponent;}
  }
- bool ResolveRacers(Vehicle &player){
-  if(std::abs(player.distance-opponent.distance)>=4.50||std::abs(player.lateral-opponent.lateral)>=1.96)return false;
-  if(std::abs(player.distance-opponent.distance)>2.5){
-   if(player.distance<opponent.distance){player.distance=opponent.distance-4.55;player.speed=std::min(player.speed,opponent.speed);}else{opponent.distance=player.distance-4.55;opponent.speed=std::min(opponent.speed,player.speed);}
-  }else{
-   double direction=player.lateral<opponent.lateral?-1.:1.;double push=(1.98-std::abs(player.lateral-opponent.lateral))*.5;
-   player.lateral=std::clamp(player.lateral+direction*push,-6.05,6.05);opponent.lateral=std::clamp(opponent.lateral-direction*push,-6.05,6.05);player.lateralSpeed=opponent.lateralSpeed=0;player.speed*=.997;opponent.speed*=.997;
-  }
-  return true;
+ bool ResolveRacers(Vehicle &player,const CarSpec &spec,double dt){
+  return ResolveRacerContact(player,spec,opponent,Cars[2],dt);
  }
  void Step(Vehicle &player,const CarSpec &spec,Input input,TrafficWorld &traffic,double dt){
   contactEvents.clear();
@@ -180,7 +174,7 @@ struct RaceSession {
    contactEvents.push_back({RaceContactKind::RivalTraffic,elapsed+dt,opponentContacts>previous,beforePlayer,ContactPose::Of(player),beforeRival,ContactPose::Of(opponent)});
   }
   beforePlayer=ContactPose::Of(player);beforeRival=ContactPose::Of(opponent);
-  if(ResolveRacers(player)){
+  if(ResolveRacers(player,spec,dt)){
    bool counted=racerContactCooldown<=0;if(counted){++playerRivalContacts;racerContactCooldown=.5;}
    playerRivalContactSeconds+=dt;
    contactEvents.push_back({RaceContactKind::PlayerRival,elapsed+dt,counted,beforePlayer,ContactPose::Of(player),beforeRival,ContactPose::Of(opponent)});
