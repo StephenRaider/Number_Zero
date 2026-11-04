@@ -65,16 +65,21 @@ The white Testarossa uses the same stock vehicle physics, automatic gearbox,
 brakes and collision rules as the player. Its driver reacts about every 120 ms,
 sees only traffic within the shared forward visibility range (42.5 m) and 25 m
 behind, and tries the first safe adjacent lane when blocked. It cannot read
-traffic generation seeds, lane-density patterns or future spawns. Its clear-road
-cruising target is 235 km/h; there is no catch-up boost. It can hesitate or make
-contact, rather than driving perfectly. Traffic remains simulated around both
-racers even when they separate, so the leader still has to weave.
+traffic generation seeds, lane-density patterns or future spawns. It uses full
+throttle on clear road, with top speed determined by the stock engine, gearing
+and drag. When boxed in, it briefly eases back to let an
+alongside car move ahead, rechecks the gap and accelerates again as it merges.
+It avoids immediately changing into an equally blocked queue and tends to
+continue around an obstruction rather than immediately weaving back. There is
+no catch-up boost. It can hesitate or make contact, rather than driving
+perfectly. Traffic remains simulated around both racers even when they separate,
+so the leader still has to weave.
 
 `--race` opens the garage with Race selected. `--race-smoke-test` verifies the
 rolling start, rival rendering and result UI (with an accelerated finish setup).
 `tests/race_tests.cpp` separately runs six complete 10 km simulations, checks
 local-only perception, traffic coverage, rolling-start equality and same-step
-finish ordering.
+finish ordering, plus a controlled boxed-in escape and clear-road throttle checks.
 
 ## Build and verify
 

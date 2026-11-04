@@ -15,43 +15,64 @@ inline std::vector<SeenCar> ObserveRaceTraffic(const Vehicle &v,const std::vecto
 // This driver receives only a locally filtered kinematic snapshot. It cannot
 // access traffic seeds, bands, reserved lanes or future spawn information.
 class RivalDriver {
- double reaction=0,laneCooldown=0;int targetLane=2,prefer=-1;Input held{};
+ double reaction=0,laneCooldown=0,boxedTime=0;int targetLane=2,prefer=-1;Input held{};bool preparingGap=false;
 public:
- int laneChanges=0;
- void Reset(int lane=2){reaction=0;laneCooldown=0;targetLane=lane;prefer=-1;held={};laneChanges=0;}
+ int laneChanges=0,gapPreparations=0;
+ bool PreparingGap()const{return preparingGap;}
+ void Reset(int lane=2){reaction=laneCooldown=boxedTime=0;targetLane=lane;prefer=-1;held={};preparingGap=false;laneChanges=gapPreparations=0;}
  Input Control(const Vehicle &v,const std::vector<SeenCar> &seen,double dt){
   reaction-=dt;laneCooldown=std::max(0.,laneCooldown-dt);
   if(reaction>0)return held;
-  reaction=.12;
+  constexpr double decisionTime=.125;reaction=decisionTime;
   int current=std::clamp((int)std::lround((v.lateral+5.25)/3.5),0,3);
   bool settled=std::abs(v.lateral-LaneCentres[targetLane])<.22&&std::abs(v.lateralSpeed)<.65;
-  double nearest=1e6,leadSpeed=235./3.6;
+  double nearest=1e6,leadSpeed=v.speed;
   for(const auto &a:seen)if(a.station>0&&std::abs(a.lateral-v.lateral)<(1.976+a.width)*.5+.18){double gap=a.station-(4.485+a.length)*.5;if(gap<nearest){nearest=gap;leadSpeed=a.speed;}}
   double closing=std::max(0.,v.speed-leadSpeed);
-  bool blocked=nearest<14+closing*1.45;
+  // A matched-speed queue is still an obstruction: do not wait until almost
+  // touching its bumper before looking for an overtake.
+  bool blocked=(nearest<28+closing*1.45&&leadSpeed<v.speed+5)||(preparingGap&&nearest<1e5);
+  bool foundGap=false;
   if(settled&&blocked&&laneCooldown<=0){
    // Take the first safe neighbouring gap. No lane-density ranking or route planning.
    for(int direction:{prefer,-prefer}){
-    int lane=current+direction;if(lane<0||lane>3)continue;bool safe=true;
+    int lane=current+direction;if(lane<0||lane>3)continue;bool safe=true;double laneFront=1e6,laneSpeed=1e6;
     for(const auto &a:seen){
      double predicted=a.lateral+a.lateralSpeed*.45;
      if(std::min(std::abs(a.lateral-LaneCentres[lane]),std::abs(predicted-LaneCentres[lane]))>(1.976+a.width)*.5+.25)continue;
      double gap=std::abs(a.station)-(4.485+a.length)*.5;
+     if(a.station>=0&&gap<laneFront){laneFront=gap;laneSpeed=a.speed;}
      if(gap<(a.station>=0?8+std::max(0.,v.speed-a.speed)*.85:8+std::max(0.,a.speed-v.speed)*.8))safe=false;
     }
-    if(safe){targetLane=lane;prefer=-direction;laneCooldown=1.5;++laneChanges;break;}
+    if(safe&&(preparingGap||laneFront>nearest+6||laneSpeed>leadSpeed+2)){targetLane=lane;prefer=direction;laneCooldown=1.5;++laneChanges;foundGap=true;break;}
    }
   }
+  bool boxed=settled&&blocked&&!foundGap&&laneCooldown<=0;
+  boxedTime=boxed?boxedTime+decisionTime:0;
+  bool yield=boxedTime>=.5;
+  if(yield&&!preparingGap)++gapPreparations;
+  preparingGap=yield;
   held={};held.steer=std::clamp((LaneCentres[targetLane]-v.lateral)*.85-v.lateralSpeed*.20,-1.,1.);
-  double target=235./3.6;held.throttle=std::clamp((target-v.speed)*.45+.18,0.,1.);
+  // Use the stock engine's full pull whenever the local path permits it. The
+  // old 235km/h cruise controller unnecessarily lifted even on open highway.
+  held.throttle=1;
+  if(yield){
+   // Drop a little behind the queue so an alongside car moves ahead, opening
+   // a merge slot. Recheck both adjacent gaps every reaction interval, then
+   // immediately release this speed target once a safe lane change starts.
+   double target=std::max(8.,leadSpeed-4.5);
+   held.throttle=std::clamp((target-v.speed)*.65+.25,0.,1.);
+   if(v.speed>target+.3){held.throttle=0;held.brake=std::clamp((v.speed-target)*.16,0.,.28);}
+  }
   if(nearest<1e5&&closing>.2){
    double required=(v.speed*v.speed-leadSpeed*leadSpeed)/(2*std::max(1.,nearest-6-closing*.25));
-   if(required>1.2){held.brake=std::clamp(required/(9.81*1.05),0.,1.);held.throttle=0;}
+   if(required>1.2){held.brake=std::max(held.brake,std::clamp(required/(9.81*1.05),0.,1.));held.throttle=0;}
    if(nearest<8){held.brake=1;held.throttle=0;}
   }
   return held;
  }
 };
+
 enum class RacePhase {Countdown,Racing,Finished};
 enum class RaceWinner {None,Player,Opponent,Tie};
 struct RaceSession {

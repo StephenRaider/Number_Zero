@@ -19,6 +19,31 @@ int main(){try{
   Require(a.laneChanges==1,"Opponent does not react to a visible obstruction");
   nz::RivalDriver empty;empty.Reset();for(int tick=0;tick<100;tick++)empty.Control(v,{},.12);Require(empty.laneChanges==0,"Opponent changes lanes to hunt empty patterns without an obstruction");
  }
+ // A boxed driver must deliberately drop behind the alongside cars, then
+ // use the opening instead of sitting at the lead car's speed indefinitely.
+ {
+  nz::Vehicle v;nz::RaceSession::Rolling(v,nz::Cars[2],1.75,true);v.speed=27;
+  nz::RivalDriver driver;driver.Reset();double minimum=v.speed;bool merged=false,resumed=false;
+  for(int tick=0;tick<120*12;tick++){
+   double t=tick/120.;std::vector<nz::SeenCar> seen;
+   for(int lane:{1,2,3}){double relative=27*t+(lane==2?25:0)-v.distance;if(relative<=nz::VisibleAhead&&relative>=-25)seen.push_back({relative,nz::LaneCentres[lane],27,0,4.5,1.9});}
+   auto input=driver.Control(v,seen,1./120.);minimum=std::min(minimum,v.speed);
+   merged=merged||(driver.laneChanges>0&&std::abs(v.lateral-1.75)>2.8);
+   resumed=resumed||(merged&&input.throttle>.99&&input.brake==0);
+   nz::Step(v,nz::Cars[2],input,1./120.);
+   for(const auto &a:seen)Require(std::abs(a.station)>=4.5||std::abs(a.lateral-v.lateral)>=1.94,"Box escape steers into an alongside car");
+  }
+  Require(driver.gapPreparations>0&&minimum<25,"Boxed rival does not slow down to create space");
+  Require(merged&&resumed,"Boxed rival does not use the opened gap and resume acceleration");
+  std::printf("PASS boxed escape: min %.1fkm/h, %d gap preparations, %d lane changes\n",minimum*3.6,driver.gapPreparations,driver.laneChanges);
+ }
+ {
+  for(double speed:{20.,50.,65.,73.}){nz::Vehicle v;v.speed=speed;v.lateral=1.75;nz::RivalDriver driver;driver.Reset();auto input=driver.Control(v,{},.125);Require(input.throttle==1&&input.brake==0,"Clear-road rival unnecessarily lifts or brakes");}
+  nz::Vehicle v;v.speed=27;v.lateral=1.75;nz::RivalDriver driver;driver.Reset();
+  std::vector<nz::SeenCar> queue={{20,1.75,27,0,4.5,1.9},{20,-1.75,27,0,4.5,1.9},{20,5.25,27,0,4.5,1.9}};
+  driver.Control(v,queue,.125);Require(driver.laneChanges==0,"Rival hops immediately into an equally blocked queue");
+  driver.Reset();Require(!driver.PreparingGap()&&driver.gapPreparations==0,"Restart retains gap preparation state");
+ }
  for(int winner=0;winner<3;winner++){
   nz::RaceSession r;nz::Vehicle p;r.phase=nz::RacePhase::Racing;r.startLine=40;r.elapsed=100;double goal=40+nz::RaceDistance;
   double pb=goal-1,ob=goal-1;p.distance=goal+(winner==0?3:1);r.opponent.distance=goal+(winner==1?3:1);r.FinishStep(pb,ob,p,.1);
