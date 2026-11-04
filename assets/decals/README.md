@@ -10,3 +10,12 @@ catalog.txt: stable ID | display label | single-ink flag | PNG filename.
 Single-ink assets use alpha as coverage; colour is selected in the editor.
 Multicolour racing sets retain their original RGB. Decals are composited into
 body albedo before dynamic lighting; no light or shadow is baked into them.
+
+## Small-scale readability
+
+The reviewed revision replaces hairlines with bold vector strokes and filled
+leaves/petals, and uses fewer, larger sponsor blocks. Honeycomb Fade has a solid
+vertical left edge and filled hexagons that thin out toward the right.
+Red Slash Racing, Orange Endurance, Heritage Tricolour and Touring Sunset are
+authored mirrored for right-side placement. Mint Club Racer remains unchanged.
+Stable catalogue IDs preserve existing saved selections and transforms.
