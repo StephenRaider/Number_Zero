@@ -4,6 +4,7 @@
 #include "trail_history.h"
 #include "traffic.h"
 #include "race.h"
+#include "race_telemetry.h"
 #include "scene.h"
 #include "decal_projection.h"
 #include "engine_audio.h"
@@ -438,7 +439,7 @@ int main(int argc,char **argv){
  RenderTexture2D target=LoadRenderTexture(Width,Height);SetTextureFilter(target.texture,TEXTURE_FILTER_POINT);
  EffectLayers layers;layers.Resize(Width,Height);EffectSettings effects;nz::TailHistory trails;
  Selection selected;selected.manual=manualSmoke;selected.car=smokeCar;selected.RestorePaint();if(smokeCar==1)selected.paint=RGBA(42,89,149);if(blackPaint){selected.paint=RGBA(28,31,36);selected.twoTone=false;}nz::Vehicle vehicle;bool driving=false,paused=false,quit=false,heads=true,tails=true,muted=false;
- nz::RaceSession race;Selection opponentChoice;opponentChoice.car=2;opponentChoice.paint=WHITE;opponentChoice.twoTone=false;opponentChoice.blackHood=false;
+ nz::RaceSession race;nz::RaceTelemetry raceTelemetry(root/"build/qa/race_telemetry.csv");Selection opponentChoice;opponentChoice.car=2;opponentChoice.paint=WHITE;opponentChoice.twoTone=false;opponentChoice.blackHood=false;
  bool decalEditor=decalSmoke;int decalView=0,decalLayer=0;
  if(limiterDeleteSmoke)selected.limiterDeleted[selected.car]=true;
  const auto decalSave=root/"build/customisation.cfg";if(!smoke){LoadDecalSettings(decalSave,selected,decals);if(smokeCar)selected.SelectCar(smokeCar);if(manualSmoke)selected.manual=true;if(limiterDeleteSmoke)selected.limiterDeleted[selected.car]=true;}
@@ -517,7 +518,7 @@ int main(int argc,char **argv){
    if(raceSmoke&&frame==120&&(std::abs(vehicle.speed-nz::RollingSpeed)>.001||std::abs(race.opponent.speed-nz::RollingSpeed)>.001))throw std::runtime_error("Race rolling start did not hold both cars at 50km/h");
    if(raceSmoke&&frame==820&&race.phase==nz::RacePhase::Racing){vehicle.distance=race.startLine+nz::RaceDistance-.1;vehicle.speed=30;race.opponent.distance=vehicle.distance-20;race.opponent.speed=20;}
    if(!paused){accumulator+=dt;while(accumulator>=1./120.){
-    if(raceMode)race.Step(vehicle,nz::Cars[selected.car],input,traffic,1./120.);
+    if(raceMode){race.Step(vehicle,nz::Cars[selected.car],input,traffic,1./120.);raceTelemetry.Record(race,vehicle);}
     else{nz::Step(vehicle,nz::Cars[selected.car],input,1./120.);if(!smoke||trafficSmoke){traffic.Step({vehicle.distance,vehicle.lateral,vehicle.speed},1./120.);if(traffic.ResolveContact(vehicle))trails.Clear();}}
     accumulator-=1./120.;
    }}

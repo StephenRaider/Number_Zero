@@ -86,12 +86,16 @@ int main(){try{
   double fraction=BassFraction(rpm);Require(fraction>.30,"Ferrari lost its low exhaust body at high RPM");
   std::printf("PASS Ferrari low-body energy at %.0frpm: %.2f\n",rpm,fraction);
  }
- for(auto profile:{carsynth::profileS13(),carsynth::profileEK9(),nz::TestarossaProfile(),nz::SupraProfile()}){
+ for(auto profile:{carsynth::profileS13(),nz::CivicProfile(),nz::TestarossaProfile(),nz::SupraProfile()}){
   for(float rpm:{1500.f,2500.f,3000.f}){double variation=LowRpmVariation(profile,rpm);Require(variation>10&&variation<180,"Low-RPM combustion remains sterile or hunts excessively");std::printf("PASS low-RPM variation %s %.0frpm: %.1frpm range\n",profile.name,rpm,variation);}
   Require(LowRpmVariation(profile,6000)<10,"Low-RPM hunting leaks into high-RPM running");
  }
+ // Keep high-cam output controlled without muting its exhaust identity.
+ double civicMid=SteadyRms(1,6500,1),civicTop=SteadyRms(1,8300,1);
+ Require(civicTop>.08&&civicTop<.17&&civicTop/civicMid<1.2,"Civic top end becomes excessively loud or silent");
+ std::printf("PASS Civic top-end level: 6500 %.3f / 8300 %.3f RMS\n",civicMid,civicTop);
  // Observable cam state: loaded high RPM engages; lift disengages with smoothing.
- carsynth::Engine civic(carsynth::profileEK9());
+ carsynth::Engine civic(nz::CivicProfile());
  for(int i=0;i<nz::AudioRate;i++)civic.process(7000,1);
  Require(civic.vtecActive(),"VTEC did not engage");
  for(int i=0;i<nz::AudioRate/2;i++)civic.process(7000,0);

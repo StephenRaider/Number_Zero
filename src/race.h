@@ -15,60 +15,78 @@ inline std::vector<SeenCar> ObserveRaceTraffic(const Vehicle &v,const std::vecto
 // This driver receives only a locally filtered kinematic snapshot. It cannot
 // access traffic seeds, bands, reserved lanes or future spawn information.
 class RivalDriver {
- double reaction=0,laneCooldown=0,boxedTime=0;int targetLane=2,prefer=-1;Input held{};bool preparingGap=false;
-public:
- int laneChanges=0,gapPreparations=0;
- bool PreparingGap()const{return preparingGap;}
- void Reset(int lane=2){reaction=laneCooldown=boxedTime=0;targetLane=lane;prefer=-1;held={};preparingGap=false;laneChanges=gapPreparations=0;}
- Input Control(const Vehicle &v,const std::vector<SeenCar> &seen,double dt){
-  reaction-=dt;laneCooldown=std::max(0.,laneCooldown-dt);
-  if(reaction>0)return held;
-  constexpr double decisionTime=.125;reaction=decisionTime;
-  int current=std::clamp((int)std::lround((v.lateral+5.25)/3.5),0,3);
-  bool settled=std::abs(v.lateral-LaneCentres[targetLane])<.22&&std::abs(v.lateralSpeed)<.65;
-  double nearest=1e6,leadSpeed=v.speed;
-  for(const auto &a:seen)if(a.station>0&&std::abs(a.lateral-v.lateral)<(1.976+a.width)*.5+.18){double gap=a.station-(4.485+a.length)*.5;if(gap<nearest){nearest=gap;leadSpeed=a.speed;}}
-  double closing=std::max(0.,v.speed-leadSpeed);
-  // A matched-speed queue is still an obstruction: do not wait until almost
-  // touching its bumper before looking for an overtake.
-  bool blocked=(nearest<28+closing*1.45&&leadSpeed<v.speed+5)||(preparingGap&&nearest<1e5);
-  bool foundGap=false;
-  if(settled&&blocked&&laneCooldown<=0){
-   // Take the first safe neighbouring gap. No lane-density ranking or route planning.
-   for(int direction:{prefer,-prefer}){
-    int lane=current+direction;if(lane<0||lane>3)continue;bool safe=true;double laneFront=1e6,laneSpeed=1e6;
-    for(const auto &a:seen){
-     double predicted=a.lateral+a.lateralSpeed*.45;
-     if(std::min(std::abs(a.lateral-LaneCentres[lane]),std::abs(predicted-LaneCentres[lane]))>(1.976+a.width)*.5+.25)continue;
-     double gap=std::abs(a.station)-(4.485+a.length)*.5;
-     if(a.station>=0&&gap<laneFront){laneFront=gap;laneSpeed=a.speed;}
-     if(gap<(a.station>=0?8+std::max(0.,v.speed-a.speed)*.85:8+std::max(0.,a.speed-v.speed)*.8))safe=false;
-    }
-    if(safe&&(preparingGap||laneFront>nearest+6||laneSpeed>leadSpeed+2)){targetLane=lane;prefer=direction;laneCooldown=1.5;++laneChanges;foundGap=true;break;}
+ const CarSpec *spec=&Cars[2];double confidence=.9,reaction=0,boxedTime=0;int targetLane=2;Input held{};bool preparingGap=false;
+ struct Plan {bool safe=false;double score=-1e9;Input input{};};
+ static double Steering(const Vehicle &v,int lane){return std::clamp((LaneCentres[lane]-v.lateral)*1.35-v.lateralSpeed*.28,-1.,1.);}
+ // Continuous relative AABB sweep between prediction samples. This also catches
+ // crossing a fast car between endpoints, rather than only checking each frame.
+ static bool Sweep(double x,double y,double dx,double dy,double length,double width){
+  double enter=0,leave=1;
+  auto slab=[&](double p,double d,double half){if(std::abs(d)<1e-8)return std::abs(p)<half;double a=(-half-p)/d,b=(half-p)/d;if(a>b)std::swap(a,b);enter=std::max(enter,a);leave=std::min(leave,b);return enter<leave;};
+  return slab(x,dx,length)&&slab(y,dy,width)&&enter<leave;
+ }
+ Plan Predict(const Vehicle &initial,const std::vector<SeenCar> &seen,int first,int next,int style)const{
+  Plan plan;Vehicle v=initial;v.distance=0;double brakeCost=0;bool second=false;int lane=first;
+  constexpr double step=.05,horizon=2.6;
+  for(int tick=0;tick<52;tick++){
+   double t=tick*step;
+   if(t>.7&&std::abs(v.lateral-LaneCentres[first])<.40&&std::abs(v.lateralSpeed)<1.4){lane=next;second=next!=first;}
+   Input input{1,0,Steering(v,lane)};
+   if(style==1||(style==2&&t>=.5)){
+    double nearest=1e6,lead=v.speed;
+    for(const auto &a:seen){double x=a.station+a.speed*t-v.distance,y=a.lateral+a.lateralSpeed*std::min(t,.6);
+     if(x>0&&std::abs(y-v.lateral)<(1.976+a.width)*.5+.10){double gap=x-(4.485+a.length)*.5;if(gap<nearest){nearest=gap;lead=a.speed;}}}
+    double closing=std::max(0.,v.speed-lead);
+    if(closing>.1&&nearest<1e5){double required=(v.speed*v.speed-lead*lead)/(2*std::max(.5,nearest-2.5-closing*.13));if(required>.8){input.throttle=0;input.brake=std::clamp(required/(spec->brakeG*GameBrakeBoost*9.81),0.,1.);}}
+   }
+   if(tick==0)plan.input=input;
+   Vehicle before=v;nz::Step(v,*spec,input,step);brakeCost+=input.brake*step;
+   for(const auto &a:seen){
+    double x=a.station+a.speed*t-before.distance,y=a.lateral+a.lateralSpeed*std::min(t,.6)-before.lateral;
+    double dx=a.speed*step-(v.distance-before.distance),dy=a.lateralSpeed*(std::min(t+step,.6)-std::min(t,.6))-(v.lateral-before.lateral);
+    double length=(4.485+a.length)*.5,width=(1.976+a.width)*.5;
+    // A contact can leave cars inside the preferred buffer. Permit paths that
+    // increase that clearance; otherwise every escape is rejected at t=0.
+    double longitudinalMargin=std::min(.85+(1-confidence)*2.,std::max(0.,std::abs(a.station)-length-.02));
+    double lateralMargin=std::min(.08+(1-confidence)*.15,std::max(0.,std::abs(a.lateral-initial.lateral)-width-.02));
+    if(Sweep(x,y,dx,dy,length+longitudinalMargin,width+lateralMargin))return plan;
    }
   }
-  bool boxed=settled&&blocked&&!foundGap&&laneCooldown<=0;
-  boxedTime=boxed?boxedTime+decisionTime:0;
-  bool yield=boxedTime>=.5;
+  double room=40;for(const auto &a:seen){double x=a.station+a.speed*horizon-v.distance;if(x>0&&std::abs(a.lateral+a.lateralSpeed*.6-v.lateral)<(1.976+a.width)*.5+.1)room=std::min(room,x);}
+  plan.safe=true;plan.score=v.distance+v.speed*.35+room*.025-brakeCost*.6-(first!=targetLane?.55:0)-(second?.3:0);return plan;
+ }
+public:
+ int laneChanges=0,gapPreparations=0,chosenLane=2,rejectedPlans=0;double nearestFront=1e6,closingSpeed=0;std::array<double,3> laneScores{{-1e9,-1e9,-1e9}};
+ bool PreparingGap()const{return preparingGap;}
+ void Configure(const CarSpec &car,double skill=.9){spec=&car;confidence=std::clamp(skill,.2,1.);}
+ void Reset(int lane=2){reaction=boxedTime=0;targetLane=chosenLane=lane;held={};preparingGap=false;laneChanges=gapPreparations=rejectedPlans=0;nearestFront=1e6;closingSpeed=0;laneScores.fill(-1e9);}
+ Input Control(const Vehicle &v,const std::vector<SeenCar> &seen,double dt){
+  reaction-=dt;if(reaction>0)return held;
+  double decisionTime=.10+(1-confidence)*.15;reaction=decisionTime;
+  bool settled=std::abs(v.lateral-LaneCentres[targetLane])<.45&&std::abs(v.lateralSpeed)<1.5;
+  nearestFront=1e6;double lead=v.speed;
+  for(const auto &a:seen)if(a.station>0&&std::abs(a.lateral-v.lateral)<(1.976+a.width)*.5+.18){double gap=a.station-(4.485+a.length)*.5;if(gap<nearestFront){nearestFront=gap;lead=a.speed;}}
+  closingSpeed=v.speed-lead;bool blocked=nearestFront<32+std::max(0.,closingSpeed)*1.4||(preparingGap&&nearestFront<1e5);
+  Plan best;int bestLane=targetLane;bool adjacentSafe=false;rejectedPlans=0;laneScores.fill(-1e9);
+  for(int delta=-1;delta<=1;delta++){
+   int first=targetLane+delta;if(first<0||first>3||(!settled&&delta!=0))continue;
+   // No unsolicited lane hunting on empty road. Only local obstacles justify a pass.
+   if(delta!=0&&!blocked&&!preparingGap)continue;
+   for(int next=std::max(0,first-1);next<=std::min(3,first+1);next++)for(int style=0;style<3;style++){
+    Plan plan=Predict(v,seen,first,next,style);if(!plan.safe){++rejectedPlans;continue;}
+    if(preparingGap&&delta!=0)plan.score+=15;
+    laneScores[delta+1]=std::max(laneScores[delta+1],plan.score);adjacentSafe=adjacentSafe||(delta!=0);
+    if(plan.score>best.score){best=plan;bestLane=first;}
+   }
+  }
+  bool boxed=settled&&blocked&&(!adjacentSafe||preparingGap);boxedTime=boxed?boxedTime+decisionTime:0;
+  bool yield=boxedTime>=.45||(preparingGap&&boxed);
   if(yield&&!preparingGap)++gapPreparations;
   preparingGap=yield;
-  held={};held.steer=std::clamp((LaneCentres[targetLane]-v.lateral)*.85-v.lateralSpeed*.20,-1.,1.);
-  // Use the stock engine's full pull whenever the local path permits it. The
-  // old 235km/h cruise controller unnecessarily lifted even on open highway.
-  held.throttle=1;
-  if(yield){
-   // Drop a little behind the queue so an alongside car moves ahead, opening
-   // a merge slot. Recheck both adjacent gaps every reaction interval, then
-   // immediately release this speed target once a safe lane change starts.
-   double target=std::max(8.,leadSpeed-4.5);
-   held.throttle=std::clamp((target-v.speed)*.65+.25,0.,1.);
-   if(v.speed>target+.3){held.throttle=0;held.brake=std::clamp((v.speed-target)*.16,0.,.28);}
-  }
-  if(nearest<1e5&&closing>.2){
-   double required=(v.speed*v.speed-leadSpeed*leadSpeed)/(2*std::max(1.,nearest-6-closing*.25));
-   if(required>1.2){held.brake=std::max(held.brake,std::clamp(required/(9.81*1.05),0.,1.));held.throttle=0;}
-   if(nearest<8){held.brake=1;held.throttle=0;}
-  }
+  held=best.safe?best.input:Input{0,1,Steering(v,targetLane)};
+  if(best.safe&&bestLane!=targetLane){targetLane=bestLane;++laneChanges;preparingGap=false;boxedTime=0;}
+  chosenLane=targetLane;
+  if(preparingGap){double target=std::max(8.,lead-4.5);held.throttle=std::min(held.throttle,std::clamp((target-v.speed)*.65+.25,0.,1.));if(v.speed>target+.3){held.throttle=0;held.brake=std::max(held.brake,std::clamp((v.speed-target)*.16,0.,.28));}}
   return held;
  }
 };

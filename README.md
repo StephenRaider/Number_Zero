@@ -62,24 +62,26 @@ The result screen offers Rematch and Garage; R and Tab work too. Pause stops
 both racers and traffic.
 
 The white Testarossa uses the same stock vehicle physics, automatic gearbox,
-brakes and collision rules as the player. Its driver reacts about every 120 ms,
-sees only traffic within the shared forward visibility range (42.5 m) and 25 m
-behind, and tries the first safe adjacent lane when blocked. It cannot read
-traffic generation seeds, lane-density patterns or future spawns. It uses full
-throttle on clear road, with top speed determined by the stock engine, gearing
-and drag. When boxed in, it briefly eases back to let an
-alongside car move ahead, rechecks the gap and accelerates again as it merges.
-It avoids immediately changing into an equally blocked queue and tends to
-continue around an obstruction rather than immediately weaving back. There is
-no catch-up boost. It can hesitate or make contact, rather than driving
-perfectly. Traffic remains simulated around both racers even when they separate,
-so the leader still has to weave.
+brakes and collision rules as the player. Its driver reacts about every 115 ms
+and sees only traffic within the shared forward visibility range (42.5 m) and
+25 m behind. It predicts 2.6 seconds of nearby motion using the selected car's
+actual steering, grip, braking and drivetrain. It checks adjacent-lane passes,
+including a second lane change or return, with continuous collision checks.
+Only the first action is applied before observing again. It cannot read traffic
+generation seeds, lane-density patterns or future spawns.
+
+It uses full throttle on clear road and drops back to open a gap when boxed in.
+There is no catch-up boost or altered vehicle physics. It can still misjudge
+traffic and make contact. Traffic remains simulated around both racers even
+when they separate. See `docs/RIVAL_TUNING.md` for measured comparisons and logs.
 
 `--race` opens the garage with Race selected. `--race-smoke-test` verifies the
 rolling start, rival rendering and result UI (with an accelerated finish setup).
 `tests/race_tests.cpp` separately runs six complete 10 km simulations, checks
 local-only perception, traffic coverage, rolling-start equality and same-step
-finish ordering, plus a controlled boxed-in escape and clear-road throttle checks.
+finish ordering, boxed-in escape, temporary-gap overtaking and post-contact
+recovery. Race sessions automatically write local diagnostic CSV data under
+`build/qa/race_telemetry.csv`.
 
 ## Build and verify
 

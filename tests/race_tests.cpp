@@ -44,6 +44,35 @@ int main(){try{
   driver.Control(v,queue,.125);Require(driver.laneChanges==0,"Rival hops immediately into an equally blocked queue");
   driver.Reset();Require(!driver.PreparingGap()&&driver.gapPreparations==0,"Restart retains gap preparation state");
  }
+ // The adjacent lane has a farther car: use it briefly, pass, and return
+ // instead of rejecting the entire lane because it is not empty forever.
+ {
+  nz::Vehicle v;nz::RaceSession::Rolling(v,nz::Cars[2],1.75,true);v.speed=40;
+  nz::RivalDriver driver;driver.Reset();bool right=false,returned=false;double closest=1e6;
+  for(int tick=0;tick<120*8;tick++){
+   double t=tick/120.;std::vector<nz::SeenCar> seen;
+   for(auto a:std::vector<nz::SeenCar>{{18,1.75,25,0,4.5,1.9},{42,5.25,25,0,4.5,1.9},{0,-1.75,40,0,4.5,1.9}}){a.station+=a.speed*t-v.distance;if(a.station>=-25&&a.station<=nz::VisibleAhead)seen.push_back(a);}
+   auto input=driver.Control(v,seen,1./120.);nz::Step(v,nz::Cars[2],input,1./120.);
+   right=right||v.lateral>4.5;returned=returned||(right&&v.lateral<2.2&&v.distance>25*t+26);
+   for(const auto &a:seen)if(std::abs(a.lateral-v.lateral)<1.94)closest=std::min(closest,std::abs(a.station));
+  }
+  Require(right&&returned,"Rival refuses the temporary right-lane overtake and return");Require(closest>4.5,"Predicted overtake contacts a car");
+  std::puts("PASS temporary-gap overtake and return with farther car in passing lane");
+ }
+ {
+  nz::Vehicle v;v.speed=0;v.lateral=1.75;nz::RivalDriver driver;driver.Reset();
+  auto control=driver.Control(v,{{-4.55,1.75,0,0,4.485,1.976}},.125);
+  Require(control.throttle==1&&control.brake==0,"Preferred buffer deadlocks a car after rear contact");
+ }
+ {
+  nz::Vehicle v;nz::RaceSession::Rolling(v,nz::Cars[2],1.75,true);v.speed=40;
+  auto weak=nz::Cars[2];weak.steerResponse=2;weak.grip=.4;
+  nz::RivalDriver capable,limited;capable.Configure(nz::Cars[2]);limited.Configure(weak);capable.Reset();limited.Reset();
+  std::vector<nz::SeenCar> seen={{14,1.75,25,0,4.5,1.9},{42,5.25,25,0,4.5,1.9},{0,-1.75,40,0,4.5,1.9}};
+  auto fast=capable.Control(v,seen,.125),slow=limited.Control(v,seen,.125);
+  Require(fast.steer>.9&&fast.brake==0&&slow.brake>.5,"Lane-change prediction ignores grip and steering capability");
+  std::puts("PASS handling-aware gap: capable car passes under power; low-grip/slower steering requires braking");
+ }
  for(int winner=0;winner<3;winner++){
   nz::RaceSession r;nz::Vehicle p;r.phase=nz::RacePhase::Racing;r.startLine=40;r.elapsed=100;double goal=40+nz::RaceDistance;
   double pb=goal-1,ob=goal-1;p.distance=goal+(winner==0?3:1);r.opponent.distance=goal+(winner==1?3:1);r.FinishStep(pb,ob,p,.1);

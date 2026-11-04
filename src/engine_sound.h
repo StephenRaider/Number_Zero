@@ -24,6 +24,15 @@ inline EngineControls DrivingSound(const Vehicle &v,int car,bool driving,bool pa
  // A shift/factory speed cut removes engine load even if the pedal remains held.
  return {(float)v.rpm,(float)((v.shiftTime>0||v.limiter)?0.:v.throttle),car,driving&&!paused,muted};
 }
+// A broader exhaust note and restrained induction preserve the B16B cam change
+// without a narrow, increasingly loud high-RPM drone.
+inline carsynth::Profile CivicProfile(){
+ auto p=carsynth::profileEK9();p.centerExhaust=true;p.pulseMs=1.15f;p.bankBodyGain=.19f;
+ p.lowpassOpen=1900;p.muffleHz=1800;p.intakeHz=820;p.intakeQ=.85f;p.intakeGain=.018f;p.mechGain=.002f;
+ p.vtecIntakeBoost=.32f;p.vtecBright=.20f;p.outGain=.48f;
+ const float hz[]={150,340,820,1700},q[]={1.05f,1.1f,1.0f,.8f},gain[]={1.15f,.85f,.28f,.045f};
+ for(int i=0;i<4;i++){p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=gain[i];}return p;
+}
 inline carsynth::Profile TestarossaProfile(){
  auto p=carsynth::profileEK9();p.name="Ferrari Testarossa F113 flat-12";p.cylinders=12;p.idleRpm=1000;p.limiterRpm=6800;p.vtec=false;p.turbo=false;
  p.pulseMs=1.55f;p.jitter=.045f;p.idleLump=.018f;p.lowRpmTexture=.95f;p.bodyGain=2.1f;p.bankBodyGain=.70f;
@@ -40,7 +49,7 @@ inline carsynth::Profile SupraProfile(){
  for(int i=0;i<4;i++){p.firingGain[i]=accent[i];p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=g[i];}return p;
 }
 class EngineSound {
- std::array<carsynth::Engine,4> engines{carsynth::Engine(carsynth::profileS13(),AudioRate),carsynth::Engine(carsynth::profileEK9(),AudioRate),carsynth::Engine(TestarossaProfile(),AudioRate),carsynth::Engine(SupraProfile(),AudioRate)};
+ std::array<carsynth::Engine,4> engines{carsynth::Engine(carsynth::profileS13(),AudioRate),carsynth::Engine(CivicProfile(),AudioRate),carsynth::Engine(TestarossaProfile(),AudioRate),carsynth::Engine(SupraProfile(),AudioRate)};
  int currentCar=0;float gain=0;
 public:
  // Single audio-thread owner. No allocation, locks, filesystem or Raylib calls here.
