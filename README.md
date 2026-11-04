@@ -271,7 +271,7 @@ frame, plus the amber red-zone gauge, and checks the compositor on the GPU.
 Open **DECALS / GRAPHICS** in the garage. The editor uses fixed diffuse studio
 fill and softbox bar reflections instead of the orbiting point source.
 Switch **FRONT VIEW / REAR VIEW**, choose one of three decal layers, then browse
-24 vector-authored designs with the arrows or mouse wheel over the preview.
+25 vector-authored designs with the arrows or mouse wheel over the preview.
 Drag on the car or use arrow keys/buttons to move the decal on its side plane;
 adjust size, angle and single-ink colour. Racing designs retain their colours.
 REMOVE clears the selected layer, RESET restores its transform, DONE / SAVE
@@ -289,3 +289,6 @@ No bonnet/roof placement or arbitrary surface wrapping is implemented.
 maps, save/reload and captures front/rear editor and driving frames. Add
 `--civic` for the EK9. Compile/run `tests/decal_tests.cpp` with the same standalone
 compiler flags as the other unit checks to verify cross-view projection maths.
+
+**Sponsor Overlay** is a transparent frame of sponsor blocks with a clear centre.
+Choose it on layer 2 or 3 over another graphic; layers draw in order 1, 2, 3.

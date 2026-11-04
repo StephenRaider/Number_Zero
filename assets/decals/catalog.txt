@@ -22,3 +22,4 @@
 17_flowing_checkerboard|Flowing Checkerboard|1|17_flowing_checkerboard.png
 18_touring_sunset|Touring Sunset|0|18_touring_sunset.png
 19_midnight_club_stickers|Midnight Club Stickers|1|19_midnight_club_stickers.png
+20_sponsor_overlay|Sponsor Overlay|1|20_sponsor_overlay.png
