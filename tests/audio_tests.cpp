@@ -22,6 +22,14 @@ static double BassFraction(float rpm){
  }
  return bass/total;
 }
+static double LowRpmVariation(carsynth::Profile profile,float rpm){
+ carsynth::Engine engine(profile);float smallest=1e9f,largest=0;
+ for(int i=0;i<6*nz::AudioRate;i++){
+  float sample=engine.process(rpm,.4f);Require(std::isfinite(sample)&&std::abs(sample)<=.85f,"Low-RPM texture is invalid");
+  if(i>=nz::AudioRate){smallest=std::min(smallest,engine.effectiveRpm());largest=std::max(largest,engine.effectiveRpm());}
+ }
+ return largest-smallest;
+}
 int main(){try{
  std::filesystem::create_directories("build/qa");
  for(int car=0;car<(int)nz::Cars.size();car++){
@@ -62,6 +70,10 @@ int main(){try{
  for(float rpm:{3000.f,5000.f,6500.f}){
   double fraction=BassFraction(rpm);Require(fraction>.30,"Ferrari lost its low exhaust body at high RPM");
   std::printf("PASS Ferrari low-body energy at %.0frpm: %.2f\n",rpm,fraction);
+ }
+ for(auto profile:{carsynth::profileS13(),carsynth::profileEK9(),nz::TestarossaProfile()}){
+  for(float rpm:{1500.f,2500.f,3000.f}){double variation=LowRpmVariation(profile,rpm);Require(variation>10&&variation<180,"Low-RPM combustion remains sterile or hunts excessively");std::printf("PASS low-RPM variation %s %.0frpm: %.1frpm range\n",profile.name,rpm,variation);}
+  Require(LowRpmVariation(profile,6000)<10,"Low-RPM hunting leaks into high-RPM running");
  }
  // Observable cam state: loaded high RPM engages; lift disengages with smoothing.
  carsynth::Engine civic(carsynth::profileEK9());

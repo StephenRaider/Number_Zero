@@ -4,6 +4,7 @@
 #include <vector>
 namespace nz {
 struct TrailPoint {float x,y,z;};
+inline bool OuterRearLamp(float forward,float lateral){return forward<-1.45f&&std::abs(lateral)>=.28f;}
 struct TailHistory {
  struct Sample {double time;std::array<TrailPoint,2> point;float strength;bool connected;};
  std::vector<Sample> samples;int car=-1;bool continuation=false;

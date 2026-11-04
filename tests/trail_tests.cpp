@@ -3,6 +3,10 @@
 #include <stdexcept>
 static void Require(bool condition,const char *message){if(!condition)throw std::runtime_error(message);}
 int main(){try{
+ Require(nz::OuterRearLamp(-2.15f,-.65f)&&nz::OuterRearLamp(-2.14f,.79f),"Outer tail clusters rejected");
+ Require(!nz::OuterRearLamp(-1.62f,0)&&!nz::OuterRearLamp(-2.1f,.01f),"Centre engine/stop detail produces a trail");
+ Require(!nz::OuterRearLamp(2.f,.65f),"Front marker produces a tail trail");
+
  nz::TailHistory history;nz::Vehicle v;v.speed=30;v.distance=100;v.elapsed=1;
  std::array<nz::TrailPoint,2> lamps{{{-2,-.6f,.5f},{-2,.6f,.5f}}};
  history.Update(v,0,true,false,lamps);Require(history.samples.size()==1&&!history.samples.back().connected,"Initial trail connects to a stale car");

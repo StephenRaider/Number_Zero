@@ -20,6 +20,7 @@ struct Profile {
     float idleRpm, limiterRpm;
     // --- combustion pulses (four gain accents repeat across the selected cylinder count)
     int cylinders=4;
+    float lowRpmTexture=.65f;
     float bankBodyGain=0; // Optional lower crank/bank exhaust orders, phase-locked to engine RPM.
     float firingGain[4];   // relative strength of each cylinder's pulse (unequal = rough/raspy)
     float pulseMs;         // blowdown pulse length; shorter = crisper/brighter
@@ -115,10 +116,16 @@ public:
     float process(float rpm, float throttle) {
         const float dt = 1.0f / sr_;
         thr_ += (throttle - thr_) * (1 - std::exp(-dt / 0.03f));
-        // rpm smoothing (8 ms) so abrupt rpm changes do not click; idle lump adds life
+        // Low-speed flywheel/governor variation evolves independently of the
+        // waveform pitch: two slow hunting rates plus cycle-to-cycle torque drift.
+        float lowRpm = std::clamp((4200.0f-rpm)/2800.0f,0.0f,1.0f);
+        lowRpm = lowRpm*lowRpm*(3-2*lowRpm);
+        huntPhase_ += dt*(.73f+.11f*thr_);huntPhase_ -= std::floor(huntPhase_);
+        huntPhase2_ += dt*.413f;huntPhase2_ -= std::floor(huntPhase2_);
+        torqueDrift_ += (cycleTorque_-torqueDrift_)*(1-std::exp(-dt/.08f));
+        const float hunt = .62f*std::sin(kTwoPi*huntPhase_)+.25f*std::sin(kTwoPi*huntPhase2_+.7f)+.35f*torqueDrift_;
         lump_ += (noise() - lump_) * 0.0006f;
-        const float idleness = std::clamp(1.0f - (rpm - p_.idleRpm) / 1500.0f, 0.0f, 1.0f);
-        const float rpmT = rpm * (1.0f + (p_.idleLump * idleness + 0.0015f) * lump_ * 4.0f);
+        const float rpmT = rpm * (1.0f + .0015f*lump_*4 + lowRpm*(p_.idleLump+.016f)*(.45f+.55f*(1-thr_))*hunt);
         rpmS_ += (rpmT - rpmS_) * (1 - std::exp(-dt / 0.008f));
         const float rev = std::clamp(rpmS_ / p_.limiterRpm, 0.0f, 1.2f);
 
@@ -149,12 +156,14 @@ public:
         const float load = closedLoad + (1.0f - closedLoad) * thr_;
         if (idx != lastIdx_) {
             lastIdx_ = idx;
+            if(idx==0)cycleTorque_=.65f*cycleTorque_+.35f*noise();
             const bool overrun = thr_ < 0.06f && rpmS_ > 1500;   // closed throttle: only air pumping
-            float amp = p_.firingGain[idx%4] * (1.0f + p_.jitter * noise()) * load;
+            float amp = p_.firingGain[idx%4] * (1.0f + p_.jitter * noise()+lowRpm*(.12f*cycleTorque_+.10f*noise())) * load;
             // Do not attenuate the RPM bed again on overrun; load already shapes it.
             if (cut) amp *= 0.06f;
             const float len = p_.pulseMs * (1.0f - 0.35f * p_.vtecBright * vtecMix_ * (p_.vtec ? 1.0f : 0.0f));
-            tauFast_ = len * 1e-3f;
+            tauFast_ = len * (1+.22f*lowRpm*cycleTorque_) * 1e-3f;
+            combustionEnvelope_=std::min(1.8f,combustionEnvelope_+amp*.8f);
             env1_ += amp;
             env2_ += amp * 0.9f;
             // overrun pops (afterburn in the exhaust): random, only on closed throttle
@@ -195,6 +204,12 @@ public:
 
         // ---- intake roar: noise through a band-pass, breathing at firing rate, louder with load and revs
         const float n = noise();
+        // Blowdown excites a short, coloured pressure burst for each combustion.
+        // Sparse low-RPM puffs replace the perfectly repeating electric-sounding bed.
+        combustionEnvelope_ *= std::exp(-dt/(.004f+.003f*lowRpm));
+        pressureNoise_ += (n-pressureNoise_)*(1-std::exp(-kTwoPi*680.0f*dt));
+        pressureLow_ += (pressureNoise_-pressureLow_)*(1-std::exp(-kTwoPi*65.0f*dt));
+        sig += (pressureNoise_-pressureLow_)*combustionEnvelope_*p_.lowRpmTexture*lowRpm*(.40f+.60f*thr_);
         const float breath = 0.55f + 0.45f * std::sin(kTwoPi * (float)phase_ * p_.cylinders);
         const float ig = p_.intakeGain * (1.0f + p_.vtecIntakeBoost * vtecMix_ + 1.2f * vtecKick_ * (p_.vtec ? 1 : 0));
         const float ih = p_.intakeHz * (1.0f + 0.35f * vtecMix_ + 0.6f * rev);
@@ -223,7 +238,7 @@ public:
                                + .45f*std::sin(3*crank+.53f) + .12f*std::sin(6*crank);
             bankNoise_ += (n-bankNoise_)*(1-std::exp(-kTwoPi*320.0f*dt));
             const float weight = (.36f+.64f*presence)*(.48f+.52f*thr_)*(cut?.15f:1.0f);
-            sig += p_.bankBodyGain * weight * (orders + .12f*bankNoise_);
+            sig += p_.bankBodyGain * weight * (orders*(1+.18f*lowRpm*cycleTorque_) + .12f*bankNoise_);
         }
 
 
@@ -258,6 +273,7 @@ public:
     // Convenience: stereo duplicate with a tiny decorrelation (optional).
     void processStereo(float rpm, float throttle, float& l, float& r) { l = r = process(rpm, throttle); }
 
+    float effectiveRpm() const { return rpmS_; }
     bool vtecActive() const { return vtecOn_; }
     float boost() const { return shaft_; }
     const Profile& profile() const { return p_; }
@@ -331,6 +347,7 @@ private:
     float fz1_[4] = {}, fz2_[4] = {}, fa1_[4] = {}, fa2_[4] = {}, fa3_[4] = {};
     float xs_ = 0, m1_ = 0, m2_ = 0, m3_ = 0, t1_ = 0, lp1_ = 0, lp2_ = 0, bd1_ = 0, bd2_ = 0, iz1_ = 0, iz2_ = 0, hp_ = 0;
     float dcIn_ = 0, dcOut_ = 0, bankNoise_ = 0, bankDc_ = 0;
+    float huntPhase_=0,huntPhase2_=0,cycleTorque_=0,torqueDrift_=0,combustionEnvelope_=0,pressureNoise_=0,pressureLow_=0;
     float pop_ = 0, popHz_ = 200, popPh_ = 0;
     bool vtecOn_ = false;
     float vtecMix_ = 0, vtecKick_ = 0;

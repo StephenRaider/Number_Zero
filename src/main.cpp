@@ -150,12 +150,19 @@ struct CarRenderer {
   }
   for(int i=0;i<5;i++)UpdateTexture(textures[i],output[i].data());
  }
- std::array<nz::TrailPoint,2> TailSources()const{
+ std::array<nz::TrailPoint,2> TailSources(Vector2 origin,Vector2 anchor)const{
   std::array<nz::TrailPoint,2> result{{{-1.9f,-.58f,.55f},{-1.9f,.58f,.55f}}};
   std::array<Vector3,2> sum{};std::array<float,2> weight{};
   for(int i=0;i<PixelCount;i++)if(output[0][i].a>127&&output[4][i].g>=48){
-   int side=output[4][i].a>127?1:0;float w=output[4][i].g;
+   float w=output[4][i].g;
    float x=(i%128+.5f-64)/26.f,y=(79-i/128-.5f)/26.f,z=((output[2][i].r*256.f+output[2][i].g)/65535.f-.5f)*5.2f;
+   // Classify on the unposed body, not the indicator alpha or a centre brake lamp.
+   auto local=nz::RecoverDecalSurface(lastView==1?-x:x,y,z,0,0,1,lastView,lastPose,lastPitch);
+   if(!nz::OuterRearLamp(-local.y,local.x))continue;
+   int side=local.x<0?1:0; // vehicle lateral = -model X in the mirrored driving view
+   float scale=PixelsPerMetre/26.f;
+   x+=(origin.x-(anchor.x-64*scale))/PixelsPerMetre;
+   y-=(origin.y-(anchor.y-79*scale))/PixelsPerMetre;
    sum[side].x+=(K*x+K*ElevationSin*y-K*ElevationCos*z)*w;
    sum[side].y+=(K*x-K*ElevationSin*y+K*ElevationCos*z)*w;
    sum[side].z+=(ElevationCos*y+ElevationSin*z)*w;weight[side]+=w;
@@ -486,7 +493,7 @@ int main(int argc,char **argv){
   if(effectsSmoke&&frame==12)car.ProbeComposite(resolveShader);
   if(scenerySmoke&&frame==12)highway.ProbeOcclusion(propShader,env);
   if(glowSmoke&&(frame==12||frame==580))car.ProbeGlow(glowShader,env);
-  if(!driving)trails.Clear();else if(!paused)trails.Update(vehicle,selected.car,tails,brake,car.TailSources());
+  if(!driving)trails.Clear();else if(!paused)trails.Update(vehicle,selected.car,tails,brake,car.TailSources(origin,carAnchor));
   Vector2 blur=MotionPixels(vehicle,driving&&effects.motionBlur);
   BeginTextureMode(layers.world);ClearBackground(Ink);if(env.studio)StudioBackdrop();else Road(roadShader,car,highway,env,origin,depth);
   if(driving&&effects.trails)DrawTrails(trails,env,vehicle);

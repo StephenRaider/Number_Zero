@@ -339,3 +339,11 @@ The Testarossa's exhaust mixes lower crank/bank harmonics with its twelve-cylind
 firing pulses for a fuller bass/midrange note. Broader, lower exhaust resonances
 and softer high-frequency filtering reduce the thin buzz. The bass follows actual
 RPM, load and shifts and stays audible on lift-off; it is not a constant loop.
+
+
+Low-RPM audio now includes cycle-to-cycle combustion variation, coloured exhaust
+pressure bursts and slow flywheel/governor hunting, fading out smoothly above
+the low-speed range. This affects the audio engine only; drivetrain performance
+and displayed RPM remain governed by the vehicle simulation.
+Tail trails ignore centre lamps/engine-bay details and use the outer rear lamps,
+including the exact sprite placement offset at the current render scale.
