@@ -58,7 +58,7 @@ int main(){try{
    Valid(buffer);for(float s:buffer){rms+=s*s;peak=std::max(peak,std::abs(s));}drive.insert(drive.end(),buffer.begin(),buffer.end());
   }
   Require(peak>.02f&&rms/drive.size()>.000001,"Drive audio is silent");
-  Require(carsynth::writeWavMono(car==2?"build/qa/testarossa_engine_drive.wav":car==1?"build/qa/civic_engine_drive.wav":"build/qa/silvia_engine_drive.wav",drive,nz::AudioRate),"Diagnostic WAV export failed");
+  Require(carsynth::writeWavMono(car==3?"build/qa/supra_engine_drive.wav":car==2?"build/qa/testarossa_engine_drive.wav":car==1?"build/qa/civic_engine_drive.wav":"build/qa/silvia_engine_drive.wav",drive,nz::AudioRate),"Diagnostic WAV export failed");
   buffer.resize(nz::AudioRate/4);
   sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,car,true,true});Valid(buffer);
   Require(std::abs(buffer.back())<1e-10,"Mute does not settle to silence");
@@ -71,7 +71,7 @@ int main(){try{
   double fraction=BassFraction(rpm);Require(fraction>.30,"Ferrari lost its low exhaust body at high RPM");
   std::printf("PASS Ferrari low-body energy at %.0frpm: %.2f\n",rpm,fraction);
  }
- for(auto profile:{carsynth::profileS13(),carsynth::profileEK9(),nz::TestarossaProfile()}){
+ for(auto profile:{carsynth::profileS13(),carsynth::profileEK9(),nz::TestarossaProfile(),nz::SupraProfile()}){
   for(float rpm:{1500.f,2500.f,3000.f}){double variation=LowRpmVariation(profile,rpm);Require(variation>10&&variation<180,"Low-RPM combustion remains sterile or hunts excessively");std::printf("PASS low-RPM variation %s %.0frpm: %.1frpm range\n",profile.name,rpm,variation);}
   Require(LowRpmVariation(profile,6000)<10,"Low-RPM hunting leaks into high-RPM running");
  }

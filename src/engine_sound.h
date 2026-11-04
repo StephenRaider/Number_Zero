@@ -10,10 +10,11 @@ constexpr int AudioRate=44100;
 struct EngineControls {float rpm=850,throttle=0;int car=0;bool active=false,muted=false;};
 // Publish one coherent snapshot; the audio thread never reads the mutable vehicle.
 inline std::uint64_t PackEngineControls(EngineControls c){
+ static_assert(Cars.size()<=4,"Expand audio car-ID bits before adding a fifth car");
  c.rpm=std::clamp(c.rpm,0.f,12000.f);c.throttle=std::clamp(c.throttle,0.f,1.f);
  std::uint32_t rpmBits;std::memcpy(&rpmBits,&c.rpm,sizeof(rpmBits));
  return rpmBits | (std::uint64_t(std::lround(c.throttle*65535.f))<<32)
-  | (std::uint64_t(std::clamp(c.car,0,2))<<48) | (std::uint64_t(c.active)<<50) | (std::uint64_t(c.muted)<<51);
+  | (std::uint64_t(std::clamp(c.car,0,(int)Cars.size()-1))<<48) | (std::uint64_t(c.active)<<50) | (std::uint64_t(c.muted)<<51);
 }
 inline EngineControls UnpackEngineControls(std::uint64_t bits){
  EngineControls c;std::uint32_t rpmBits=(std::uint32_t)bits;std::memcpy(&c.rpm,&rpmBits,sizeof(c.rpm));
@@ -30,8 +31,15 @@ inline carsynth::Profile TestarossaProfile(){
  const float hz[]={90,180,430,1100},q[]={.95f,1.15f,1.35f,.9f},g[]={1.6f,1.4f,.45f,.08f},accent[]={1.f,.97f,1.03f,.99f};
  for(int i=0;i<4;i++){p.firingGain[i]=accent[i];p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=g[i];}return p;
 }
+inline carsynth::Profile SupraProfile(){
+ auto p=carsynth::profileS13();p.name="Toyota Supra SZ 2JZ-GE inline-six";p.centerExhaust=true;p.cylinders=6;p.idleRpm=750;p.limiterRpm=6800;p.vtec=false;p.turbo=false;
+ p.pulseMs=2.3f;p.jitter=.035f;p.idleLump=.035f;p.lowRpmTexture=.8f;p.bodyGain=.85f;p.bankBodyGain=0;
+ p.lowpassClosed=650;p.lowpassOpen=3200;p.muffleHz=2800;p.intakeHz=900;p.intakeQ=.85f;p.intakeGain=.06f;p.mechGain=.004f;p.outGain=.55f;
+ const float hz[]={140,280,700,1800},q[]={1.f,1.1f,1.2f,.8f},g[]={.8f,.7f,.20f,.05f};
+ for(int i=0;i<4;i++){p.firingGain[i]=1.f;p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=g[i];}return p;
+}
 class EngineSound {
- std::array<carsynth::Engine,3> engines{carsynth::Engine(carsynth::profileS13(),AudioRate),carsynth::Engine(carsynth::profileEK9(),AudioRate),carsynth::Engine(TestarossaProfile(),AudioRate)};
+ std::array<carsynth::Engine,4> engines{carsynth::Engine(carsynth::profileS13(),AudioRate),carsynth::Engine(carsynth::profileEK9(),AudioRate),carsynth::Engine(TestarossaProfile(),AudioRate),carsynth::Engine(SupraProfile(),AudioRate)};
  int currentCar=0;float gain=0;
 public:
  // Single audio-thread owner. No allocation, locks, filesystem or Raylib calls here.

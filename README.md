@@ -466,3 +466,18 @@ commands and 0.22s / 0.28s shift cuts. Cooldowns and RPM/torque hysteresis preve
 hunting while preserving an advantage for well-timed manual selection.
 Tests cover kickdown from 3500rpm, stable passing gears, calm lift-off, manual
 shift timing, acceleration, limiter options and retained rev protection.
+
+## Toyota Supra A80 SZ
+
+The fourth garage car is the naturally aspirated 225PS Supra SZ, using a
+five-speed gear set and an inline-six audio profile. Paint, black hood, three
+decal layers, headlights, indicators, suspension pitch and saved limiter-delete
+settings work like the other cars. Four garage entries fit above the paint panel.
+Existing three-car version-4 saves migrate with their settings intact; the new
+car starts with silver paint and its stock governor.
+
+`--supra` selects it for ordinary play or any smoke mode. The runtime car README
+records factory specification sources and prototype/visual approximations.
+Build tests now exercise all four vehicle and audio profiles, including audio
+control publication of the fourth car. The car-ID snapshot explicitly guards
+its current four-car capacity against silent aliasing when the roster grows.

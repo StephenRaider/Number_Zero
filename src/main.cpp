@@ -36,7 +36,7 @@ struct PaintSettings {
 struct Selection {
  std::array<bool,nz::Cars.size()> limiterDeleted{};
  std::array<std::array<nz::DecalPlacement,3>,nz::Cars.size()> decals{};
- std::array<PaintSettings,nz::Cars.size()> finishes{{{{229,226,207,255},true,false,35,.12f,.90f},{{225,230,222,255},false,false,95,.035f,.90f},{{204,28,34,255},false,false,358,.86f,.80f}}};
+ std::array<PaintSettings,nz::Cars.size()> finishes{{{{229,226,207,255},true,false,35,.12f,.90f},{{225,230,222,255},false,false,95,.035f,.90f},{{204,28,34,255},false,false,358,.86f,.80f},{{174,181,184,255},false,false,198,.054f,.72f}}};
  int car=0;Color paint{229,226,207,255};bool twoTone=true,blackHood=false,manual=false;float hue=35.f,saturation=.12f,value=.90f;
  void CapturePaint(){finishes[car]={paint,twoTone,blackHood,hue,saturation,value};}
  void RestorePaint(){const auto &p=finishes[car];paint=p.paint;twoTone=p.twoTone;blackHood=p.blackHood;hue=p.hue;saturation=p.saturation;value=p.value;}
@@ -101,7 +101,7 @@ struct CarRenderer {
   if(lastCar==choice.car&&lastView==view&&lastPose==pose&&lastFrame==frame&&lastPitch==pitch&&ColorToInt(lastPaint)==ColorToInt(choice.paint)&&lastHood==choice.blackHood&&lastTwoTone==choice.twoTone&&lastDecals==choice.decals[choice.car]&&lastRaised==raised)return;
   lastCar=choice.car;lastView=view;lastPose=pose;lastFrame=frame;lastPitch=pitch;lastPaint=choice.paint;lastHood=choice.blackHood;lastTwoTone=choice.twoTone;lastDecals=choice.decals[choice.car];lastRaised=raised;decalPixels=0;
   const auto &part=art.views[view][pose];bool closed=nz::Cars[choice.car].popupHeadlights&&!raised;const auto &body=pitch==0?(closed?part.closed:part.body):(closed?part.closedPitch:part.pitch)[pitch<0?pitch+2:pitch+1];const auto &wheels=art.views[view][pose].wheels[frame];
-  const float original[3][3]={{255,234,186},{219,229,237},{219,229,237}};
+  const float original[4][3]={{255,234,186},{219,229,237},{219,229,237},{219,229,237}};
   for(int i=0;i<PixelCount;i++){
    bool b=body.pixels[0][i].a>=128,w=wheels.pixels[0][i].a>=128;
    unsigned bd=body.pixels[2][i].r*256u+body.pixels[2][i].g,wd=wheels.pixels[2][i].r*256u+wheels.pixels[2][i].g;
@@ -282,9 +282,9 @@ static void Garage(Selection &s,Vector2 mouse,bool &start,bool &quit,bool &heads
  DrawRectangle(0,0,640,57,RGBA(9,15,23,235));Label("NUMBER ZERO",24,16,23);Label("NIGHT DRIVE  /  PROTOTYPE 01",25,42,9,Mint);
  Label("CHOOSE YOUR CAR",381,73,10,Muted);
  for(int i=0;i<(int)nz::Cars.size();i++){
-  Rectangle r{378.f,91.f+i*35,240,32};Box(r,s.car==i?RGBA(36,58,65):Panel);
-  Label(nz::Cars[i].name,389,(int)r.y+5,11,s.car==i?Mint:Paper);
-  Label(TextFormat("%.0f PS   %s   %.0f kg",nz::Cars[i].peakPS,nz::Cars[i].drive,nz::Cars[i].mass),389,(int)r.y+20,8,Muted);
+  Rectangle r{378.f,91.f+i*26,240,24};Box(r,s.car==i?RGBA(36,58,65):Panel);
+  Label(nz::Cars[i].name,389,(int)r.y+3,11,s.car==i?Mint:Paper);
+  Label(TextFormat("%.0f PS   %s   %.0f kg",nz::Cars[i].peakPS,nz::Cars[i].drive,nz::Cars[i].mass),389,(int)r.y+15,8,Muted);
   if(CheckCollisionPointRec(mouse,r)&&IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){s.SelectCar(i);}
  }
  Label("BODY PAINT",381,200,10,Muted);
@@ -397,7 +397,7 @@ static fs::path LocateAssets(){
  throw std::runtime_error("Cannot find assets/cars/catalog.json. Run from the Number_Zero folder.");
 }
 int main(int argc,char **argv){
- bool limiterDeleteSmoke=false,trafficSmoke=false,decalSmoke=false,smoke=false,audioSmoke=false,resizeSmoke=false,manualSmoke=false,featureSmoke=false,glowSmoke=false,garageSmoke=false,blackPaint=false,scenerySmoke=false,effectsSmoke=false;int smokeCar=0,windowWidth=1280,windowHeight=720;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--traffic-smoke-test"){smoke=true;trafficSmoke=true;}if(std::string(argv[i])=="--decal-smoke-test"){smoke=true;decalSmoke=true;}if(std::string(argv[i])=="--resize-smoke-test"){smoke=true;resizeSmoke=true;}if(std::string(argv[i])=="--audio-smoke-test"){smoke=true;audioSmoke=true;}if(std::string(argv[i])=="--effects-smoke-test"){smoke=true;effectsSmoke=true;}if(std::string(argv[i])=="--scenery-smoke-test"){smoke=true;scenerySmoke=true;}if(std::string(argv[i])=="--black")blackPaint=true;if(std::string(argv[i])=="--garage-smoke-test"){smoke=true;garageSmoke=true;}if(std::string(argv[i])=="--glow-smoke-test"){smoke=true;glowSmoke=true;}if(std::string(argv[i])=="--manual")manualSmoke=true;if(std::string(argv[i])=="--limiter-delete")limiterDeleteSmoke=true;if(std::string(argv[i])=="--feature-smoke-test"){smoke=true;featureSmoke=true;}if(std::string(argv[i])=="--civic")smokeCar=1;if(std::string(argv[i])=="--testarossa")smokeCar=2;if(std::string(argv[i])=="--ultrawide"){windowWidth=2560;windowHeight=1080;}if(std::string(argv[i])=="--superwide"){windowWidth=3840;windowHeight=1080;}if(std::string(argv[i])=="--tall"){windowWidth=960;windowHeight=900;}}
+ bool limiterDeleteSmoke=false,trafficSmoke=false,decalSmoke=false,smoke=false,audioSmoke=false,resizeSmoke=false,manualSmoke=false,featureSmoke=false,glowSmoke=false,garageSmoke=false,blackPaint=false,scenerySmoke=false,effectsSmoke=false;int smokeCar=0,windowWidth=1280,windowHeight=720;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--traffic-smoke-test"){smoke=true;trafficSmoke=true;}if(std::string(argv[i])=="--decal-smoke-test"){smoke=true;decalSmoke=true;}if(std::string(argv[i])=="--resize-smoke-test"){smoke=true;resizeSmoke=true;}if(std::string(argv[i])=="--audio-smoke-test"){smoke=true;audioSmoke=true;}if(std::string(argv[i])=="--effects-smoke-test"){smoke=true;effectsSmoke=true;}if(std::string(argv[i])=="--scenery-smoke-test"){smoke=true;scenerySmoke=true;}if(std::string(argv[i])=="--black")blackPaint=true;if(std::string(argv[i])=="--garage-smoke-test"){smoke=true;garageSmoke=true;}if(std::string(argv[i])=="--glow-smoke-test"){smoke=true;glowSmoke=true;}if(std::string(argv[i])=="--manual")manualSmoke=true;if(std::string(argv[i])=="--limiter-delete")limiterDeleteSmoke=true;if(std::string(argv[i])=="--feature-smoke-test"){smoke=true;featureSmoke=true;}if(std::string(argv[i])=="--civic")smokeCar=1;if(std::string(argv[i])=="--testarossa")smokeCar=2;if(std::string(argv[i])=="--supra")smokeCar=3;if(std::string(argv[i])=="--ultrawide"){windowWidth=2560;windowHeight=1080;}if(std::string(argv[i])=="--superwide"){windowWidth=3840;windowHeight=1080;}if(std::string(argv[i])=="--tall"){windowWidth=960;windowHeight=900;}}
  SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_VSYNC_HINT|(smoke?FLAG_WINDOW_HIDDEN:0));InitWindow(windowWidth,windowHeight,"Number Zero | Highway Prototype");SetWindowMinSize(800,450);SetTargetFPS(60);SetExitKey(KEY_NULL);
  SetTraceLogLevel(LOG_WARNING);
  try{
@@ -449,7 +449,7 @@ int main(int argc,char **argv){
   if(legacy.decals!=stored.decals)throw std::runtime_error("Legacy decals were lost during migration");
   std::puts("GARAGE SAVE PROBE: both paint colours, hood/two-tone/HSV, car switching, gearbox, decals and legacy migration pass");
  }
- int indicator=0;float sceneClock=0;double accumulator=0;int frame=0;float bestSpeed=0;const char *qaName=smokeCar==2?"testarossa":smokeCar==1?"civic":"silvia";
+ int indicator=0;float sceneClock=0;double accumulator=0;int frame=0;float bestSpeed=0;const char *qaName=smokeCar==3?"supra":smokeCar==2?"testarossa":smokeCar==1?"civic":"silvia";
  while(!WindowShouldClose()&&!quit){
   frame++;framePress.fill(false);for(int key=GetKeyPressed();key>0;key=GetKeyPressed())if(key<(int)framePress.size())framePress[key]=true;float dt=std::min(GetFrameTime(),.1f);if(smoke)dt=1.f/60;
   if(resizeSmoke){if(frame==140)SetWindowSize(2560,1080);if(frame==300)SetWindowSize(960,900);if(frame==450)SetWindowSize(1280,720);}

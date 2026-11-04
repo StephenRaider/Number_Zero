@@ -15,6 +15,11 @@
       "id": "ferrari_testarossa",
       "name": "Ferrari Testarossa",
       "manifest": "ferrari_testarossa/manifest.json"
+    },
+    {
+      "id": "toyota_supra_a80_sz",
+      "name": "Toyota Supra A80 SZ",
+      "manifest": "toyota_supra_a80_sz/manifest.json"
     }
   ]
 }

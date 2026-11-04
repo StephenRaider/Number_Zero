@@ -15,6 +15,7 @@ constexpr float kTwoPi = 6.28318530718f;
 // ============================================================================ profile
 // Everything that makes one engine sound different from another lives here.
 struct Profile {
+    bool centerExhaust=false; // DC removal for overlapping pulse trains before saturation.
     const char* name;
     // --- engine speed range (rpm)
     float idleRpm, limiterRpm;
@@ -250,6 +251,11 @@ public:
             pop_ *= std::exp(-dt / 0.05f);
         }
         sig += popSig * 0.5f;
+
+        if(p_.centerExhaust && p_.bankBodyGain<=0){
+            bankDc_ += (sig-bankDc_)*(1-std::exp(-kTwoPi*18.0f*dt));
+            sig -= bankDc_;
+        }
 
         // ---- saturation: dirtier the harder it is driven (asymmetric -> even harmonics)
         const float level = (0.42f + 0.06f * presence + (0.58f - 0.06f * presence) * thr_) * (0.45f + 0.55f * std::min(1.0f, rev * 1.15f));

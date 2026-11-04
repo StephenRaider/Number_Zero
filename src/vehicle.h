@@ -16,7 +16,7 @@ struct CarSpec {
     std::vector<TorquePoint> torque;
     double speedLimitKmh=180.;bool popupHeadlights=false;
 };
-inline const std::array<CarSpec,3> Cars={{
+inline const std::array<CarSpec,4> Cars={{
     {"nissan_silvia_s13","NISSAN SILVIA S13 K'S","SR20DET  /  2.0 TURBO","RWD",
      1150,205,275,2.475,.3135,4.083,.85,.64,850,3400,7050,7500,.53,.95,.93,9.5,false,true,
      {3.321,1.902,1.308,1.000,.759},
@@ -30,6 +30,11 @@ inline const std::array<CarSpec,3> Cars={{
      1630,390,490,2.550,.328,3.210,.88,.72,1000,3200,6500,6800,.40,.98,.95,9.3,false,false,
      {3.139,2.104,1.526,1.167,.875},
      {{1000,230},{2000,330},{3000,420},{4000,475},{4500,490},{5000,478},{5500,465},{6000,450},{6300,435},{6500,410},{6800,370}},0.,true}
+ ,
+    {"toyota_supra_a80_sz","TOYOTA SUPRA A80 SZ","2JZ-GE  /  3.0 INLINE-6","RWD",
+     1410,225,284.4,2.550,.3157,4.083,.86,.62,750,2800,6500,6800,.51,.97,.96,9.2,false,false,
+     {3.285,1.894,1.275,1.000,.783},
+     {{750,110},{1500,185},{2500,225},{3500,255},{4500,278},{4800,284.4},{5500,275},{6000,263.4},{6500,241},{6800,200}}}
 }};
 inline double TorqueAt(const CarSpec &c,double rpm){
     if(rpm<=c.torque.front().rpm)return c.torque.front().nm;
