@@ -36,6 +36,29 @@ int main(){try{
  }
  Require(signals>0&&world.laneChanges>0,"No signalled overtaking in long simulation");for(bool present:allTypes)Require(present,"One of the five traffic types never spawns");
  nz::TrafficWorld a,b;a.Reset({0,0,0},42);b.Reset({0,0,0},42);for(int t=0;t<1200;t++){a.Step({0,0,0},1./120.);b.Step({0,0,0},1./120.);}Require(a.cars.size()==b.cars.size(),"Traffic replay is not deterministic");for(size_t i=0;i<a.cars.size();i++)Require(a.cars[i].station==b.cars[i].station&&a.cars[i].lateral==b.cars[i].lateral,"Traffic seed is unstable");
+ // A faster player must not exhaust a fixed per-second vehicle supply.
+ // Sample the same spatial window at three speeds, including quiet road sections.
+ std::array<double,3> density{};int speedIndex=0;
+ for(double kmh:{100.,180.,280.}){
+  double total=0;int samples=0,empty=0,openLane=0;
+  for(unsigned seed:{11u,42u,197u}){
+   nz::TrafficWorld stream;nz::TrafficPlayer driver{0,1.75,kmh/3.6};stream.Reset(driver,seed);
+   std::set<int> seen;for(const auto &car:stream.cars)seen.insert(car.id);
+   for(int tick=0;tick<60*360;tick++){
+    driver.station+=driver.speed/60.;stream.Step(driver,1./60.);
+    Require(stream.cars.size()<=28,"Spatial traffic exceeds population budget");
+    for(const auto &car:stream.cars)if(seen.insert(car.id).second){double relative=car.station-driver.station;Require(relative>100||relative< -80,"Traffic replenishes inside the visible driving area");}
+    if(tick>60*20&&tick%30==0){
+     int count=0;bool occupied[4]={};for(const auto &car:stream.cars)if(car.station>driver.station+5&&car.station<driver.station+150){++count;occupied[car.lane]=true;}
+     total+=count;++samples;empty+=count==0;openLane+=count>0&&!(occupied[0]&&occupied[1]&&occupied[2]&&occupied[3]);
+    }
+   }
+  }
+  density[speedIndex++]=total/samples;
+  Require(empty>0&&openLane>samples/2,"Spatial traffic loses quiet stretches or open lanes");
+  std::printf("Spatial traffic %.0fkm/h: %.2f cars per 150m, %.1f%% empty samples\n",kmh,total/samples,100.*empty/samples);
+ }
+ Require(density[1]>density[0]*.8&&density[2]>density[1]*.8&&density[2]<density[1]*1.2,"Traffic density changes materially with player speed");
  nz::Vehicle v;v.distance=60;v.lateral=nz::LaneCentres[0];v.speed=40;nz::TrafficWorld impact;impact.Reset({0,0,0});impact.cars.resize(1);impact.cars[0].station=62;impact.cars[0].lateral=v.lateral;impact.cars[0].speed=20;
  Require(impact.ResolveContact(v)&&v.speed<=20&&v.distance<60,"Traffic collision did not constrain player");
  v.distance=impact.cars[0].station;v.lateral=6.05;v.speed=30;impact.cars[0].lateral=5.25;

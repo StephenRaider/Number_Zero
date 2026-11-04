@@ -6,6 +6,8 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
+#include <set>
+#include <utility>
 namespace nz {
 constexpr double HighwaySpeedLimit=100./3.6;
 constexpr std::array<double,4> LaneCentres{{-5.25,-1.75,1.75,5.25}};
@@ -27,7 +29,38 @@ inline double TrafficEntryWarning(const TrafficCar &car,const TrafficPlayer &pla
 }
 class TrafficWorld {
  struct Gap {double front=1e6,rear=1e6,frontSpeed=HighwaySpeedLimit,rearSpeed=0;};
- std::uint32_t rng=12345;int nextId=1;double spawnClock=0,contactCooldown=0;
+ std::uint32_t rng=12345;int nextId=1;double contactCooldown=0,streamOrigin=0;std::uint32_t layoutSeed=12345;
+ // Traffic groups are keyed by stream distance, independently of AI randomness.
+ // The stream moves with ordinary traffic; faster driving consumes more groups.
+ static constexpr double BandLength=480.,StreamSpeed=24.;
+ std::set<std::pair<std::int64_t,int>> emitted;
+ static std::uint32_t LayoutHash(std::int64_t band,std::uint32_t seed){
+  std::uint64_t v=(std::uint64_t)band+0x9e3779b97f4a7c15ull+seed;
+  v=(v^(v>>30))*0xbf58476d1ce4e5b9ull;v=(v^(v>>27))*0x94d049bb133111ebull;
+  return (std::uint32_t)(v^(v>>31));
+ }
+ void Populate(const TrafficPlayer &player,bool initial=false){
+  const double origin=streamOrigin+StreamSpeed*clock;
+  auto first=(std::int64_t)std::floor((player.station-origin-170)/BandLength);
+  auto last=(std::int64_t)std::floor((player.station-origin+420)/BandLength);
+  for(auto it=emitted.begin();it!=emitted.end();)if(it->first<first-2||it->first>last+2)it=emitted.erase(it);else ++it;
+  for(auto band=first;band<=last;band++){
+   std::uint32_t state=LayoutHash(band,layoutSeed);
+   auto random=[&](){state=1664525u*state+1013904223u;return (state>>8)/16777216.;};
+   const int count=8+(int)(random()*4);std::array<int,4> lanes{{0,1,2,3}};
+   for(int i=3;i>0;i--){int j=(int)(random()*(i+1));std::swap(lanes[i],lanes[j]);}
+   double choice=random();int occupied=choice<.25?2:choice<.8?3:4;
+   double offset=55+random()*20;
+   for(int slot=0;slot<count;slot++){
+    int lane=lanes[slot%occupied];double station=origin+band*BandLength+offset;offset+=24+random()*10;
+    auto key=std::make_pair(band,slot);double relative=station-player.station;
+    if(emitted.count(key)||relative< -170||relative>420)continue;
+    if(initial?std::abs(relative)<35:(relative> -90&&relative<110))continue;
+    if(cars.size()>=28)continue;
+    if(Add(lane,station,player))emitted.insert(key);
+   }
+  }
+ }
  double Random(){rng=1664525u*rng+1013904223u;return (rng>>8)/16777216.;}
  bool Occupies(const TrafficCar &a,int lane)const{return a.lane==lane||((a.signal>0||a.change>=0)&&a.targetLane==lane);}
  Gap Neighbours(const TrafficCar &subject,int lane,const TrafficPlayer &player,bool withPlayer=true)const{
@@ -54,13 +87,13 @@ class TrafficWorld {
 public:
  std::vector<TrafficCar> cars;double clock=0;int laneChanges=0,contacts=0;
  void Reset(const TrafficPlayer &player,std::uint32_t seed=12345){
-  cars.clear();rng=seed;nextId=1;clock=spawnClock=contactCooldown=0;laneChanges=contacts=0;
-  for(int lane=0;lane<4;lane++){Add(lane,player.station+62+lane*11,player);Add(lane,player.station+112+lane*13,player);Add(lane,player.station-46-lane*14,player);}
+  cars.clear();rng=seed;nextId=1;clock=contactCooldown=0;laneChanges=contacts=0;streamOrigin=player.station;layoutSeed=seed;emitted.clear();
+  Populate(player,true);
  }
  void Step(const TrafficPlayer &player,double dt){
-  clock+=dt;spawnClock+=dt;contactCooldown=std::max(0.,contactCooldown-dt);
+  clock+=dt;contactCooldown=std::max(0.,contactCooldown-dt);
   cars.erase(std::remove_if(cars.begin(),cars.end(),[&](const TrafficCar&a){return a.station<player.station-170||a.station>player.station+450;}),cars.end());
-  if(spawnClock>=1.8&&cars.size()<28){spawnClock=0;int lane=(int)(Random()*4);Add(lane,player.station+(Random()<.35?-105-Random()*40:165+Random()*100),player);}
+  Populate(player);
   std::vector<double> acceleration(cars.size());
   for(size_t i=0;i<cars.size();i++){
    auto &a=cars[i];a.decision-=dt;auto gap=Neighbours(a,a.lane,player);

@@ -410,3 +410,24 @@ world lookahead for every aspect ratio.
 Traffic factory palettes and estimated period-based spawn distributions are
 recorded in assets/traffic/colours.md. Model-specific sales-by-colour data is not
 claimed. Bus road-tyre faces use charcoal rubber; original silver hubs remain.
+
+## Spatial traffic groups
+
+Traffic supply now follows a moving spatial stream instead of attempting one
+spawn every 1.8 seconds. Its layout is keyed by seed and 480m stream bands,
+advecting at 24m/s (86.4km/h). Each band contains 8-11 staggered vehicles followed
+by a quiet stretch. Crossing more stream distance replenishes more traffic, so
+high speed cannot drain a fixed time-based supply. Ordinary relative-speed
+behavior remains: faster driving still catches traffic more quickly.
+
+Groups choose two, three or four occupied lanes (25/55/20 percent respectively),
+with the subset shuffled per group. This leaves varying lanes open without
+forcing AI vehicles to stay out of them. Existing following, indicators and
+lane-change behavior continue normally, so moving vehicles can disperse groups.
+
+New vehicles enter offscreen, at least 110m ahead or 90m behind, with coverage
+maintained out to 420m ahead / 170m behind. Initial traffic stays at least 35m
+from the player. The population budget remains 28; layout history is bounded.
+The one-second entry warning and shared lookahead across aspect ratios are
+unchanged. Long multi-seed tests compare density at 100/180/280km/h and check
+quiet samples, open lanes and offscreen replenishment.
