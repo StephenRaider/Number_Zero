@@ -27,3 +27,8 @@ material passes. No alternative wheel designs or tint selector are introduced.
 
 Performance is registered in src/vehicle.h; see docs/PERFORMANCE.md for sources
 and assumptions. Sound is the RB26 procedural profile in src/engine_sound.h.
+
+Replacement requested: runtime PNGs plus meta.json/wheels.json were overwritten
+from nissan_skyline_r34_gtr_assets (1).zip. Its PNG bytes match the previously
+installed pack, so this replacement alone introduces no visual bumper/material
+change. The exact replacement archive SHA-256 is recorded in manifest.json.

@@ -131,3 +131,54 @@ RB26 audio uses a six-cylinder turbo profile, with restrained whistle/noise,
 low-order exhaust body and continuous lift-off. It is procedural rather than a
 recording. Audio tests cover fifth-car atomic IDs, load/coast, headroom, low-RPM
 variation and high-RPM exhaust body; player listening remains the timbre check.
+
+## R34 versus Testarossa sanity check
+
+A standing launch and our race's 50 km/h rolling start are different tests. AWD
+can help launch traction but provides much less benefit once both cars are
+moving without wheelspin. A mid/rear-engine Testarossa also has substantial
+rear driven-axle load. Its extra power matters increasingly with speed.
+
+The [Car and Driver original Testarossa test](https://www.caranddriver.com/reviews/a15142218/1985-ferrari-testarossa-archived-road-test-review/)
+measured 0-60 mph in 5.0 seconds. [Evo's R34 review](https://www.evo.co.uk/nissan/skyline/gt-r-r34)
+lists a claimed 4.8-second 0-60 mph figure and describes the car's strong AWD
+traction. These were not a controlled head-to-head test, and the Evo feature
+concerns a UK V-spec rather than the base JDM configuration in this prototype.
+They support a close contest and a plausible R34 launch edge, not a guaranteed
+large margin or dominance in a rolling race. Do not compare 60 mph with 100 km/h
+as if they were the same endpoint.
+
+Measured using current stock power/torque/gearing, automatic shift assist,
+no traffic/steering, 120 Hz integration and interpolated speed crossings:
+
+| Test | Testarossa | R34 GT-R |
+| --- | --- | --- |
+| 0-30 km/h | 1.40 s | 1.35 s |
+| 0-50 km/h | 2.26 s | 2.09 s |
+| 0-60 mph | 4.85 s | 5.20 s |
+| 0-100 km/h | 5.06 s | 5.48 s |
+| 0-160 km/h | 10.54 s | 13.32 s |
+| 50-100 km/h rolling, both starting in second | 3.26 s | 3.88 s |
+| 50-160 km/h rolling, both starting in second | 8.74 s | 11.73 s |
+
+Assessment: the model already gives the R34 the initial launch advantage. It
+then loses to the more powerful Ferrari, including in the rolling-start race.
+Its 0-60 result is conservative relative to Evo's claimed figure; the Ferrari
+is near the quick end of period results. Our simple clutch/turbo launch model
+has no driver-selectable preloaded-boost launch, and the R34 uses the nominal
+280 PS rating rather than assuming an unverified higher output. Acceleration
+curves, boost and shift calibration are approximations; these numbers are not
+proof of an exact real-world ranking. No physics values were changed for this
+check. Revisit launch/clutch/boost calibration against comparable measured
+stock-car tests before adding power simply to force a desired winner.
+
+Reproduce the model comparison:
+
+```text
+g++ -std=c++17 -O2 -Wall -Wextra -Isrc tools/performance_sanity.cpp -o build/performance_sanity.exe
+./build/performance_sanity.exe
+```
+
+The governor is deleted in this diagnostic only so it can also report 0-200
+figures; it does not affect the sub-180 comparisons above. Times of zero mean a
+threshold was at/below starting speed or not reached within the diagnostic.

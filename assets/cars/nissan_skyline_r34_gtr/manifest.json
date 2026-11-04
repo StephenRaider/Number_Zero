@@ -1443,5 +1443,11 @@
     "wheels": "Reuse existing independent wheel frames."
   },
   "cleanup": "Dominant-material depth/normals, crease-aware surface filtering, supported paint-speckle cleanup; masks/emission/silhouettes unchanged.",
-  "import_note": "Supplied rendered asset pack; original PNG hash entries were stale. PNGs decoded/validated and checksums rebuilt on import; sprite bytes preserved."
+  "import_note": "Supplied rendered asset pack; original PNG hash entries were stale. PNGs decoded/validated and checksums rebuilt on import; sprite bytes preserved.",
+  "import_archive": {
+    "filename": "nissan_skyline_r34_gtr_assets (1).zip",
+    "sha256": "d30d9ed9bd1fb59634d76d16433ab394f11af469c7ad6172ab256f68ccc72256",
+    "runtime_pngs_overwritten": 576,
+    "note": "Replaced from the second supplied ZIP as requested; its 576 PNG byte streams match the previously installed pack."
+  }
 }
