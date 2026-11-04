@@ -102,6 +102,25 @@ int main(){try{
   std::printf("Limiter delete %s: stock %.1f / deleted %.1f km/h, rev limiter retained\n",car.id,stock.speed*3.6,deleted.speed*3.6);
  }
  for(const auto &car:nz::Cars){
+  // Request power while still well above the former 2600rpm downshift threshold.
+  nz::Vehicle kick;kick.gear=4;kick.throttle=1;kick.rpm=3500;
+  double fixedSpeed=3500/(car.gears[4]*car.finalDrive)/60*(2*nz::Pi*car.radius);kick.speed=fixedSpeed;
+  nz::Step(kick,car,{1,0,0},1./120.);Require(kick.gear==4,"Automatic kickdown has no decision delay");
+  for(int t=0;t<28;t++){kick.speed=fixedSpeed;nz::Step(kick,car,{1,0,0},1./120.);}
+  Require(kick.gear<4&&kick.shiftTime>0,"Automatic fails to kick down for useful power above 2600rpm");
+  double selectedRpm=fixedSpeed/(2*nz::Pi*car.radius)*60*car.gears[kick.gear]*car.finalDrive;
+  Require(selectedRpm<car.shiftRpm*.93,"Automatic kickdown lands too close to an immediate upshift");
+  nz::Vehicle steady;steady.gear=kick.gear;steady.speed=fixedSpeed;steady.throttle=1;
+  for(int t=0;t<120*4;t++){steady.speed=fixedSpeed;nz::Step(steady,car,{1,0,0},1./120.);}
+  Require(steady.shifts==0,"Automatic hunts at a fixed passing speed");
+  nz::Vehicle cruise;cruise.gear=4;cruise.speed=fixedSpeed;
+  for(int t=0;t<120;t++){cruise.speed=fixedSpeed;nz::Step(cruise,car,{},1./120.);}
+  Require(cruise.gear==4,"Lift-off needlessly triggers power-band kickdown");
+  nz::Vehicle hand;hand.automatic=false;hand.gear=4;hand.speed=fixedSpeed;
+  Require(nz::Shift(hand,car,-1)&&hand.gear==3&&hand.shiftTime<.30,"Manual downshift loses its timing advantage");
+  hand.shiftTime=hand.shiftCooldown=0;Require(nz::Shift(hand,car,1)&&hand.shiftTime<.34,"Manual upshift loses its timing advantage");
+ }
+ for(const auto &car:nz::Cars){
   nz::Vehicle manual;manual.automatic=false;
   for(int i=0;i<120*15;i++)nz::Step(manual,car,{1,0,0},1./120.);
   Require(manual.gear==0&&manual.rpm>car.redline*.95,"Manual gearbox shifted itself or failed to hold revs");

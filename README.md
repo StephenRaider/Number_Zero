@@ -450,3 +450,19 @@ stock/deleted top speeds and retained first-gear rev protection.
 Swift traffic sprites have charcoal wheel rubber and smaller rear lamp inserts
 fitted within the body silhouette. All steering/spin maps were regenerated and
 verified, including both indicator sides and stationary body pixels.
+
+## Automatic kickdown
+
+The automatic now compares wheel torque in usable lower gears when acceleration
+is requested, instead of waiting for every engine to drop below 2600rpm. It needs
+at least a 14% pulling-force benefit and keeps candidate RPM below 92% of the
+normal upshift point. Light throttle/coasting use calmer model-relative RPM floors;
+braking downshifts earlier for engine braking. Stock governors, rev protection
+and manual gearbox controls are unchanged.
+
+Automatic decisions take 0.20s for downshifts / 0.12s for upshifts. Shift cuts are
+0.30s down (plus 0.04s per skipped gear) / 0.34s up, compared with immediate manual
+commands and 0.22s / 0.28s shift cuts. Cooldowns and RPM/torque hysteresis prevent
+hunting while preserving an advantage for well-timed manual selection.
+Tests cover kickdown from 3500rpm, stable passing gears, calm lift-off, manual
+shift timing, acceleration, limiter options and retained rev protection.

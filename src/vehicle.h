@@ -44,7 +44,7 @@ struct Vehicle {
     double throttle=0,brake=0,steering=0,boost=0,shiftTime=0,shiftCooldown=0,acceleration=0;
     double pitch=0,pitchVelocity=0;bool automatic=true,speedLimiterDeleted=false;
     double yaw=0,elapsed=0,timeTo100=-1;
-    int gear=0,shifts=0;bool limiter=false;
+    int gear=0,shifts=0,autoShiftTarget=-1;double autoShiftIntent=0;bool limiter=false;
 };
 inline double Approach(double value,double target,double rate,double dt){
     return value+(target-value)*(1-std::exp(-rate*dt));
@@ -56,6 +56,27 @@ inline bool Shift(Vehicle &v,const CarSpec &c,int direction){
     double targetRpm=v.speed/(2*Pi*c.radius)*60*c.gears[next]*c.finalDrive;
     if(direction<0&&targetRpm>c.redline*.985)return false;
     v.gear=next;++v.shifts;v.shiftTime=direction>0?.28:.22;v.shiftCooldown=.38;return true;
+}
+// Automatic kickdown compares usable wheel torque, rather than waiting for a
+// universal low-RPM threshold. A conservative margin leaves manual timing useful.
+inline int AutomaticGear(const Vehicle &v,const CarSpec &c,double wheelRpm){
+    double rpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
+    if(rpm>c.shiftRpm&&v.gear<4&&v.throttle>.2)return v.gear+1;
+    if(v.gear==0)return 0;
+    if(v.throttle>.45&&v.brake<.05&&!(c.speedLimitKmh>0&&!v.speedLimiterDeleted&&v.speed*3.6>c.speedLimitKmh-1.)){
+        int best=v.gear;double torque=TorqueAt(c,std::max(c.idle,rpm))*c.gears[v.gear],bestTorque=torque;
+        for(int gear=v.gear-1;gear>=0;--gear){
+            double candidate=wheelRpm*c.gears[gear]*c.finalDrive;
+            if(candidate>c.shiftRpm*.92)continue;
+            double pull=TorqueAt(c,std::max(c.idle,candidate))*c.gears[gear];
+            if(pull>bestTorque){bestTorque=pull;best=gear;}
+        }
+        if(bestTorque>torque*1.14)return best;
+    }
+    double floor=c.shiftRpm*(v.brake>.1?.43:v.throttle>.15?.37:.28);
+    double nextRpm=wheelRpm*c.gears[v.gear-1]*c.finalDrive;
+    if(rpm<floor&&nextRpm<c.shiftRpm*.78)return v.gear-1;
+    return v.gear;
 }
 // Highway positioning envelope: quick at urban speeds, progressively calmer at speed.
 // Steering response is a game tuning parameter, separate from tyre grip and driven axle.
@@ -79,10 +100,21 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     v.steering=Approach(v.steering,in.steer,SteeringResponsiveness*(std::abs(in.steer)<.01?24.:assist*c.steerResponse/(1+v.speed/65.)),dt);
     const double wheelRpm=v.speed/(2*Pi*c.radius)*60;
     double coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
-    if(v.automatic && v.shiftTime<=0 && v.shiftCooldown<=0){
-        if(coupledRpm>c.shiftRpm && v.gear<4 && v.throttle>.2){++v.gear;++v.shifts;v.shiftTime=.28;v.shiftCooldown=.48;}
-        else if(v.gear>0 && coupledRpm<2600 && wheelRpm*c.gears[v.gear-1]*c.finalDrive<c.shiftRpm*.92){--v.gear;v.shiftTime=.16;v.shiftCooldown=.5;}
-    }
+    if(v.automatic&&v.shiftTime<=0&&v.shiftCooldown<=0){
+        int target=AutomaticGear(v,c,wheelRpm);
+        if(target==v.gear){v.autoShiftTarget=-1;v.autoShiftIntent=0;}
+        else{
+            if(target!=v.autoShiftTarget){v.autoShiftTarget=target;v.autoShiftIntent=0;}
+            v.autoShiftIntent+=dt;
+            bool up=target>v.gear;
+            // A skilled manual shift starts immediately and completes faster.
+            if(v.autoShiftIntent>=(up?.12:.20)){
+                int skipped=std::max(0,std::abs(target-v.gear)-1);
+                v.gear=target;++v.shifts;v.shiftTime=up?.34:.30+.04*skipped;v.shiftCooldown=up?.58:.65;
+                v.autoShiftTarget=-1;v.autoShiftIntent=0;
+            }
+        }
+    }else{v.autoShiftTarget=-1;v.autoShiftIntent=0;}
     coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
     double engineRpm=std::max(c.idle,coupledRpm);
     if(v.gear==0 && v.throttle>.05)engineRpm=std::max(engineRpm,c.idle+(c.launchRpm-c.idle)*v.throttle);
