@@ -116,3 +116,48 @@ g++ -std=c++17 -O2 -Wall -Wextra -Isrc tools/audio_profile_probe.cpp -o build/au
 
 This exports build/qa/civic_top_end_current.wav at 5000/6500/7500/8300 RPM.
 Before/after captures remain local in build/qa.
+
+## Contact telemetry and blocking analysis
+
+Live race summary: `build/qa/race_telemetry.csv`.
+Exact physics-step contact events: `build/qa/race_telemetry_contacts.csv`.
+When a new application run first opens either log, the previous nonempty file
+is copied into `build/qa/race_history/` with a unique timestamp before replacement.
+Rematches in one run retain the shared log and receive a new session/seed.
+Automated native checks write `race_smoke_telemetry.csv` and its separate
+contacts file, so test runs cannot overwrite or masquerade as player races.
+These diagnostics stay local and ignored by Git.
+
+The summary retains `contacts` as the legacy rival-versus-traffic counter, and
+adds explicit `player_traffic_contacts`, `rival_traffic_contacts` and
+`player_rival_contacts`. Each category also records cumulative seconds of actual
+resolved overlap. Traffic contact counters retain their existing 0.5-second
+cooldown; direct racer contact has a separate 0.5-second counting cooldown.
+These are debounced contact counts, not unique crashes or unique vehicles hit.
+A long push can contain multiple counted contacts; duration and exact events
+must be considered together. The new racer counter never changes separation,
+speed loss, collision cooldowns for traffic, opponent control or other physics.
+
+The event file records every tick with a resolved contact, including contacts
+between the 4 Hz summary samples. Categories are `player_traffic`,
+`rival_traffic` and `player_rival`; `counted` indicates whether that tick increased
+the corresponding debounced count. Pre/post speeds, world station, lateral
+position, initial lateral speed, relative gap and lateral separation let an
+analyst see rear contact, side pushing, road-edge constraints and immediate
+loss of pace. Each row represents one category's resolution phase in a tick,
+not a separate row for every traffic actor if multiple actors overlap at once.
+No automatic blame or intent is inferred from proximity/contact geometry.
+
+Player lateral position, lateral speed, steering and braking are also included
+in regular samples, alongside the existing rival lane/decision data. This helps
+identify boxing/blocking even when the racers are close without touching.
+Contact events are written before summary-rate filtering and a finish row is
+always retained. Duplicate calls for one simulation tick do not repeat events;
+pause/finish add no contact time, and rematch clears all counters/history.
+
+A player's account of the R34 victory described early pushing and boxing-in of
+the rival. The older log lacked direct racer contacts/player contact counters,
+so that race cannot retrospectively establish how much of the lead came from
+blocking versus traffic incidents. Future analysis should use the new contact
+categories and proximity/decision timeline rather than attribute every speed
+loss or lead change to ordinary traffic mistakes.

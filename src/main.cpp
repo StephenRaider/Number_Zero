@@ -473,7 +473,7 @@ int main(int argc,char **argv){
  RenderTexture2D target=LoadRenderTexture(Width,Height);SetTextureFilter(target.texture,TEXTURE_FILTER_POINT);
  EffectLayers layers;layers.Resize(Width,Height);EffectSettings effects;nz::TailHistory trails;nz::TyreSmoke tyreSmoke,rivalSmoke;
  Selection selected;selected.manual=manualSmoke;selected.car=smokeCar;selected.RestorePaint();if(smokeCar==1)selected.paint=RGBA(42,89,149);if(blackPaint){selected.paint=RGBA(28,31,36);selected.twoTone=false;}nz::Vehicle vehicle;bool driving=false,paused=false,quit=false,heads=true,tails=true,muted=false;
- nz::RaceSeedSequence raceSeeds;nz::RaceSession race;nz::RaceTelemetry raceTelemetry(root/"build/qa/race_telemetry.csv");Selection opponentChoice;opponentChoice.car=2;opponentChoice.paint=WHITE;opponentChoice.twoTone=false;opponentChoice.blackHood=false;
+ nz::RaceSeedSequence raceSeeds;nz::RaceSession race;nz::RaceTelemetry raceTelemetry(root/(smoke?"build/qa/race_smoke_telemetry.csv":"build/qa/race_telemetry.csv"));Selection opponentChoice;opponentChoice.car=2;opponentChoice.paint=WHITE;opponentChoice.twoTone=false;opponentChoice.blackHood=false;
  bool decalEditor=decalSmoke;int decalView=0,decalLayer=0;
  if(assistSmoke)selected.tractionAssist[selected.car]=true;
  if(tcsSmoke&&nz::HasFactoryElectronics(nz::Cars[selected.car]))selected.tcsEnabled[selected.car]=true;

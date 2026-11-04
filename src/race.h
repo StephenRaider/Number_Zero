@@ -113,15 +113,28 @@ public:
 
 enum class RacePhase {Countdown,Racing,Finished};
 enum class RaceWinner {None,Player,Opponent,Tie};
+enum class RaceContactKind { PlayerTraffic, RivalTraffic, PlayerRival };
+struct ContactPose {
+ double station,lateral,speed,lateralSpeed;
+ static ContactPose Of(const Vehicle &v){return {v.distance,v.lateral,v.speed,v.lateralSpeed};}
+};
+struct RaceContact {
+ RaceContactKind kind;double time;bool counted;
+ ContactPose playerBefore,playerAfter,rivalBefore,rivalAfter;
+};
 struct RaceSession {
  std::uint32_t trafficSeed=12345;
  Vehicle opponent;RivalDriver driver;RacePhase phase=RacePhase::Countdown;RaceWinner winner=RaceWinner::None;
  double countdown=3,elapsed=0,startLine=0,opponentContactCooldown=0,playerFinish=-1,opponentFinish=-1;int opponentContacts=0;Input opponentInput{};
+ int playerTrafficContacts=0,playerRivalContacts=0;
+ double racerContactCooldown=0,playerTrafficContactSeconds=0,rivalTrafficContactSeconds=0,playerRivalContactSeconds=0;
+ std::vector<RaceContact> contactEvents; // Only this physics step, never an unbounded race history.
  static TrafficPlayer Observer(const Vehicle &v){return {v.distance,v.lateral,v.speed,4.485,1.976};}
  static void Rolling(Vehicle &v,const CarSpec &spec,double lateral,bool automatic){v=Vehicle{};v.speed=RollingSpeed;v.lateral=lateral;v.gear=1;v.automatic=automatic;v.tcsEnabled=HasFactoryElectronics(spec);v.rpm=v.speed/(2*Pi*spec.radius)*60*spec.gears[1]*spec.finalDrive;}
  void Start(Vehicle &player,const CarSpec &spec,bool automatic,bool deleted,bool tcs=false,bool assist=false){
   Rolling(player,spec,-1.75,automatic);player.speedLimiterDeleted=deleted;player.tcsEnabled=tcs&&HasFactoryElectronics(spec);player.tractionAssist=assist;Rolling(opponent,Cars[2],1.75,true);driver.Reset(2);
-  phase=RacePhase::Countdown;winner=RaceWinner::None;countdown=3;elapsed=startLine=opponentContactCooldown=0;playerFinish=opponentFinish=-1;opponentContacts=0;opponentInput={};
+  phase=RacePhase::Countdown;winner=RaceWinner::None;countdown=3;elapsed=startLine=opponentContactCooldown=0;playerFinish=opponentFinish=-1;opponentContacts=playerTrafficContacts=playerRivalContacts=0;opponentInput={};
+  racerContactCooldown=playerTrafficContactSeconds=rivalTrafficContactSeconds=playerRivalContactSeconds=0;contactEvents.clear();
  }
  double PlayerProgress(const Vehicle &v)const{return phase==RacePhase::Countdown?0.:std::clamp(v.distance-startLine,0.,RaceDistance);}
  double OpponentProgress()const{return phase==RacePhase::Countdown?0.:std::clamp(opponent.distance-startLine,0.,RaceDistance);}
@@ -132,18 +145,20 @@ struct RaceSession {
   elapsed+=dt;
   if(playerFinish>=0||opponentFinish>=0){phase=RacePhase::Finished;if(playerFinish>=0&&opponentFinish>=0)winner=std::abs(playerFinish-opponentFinish)<1e-7?RaceWinner::Tie:playerFinish<opponentFinish?RaceWinner::Player:RaceWinner::Opponent;else winner=playerFinish>=0?RaceWinner::Player:RaceWinner::Opponent;}
  }
- void ResolveRacers(Vehicle &player){
-  if(std::abs(player.distance-opponent.distance)>=4.50||std::abs(player.lateral-opponent.lateral)>=1.96)return;
+ bool ResolveRacers(Vehicle &player){
+  if(std::abs(player.distance-opponent.distance)>=4.50||std::abs(player.lateral-opponent.lateral)>=1.96)return false;
   if(std::abs(player.distance-opponent.distance)>2.5){
    if(player.distance<opponent.distance){player.distance=opponent.distance-4.55;player.speed=std::min(player.speed,opponent.speed);}else{opponent.distance=player.distance-4.55;opponent.speed=std::min(opponent.speed,player.speed);}
   }else{
    double direction=player.lateral<opponent.lateral?-1.:1.;double push=(1.98-std::abs(player.lateral-opponent.lateral))*.5;
    player.lateral=std::clamp(player.lateral+direction*push,-6.05,6.05);opponent.lateral=std::clamp(opponent.lateral-direction*push,-6.05,6.05);player.lateralSpeed=opponent.lateralSpeed=0;player.speed*=.997;opponent.speed*=.997;
   }
+  return true;
  }
  void Step(Vehicle &player,const CarSpec &spec,Input input,TrafficWorld &traffic,double dt){
+  contactEvents.clear();
   if(phase==RacePhase::Finished)return;
-  opponentContactCooldown=std::max(0.,opponentContactCooldown-dt);
+  opponentContactCooldown=std::max(0.,opponentContactCooldown-dt);racerContactCooldown=std::max(0.,racerContactCooldown-dt);
   if(phase==RacePhase::Countdown){
    double advance=std::min(dt,countdown);player.speed=opponent.speed=RollingSpeed;player.distance+=RollingSpeed*advance;opponent.distance+=RollingSpeed*advance;countdown=std::max(0.,countdown-advance);
    auto other=Observer(opponent);traffic.Step(Observer(player),advance,&other);
@@ -152,7 +167,24 @@ struct RaceSession {
   }
   double pb=player.distance,ob=opponent.distance;opponentInput=driver.Control(opponent,ObserveRaceTraffic(opponent,traffic.cars,Observer(player)),dt);
   nz::Step(player,spec,input,dt);nz::Step(opponent,Cars[2],opponentInput,dt);
-  auto other=Observer(opponent);traffic.Step(Observer(player),dt,&other);traffic.ResolveContact(player);traffic.ResolveContact(opponent,&opponentContactCooldown,&opponentContacts);ResolveRacers(player);
+  auto other=Observer(opponent);traffic.Step(Observer(player),dt,&other);
+  auto beforePlayer=ContactPose::Of(player),beforeRival=ContactPose::Of(opponent);int previous=traffic.contacts;
+  if(traffic.ResolveContact(player)){
+   playerTrafficContactSeconds+=dt;
+   contactEvents.push_back({RaceContactKind::PlayerTraffic,elapsed+dt,traffic.contacts>previous,beforePlayer,ContactPose::Of(player),beforeRival,ContactPose::Of(opponent)});
+  }
+  playerTrafficContacts=traffic.contacts;
+  beforePlayer=ContactPose::Of(player);beforeRival=ContactPose::Of(opponent);previous=opponentContacts;
+  if(traffic.ResolveContact(opponent,&opponentContactCooldown,&opponentContacts)){
+   rivalTrafficContactSeconds+=dt;
+   contactEvents.push_back({RaceContactKind::RivalTraffic,elapsed+dt,opponentContacts>previous,beforePlayer,ContactPose::Of(player),beforeRival,ContactPose::Of(opponent)});
+  }
+  beforePlayer=ContactPose::Of(player);beforeRival=ContactPose::Of(opponent);
+  if(ResolveRacers(player)){
+   bool counted=racerContactCooldown<=0;if(counted){++playerRivalContacts;racerContactCooldown=.5;}
+   playerRivalContactSeconds+=dt;
+   contactEvents.push_back({RaceContactKind::PlayerRival,elapsed+dt,counted,beforePlayer,ContactPose::Of(player),beforeRival,ContactPose::Of(opponent)});
+  }
   FinishStep(pb,ob,player,dt);
  }
 };

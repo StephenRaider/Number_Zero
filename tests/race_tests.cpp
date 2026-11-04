@@ -1,4 +1,6 @@
 #include "race.h"
+#include "race_telemetry.h"
+#include <sstream>
 #include <cstdio>
 #include <stdexcept>
 static void Require(bool ok,const char *message){if(!ok)throw std::runtime_error(message);}
@@ -90,6 +92,45 @@ int main(){try{
   double pb=goal-1,ob=goal-1;p.distance=goal+(winner==0?3:1);r.opponent.distance=goal+(winner==1?3:1);r.FinishStep(pb,ob,p,.1);
   Require(r.phase==nz::RacePhase::Finished,"10km finish not detected");
   Require(r.winner==(winner==0?nz::RaceWinner::Player:winner==1?nz::RaceWinner::Opponent:nz::RaceWinner::Tie),"Same-step finish order is incorrect");
+ }
+ {
+  const double dt=1./120.;
+  auto directory=std::filesystem::path("build/qa")/("contact-test-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+  std::filesystem::create_directories(directory);auto log=directory/"race.csv";
+  {std::ofstream previous(log);previous<<"previous race evidence\n";}
+  {
+   nz::RaceTelemetry telemetry(log);
+   for(int kind=0;kind<3;kind++){
+    nz::Vehicle p;nz::RaceSession r;r.Start(p,nz::Cars[4],true,false);r.phase=nz::RacePhase::Racing;r.trafficSeed=100+kind;
+    p.speed=35;r.opponent.speed=20;r.opponent.distance=100;
+    nz::TrafficWorld world;auto other=nz::RaceSession::Observer(r.opponent);world.Reset(nz::RaceSession::Observer(p),r.trafficSeed,&other);world.cars.clear();
+    if(kind<2){
+     nz::TrafficCar a;a.id=100000;a.lane=a.targetLane=kind==0?1:2;a.lateral=kind==0?p.lateral:r.opponent.lateral;a.station=(kind==0?p.distance:r.opponent.distance)+3.5;a.speed=a.cruise=15;a.decision=10;world.cars.push_back(a);
+    }else{r.opponent.distance=p.distance+3.5;r.opponent.lateral=p.lateral;}
+    telemetry.Record(r,p,4);r.Step(p,nz::Cars[4],{1,0,0},world,dt);
+    Require(r.contactEvents.size()==1,"Contact category missing or duplicated");const auto e=r.contactEvents.front();
+    Require((int)e.kind==kind&&e.counted,"Contact kind or count flag incorrect");
+    Require(kind==0?r.playerTrafficContacts==1&&r.opponentContacts==0&&r.playerRivalContacts==0:kind==1?r.playerTrafficContacts==0&&r.opponentContacts==1&&r.playerRivalContacts==0:r.playerTrafficContacts==0&&r.opponentContacts==0&&r.playerRivalContacts==1,"Contact categories contaminate each other's counters");
+    Require(kind==1?e.rivalAfter.speed<e.rivalBefore.speed:e.playerAfter.speed<e.playerBefore.speed,"Contact snapshots miss speed loss");
+    Require(e.time==r.elapsed,"Contact timestamp is not the physics tick");
+    telemetry.Record(r,p,4);telemetry.Record(r,p,4); // Same event must not be duplicated.
+    if(kind==2){
+     r.opponent.distance=p.distance+3.5;r.opponent.lateral=p.lateral;
+     r.Step(p,nz::Cars[4],{1,0,0},world,dt);Require(r.playerRivalContacts==1&&std::abs(r.playerRivalContactSeconds-2*dt)<1e-9&&!r.contactEvents.back().counted,"Sustained push inflates counter or loses contact duration");
+     telemetry.Record(r,p,4);r.phase=nz::RacePhase::Finished;telemetry.Record(r,p,4);
+     r.Step(p,nz::Cars[4],{},world,dt);Require(r.contactEvents.empty(),"Finished race replays contact events");
+    }
+    r.Start(p,nz::Cars[4],true,false);Require(r.playerTrafficContacts==0&&r.playerRivalContacts==0&&r.opponentContacts==0&&r.playerRivalContactSeconds==0&&r.contactEvents.empty(),"Rematch retains contact history");
+   }
+  }
+  std::ifstream events(directory/"race_contacts.csv");std::string line;int count=0,fields=0;
+  while(std::getline(events,line)){int n=1+(int)std::count(line.begin(),line.end(),',');if(!count)fields=n;Require(n==fields,"Contact CSV header/row mismatch");++count;}
+  Require(count==5,"Exact contact rows missing or duplicate recording bypasses tick guard");
+  std::ifstream summary(log);count=0;while(std::getline(summary,line)){int n=1+(int)std::count(line.begin(),line.end(),',');if(!count)fields=n;Require(n==fields,"Summary CSV header/row mismatch");++count;}
+  Require(count>=5,"Contact/terminal telemetry replaces or loses summary rows");
+  bool preserved=false;for(const auto &file:std::filesystem::directory_iterator(directory/"race_history")){std::ifstream old(file.path());std::getline(old,line);preserved=preserved||line=="previous race evidence";}
+  Require(preserved,"Opening a new telemetry log destroys prior race evidence");
+  std::puts("PASS contact telemetry: three categories, speed/position snapshots, tick events, push duration, cooldown, rematch, terminal row, CSV schema and archived evidence");
  }
  int totalContacts=0;
  for(unsigned seed:{11u,42u,197u,7u,12345u,901u}){
