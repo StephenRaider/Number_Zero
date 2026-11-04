@@ -2,22 +2,23 @@
 #include <limits>
 static void SaveDecalSettings(const fs::path &path,const Selection &selection,const DecalLibrary &lib){
  Selection s=selection;s.CapturePaint();
- std::ofstream out(path);out.precision(std::numeric_limits<float>::max_digits10);out<<"NZ_GARAGE_4\n"<<nz::Cars.size()<<'\n'<<s.car<<' '<<s.manual<<'\n';
- for(int car=0;car<(int)nz::Cars.size();car++){const auto &p=s.finishes[car];out<<car<<' '<<(unsigned)ColorToInt(p.paint)<<' '<<p.twoTone<<' '<<p.blackHood<<' '<<p.hue<<' '<<p.saturation<<' '<<p.value<<' '<<s.limiterDeleted[car]<<'\n';}
+ std::ofstream out(path);out.precision(std::numeric_limits<float>::max_digits10);out<<"NZ_GARAGE_5\n"<<nz::Cars.size()<<'\n'<<s.car<<' '<<s.manual<<'\n';
+ for(int car=0;car<(int)nz::Cars.size();car++){const auto &p=s.finishes[car];out<<car<<' '<<(unsigned)ColorToInt(p.paint)<<' '<<p.twoTone<<' '<<p.blackHood<<' '<<p.hue<<' '<<p.saturation<<' '<<p.value<<' '<<s.limiterDeleted[car]<<' '<<s.tcsEnabled[car]<<'\n';}
  for(int car=0;car<(int)nz::Cars.size();car++)for(int layer=0;layer<3;layer++){
   const auto &d=s.decals[car][layer];out<<car<<' '<<layer<<' '<<(d.design>=0?lib.entries[d.design].id:"none")<<' '<<d.forward<<' '<<d.height<<' '<<d.width<<' '<<d.angle<<' '<<d.tint<<'\n';
  }
 }
 static void LoadDecalSettings(const fs::path &path,Selection &s,const DecalLibrary &lib){
- std::ifstream in(path);std::string tag;if(!(in>>tag)||(tag!="NZ_DECALS_1"&&tag!="NZ_GARAGE_2"&&tag!="NZ_GARAGE_3"&&tag!="NZ_GARAGE_4"))return;
- Selection loaded=s;loaded.limiterDeleted.fill(false);
- if(tag=="NZ_GARAGE_2"||tag=="NZ_GARAGE_3"||tag=="NZ_GARAGE_4"){
-  int savedCars=2;if((tag=="NZ_GARAGE_3"||tag=="NZ_GARAGE_4")&&(!(in>>savedCars)||savedCars<1||savedCars>(int)nz::Cars.size()))return;
+ std::ifstream in(path);std::string tag;if(!(in>>tag)||(tag!="NZ_DECALS_1"&&tag!="NZ_GARAGE_2"&&tag!="NZ_GARAGE_3"&&tag!="NZ_GARAGE_4"&&tag!="NZ_GARAGE_5"))return;
+ Selection loaded=s;loaded.limiterDeleted.fill(false);for(size_t i=0;i<nz::Cars.size();i++)loaded.tcsEnabled[i]=nz::Cars[i].factoryTcs;
+ if(tag=="NZ_GARAGE_2"||tag=="NZ_GARAGE_3"||(tag=="NZ_GARAGE_4"||tag=="NZ_GARAGE_5")){
+  int savedCars=2;if((tag=="NZ_GARAGE_3"||(tag=="NZ_GARAGE_4"||tag=="NZ_GARAGE_5"))&&(!(in>>savedCars)||savedCars<1||savedCars>(int)nz::Cars.size()))return;
   int selected;bool manual;if(!(in>>selected>>manual)||selected<0||selected>=(int)nz::Cars.size())return;loaded.car=selected;loaded.manual=manual;
   for(int row=0;row<savedCars;row++){
    int car;unsigned colour;bool twoTone,hood;float hue,saturation,value;
    if(!(in>>car>>colour>>twoTone>>hood>>hue>>saturation>>value)||car!=row||!std::isfinite(hue)||!std::isfinite(saturation)||!std::isfinite(value))return;
-   if(tag=="NZ_GARAGE_4"&&!(in>>loaded.limiterDeleted[car]))return;
+   if((tag=="NZ_GARAGE_4"||tag=="NZ_GARAGE_5")&&!(in>>loaded.limiterDeleted[car]))return;
+   if(tag=="NZ_GARAGE_5"&&!(in>>loaded.tcsEnabled[car]))return;
    loaded.finishes[car]={GetColor(colour),twoTone,hood,std::clamp(hue,0.f,360.f),std::clamp(saturation,0.f,1.f),std::clamp(value,0.f,1.f)};
   }
   loaded.RestorePaint();

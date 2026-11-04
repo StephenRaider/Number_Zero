@@ -17,6 +17,7 @@ struct CarSpec {
     double speedLimitKmh=180.;bool popupHeadlights=false;int gearCount=5;bool allWheelDrive=false;
     // Driver/assisted-clutch timing calibration, not manufacturer gearbox claims.
     double manualUpshiftSeconds=.28,autoUpshiftSeconds=.34,autoUpshiftIntentSeconds=.12;
+    bool factoryTcs=false;double clutchRate=12.,longitudinalGripScale=1.;
 };
 inline const std::array<CarSpec,5> Cars={{
     {"nissan_silvia_s13","NISSAN SILVIA S13 K'S","SR20DET  /  2.0 TURBO","RWD",
@@ -31,7 +32,7 @@ inline const std::array<CarSpec,5> Cars={{
     {"ferrari_testarossa","FERRARI TESTAROSSA","F113  /  4.9 FLAT-12","RWD",
      1630,390,490,2.550,.328,3.210,.88,.72,1000,3200,6500,6800,.40,.98,.95,9.3,false,false,
      {3.139,2.104,1.526,1.167,.875},
-     {{1000,230},{2000,330},{3000,420},{4000,475},{4500,490},{5000,478},{5500,465},{6000,450},{6300,435},{6500,410},{6800,370}},0.,true}
+     {{1000,230},{2000,330},{3000,420},{4000,475},{4500,490},{5000,478},{5500,465},{6000,450},{6300,435},{6500,410},{6800,370}},0.,true,5,false,.28,.34,.12,false,12.,.94}
  ,
     {"toyota_supra_a80_sz","TOYOTA SUPRA A80 SZ","2JZ-GE  /  3.0 INLINE-6","RWD",
      1410,225,284.4,2.550,.3157,4.083,.86,.62,750,2800,6500,6800,.51,.97,.96,9.2,false,false,
@@ -57,6 +58,8 @@ struct Vehicle {
     double throttle=0,brake=0,steering=0,boost=0,shiftTime=0,shiftCooldown=0,acceleration=0;
     double pitch=0,pitchVelocity=0;bool automatic=true,speedLimiterDeleted=false;
     double yaw=0,elapsed=0,timeTo100=-1;
+    double wheelSpeed=0,wheelDistance=0,slipRatio=0,clutch=0,tcsCut=0,longitudinalLoad=0;
+    bool wheelsInitialized=false,tcsEnabled=false,tcsActive=false;
     int gear=0,shifts=0,autoShiftTarget=-1;double autoShiftIntent=0;bool limiter=false;
 };
 inline double Approach(double value,double target,double rate,double dt){
@@ -103,9 +106,21 @@ inline double SteeringAssist(double throttle,double brake){
 inline double LateralSpeedLimit(double speed){
     return SteeringResponsiveness*std::min(speed*.32,1.7+3.0/(1+std::pow(speed/21.,2)));
 }
-inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
+// Driven-axle slip curve: peak near 6% slip, progressively less grip beyond it.
+inline double TyreGrip(double slip){
+ double s=std::abs(slip);return s<=.06?s/.06:.70+.30*std::exp(-(s-.06)/.18);
+}
+inline double DriverTractionThrottle(const Vehicle &v,double request){
+ // Driver feathering is separate from TCS; both predicted and actual rival
+ // inputs use this response. Players retain control of their own throttle.
+ return request*std::clamp(1.-std::max(0.,v.slipRatio-.05)*4.0,.15,1.);
+}
+inline double DrivenWheelSpeed(const Vehicle &v){return v.wheelsInitialized?v.wheelSpeed:v.speed;}
+inline double DrivenWheelDistance(const Vehicle &v){return v.wheelsInitialized?v.wheelDistance:v.distance;}
+inline void StepTick(Vehicle &v,const CarSpec &c,Input in,double dt){
     in.throttle=std::clamp(in.throttle,0.0,1.0);in.brake=std::clamp(in.brake,0.0,1.0);in.steer=std::clamp(in.steer,-1.0,1.0);
     const double mass=c.mass+75.; // One driver; catalogue curb mass already includes normal fluids.
+    if(!v.wheelsInitialized){v.wheelSpeed=v.speed;v.wheelDistance=v.distance;v.clutch=v.speed>2?1:0;v.wheelsInitialized=true;}
     v.elapsed+=dt;v.shiftTime=std::max(0.,v.shiftTime-dt);v.shiftCooldown=std::max(0.,v.shiftCooldown-dt);
     v.throttle=Approach(v.throttle,in.brake>.05?0.:in.throttle,12.,dt);
     v.brake=Approach(v.brake,in.brake,28.,dt);
@@ -114,7 +129,8 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     const double wheelRpm=v.speed/(2*Pi*c.radius)*60;
     double coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
     if(v.automatic&&v.shiftTime<=0&&v.shiftCooldown<=0){
-        int target=AutomaticGear(v,c,wheelRpm);
+        double wheelSignal=v.wheelSpeed/(2*Pi*c.radius)*60;
+        int target=AutomaticGear(v,c,wheelRpm+(wheelSignal-wheelRpm)*std::clamp((.25-v.slipRatio)/.15,0.,1.));
         if(target==v.gear){v.autoShiftTarget=-1;v.autoShiftIntent=0;}
         else{
             if(target!=v.autoShiftTarget){v.autoShiftTarget=target;v.autoShiftIntent=0;}
@@ -128,41 +144,67 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
             }
         }
     }else{v.autoShiftTarget=-1;v.autoShiftIntent=0;}
-    coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
+    coupledRpm=v.wheelSpeed/(2*Pi*c.radius)*60*c.gears[v.gear]*c.finalDrive;
     double engineRpm=std::max(c.idle,coupledRpm);
+    double clutchTarget=v.shiftTime>0?0.:v.throttle>.03||v.speed>1?1.:0.;
+    v.clutch=Approach(v.clutch,clutchTarget,clutchTarget>v.clutch?(v.speed>2?45.:c.clutchRate):35.,dt);
     if(v.gear==0 && v.throttle>.05)engineRpm=std::max(engineRpm,c.idle+(c.launchRpm-c.idle)*v.throttle);
     v.rpm=Approach(v.rpm,std::min(engineRpm,c.redline),20.,dt);
     const double boostTarget=v.throttle*std::clamp((v.rpm-1600)/1700,0.,1.);
     v.boost=Approach(v.boost,boostTarget,boostTarget>v.boost?4.:9.,dt);
     double force=TorqueAt(c,v.rpm)*c.gears[v.gear]*c.finalDrive*c.efficiency/c.radius*v.throttle;
     if(c.turbo)force*=.70+.30*v.boost;
+    force*=v.clutch;
     if(v.shiftTime>0)force=0.;
-    if(coupledRpm>c.redline)force=0.;
+    force*=std::clamp((c.redline-coupledRpm)/180.,0.,1.);
     const bool governed=c.speedLimitKmh>0&&!v.speedLimiterDeleted;
     v.limiter=governed&&v.speed*3.6>c.speedLimitKmh-.5;
     if(governed)force*=std::clamp((c.speedLimitKmh+.5-v.speed*3.6)/1.0,0.,1.0);
-    const double transfer=std::clamp(v.acceleration*.50/(9.81*c.wheelbase),-.18,.18);
+    v.longitudinalLoad=Approach(v.longitudinalLoad,std::clamp(v.acceleration*.50/(9.81*c.wheelbase),-.18,.18),12.,dt);
+    const double transfer=v.longitudinalLoad;
     const double drivenWeight=c.allWheelDrive?.92:c.frontDrive?c.frontWeight-transfer:1-c.frontWeight+transfer;
-    force=std::min(force,c.grip*mass*9.81*std::clamp(drivenWeight,.25,c.allWheelDrive?1.:.80));
-    const double aero=.5*1.225*c.cdArea*v.speed*v.speed;
-    const double rolling=v.speed>.005?.012*mass*9.81:0.;
-    const double engineBrake=(1-v.throttle)*std::min(v.speed/6.,1.)*(170.+v.rpm*.035);
-    const double braking=v.brake*c.brakeG*GameBrakeBoost*mass*9.81;
-    const double oldSpeed=v.speed;
-    v.acceleration=(force-aero-rolling-engineBrake-braking)/(mass*1.04); // Equivalent rotating wheel/driveline inertia.
-    v.speed=std::max(0.,v.speed+v.acceleration*dt);
+    const double capacity=c.grip*c.longitudinalGripScale*mass*9.81*std::clamp(drivenWeight,.25,c.allWheelDrive?1.:.80);
+    // Excess axle torque accelerates the driven wheels, rather than disappearing
+    // behind an ideal traction clamp. Wheel inertia replaces the old 4% blanket.
+    const double oldSpeed=v.speed,rotatingMass=mass*.04;
+    const int count=std::max(1,(int)std::ceil(dt*900));const double h=dt/count;
+    double cut=0;
+    for(int sub=0;sub<count;sub++){
+     double slip=(v.wheelSpeed-v.speed)/std::max(v.speed,3.);
+     double command=force;
+     if(v.tcsEnabled){
+      double safe=capacity*.96;
+      if(slip>.07)safe*=std::clamp(1.-(slip-.07)*3.5,.15,1.);
+      command=std::min(command,safe);
+     }
+     double targetCut=force>1?1-command/force:0.;cut=std::max(cut,targetCut);
+     double tyre=capacity*TyreGrip(slip)*(slip>=0?1:-1);
+     double aero=.5*1.225*c.cdArea*v.speed*v.speed;
+     double rolling=v.speed>.005?.012*mass*9.81:0.;
+     double engineBrake=(1-v.throttle)*std::min(v.speed/6.,1.)*(170.+v.rpm*.035);
+     double braking=v.brake*c.brakeG*GameBrakeBoost*mass*9.81;
+     double before=v.speed;
+     v.speed=std::max(0.,v.speed+(tyre-aero-rolling-engineBrake-braking)/mass*h);
+     v.wheelSpeed=std::max(0.,v.wheelSpeed+(command-tyre)/rotatingMass*h);
+     v.distance+=(before+v.speed)*.5*h;v.wheelDistance+=v.wheelSpeed*h;
+     if(v.throttle<.001&&v.speed<.015&&v.wheelSpeed<.015){v.speed=v.wheelSpeed=0;}
+    }
+    v.tcsCut=Approach(v.tcsCut,cut,cut>v.tcsCut?35:12,dt);v.tcsActive=v.tcsEnabled&&v.tcsCut>.025;
+    v.slipRatio=(v.wheelSpeed-v.speed)/std::max(v.speed,3.);
+    v.acceleration=(v.speed-oldSpeed)/dt;
     // A damped suspension response: positive pitch lifts the nose, negative pitches into braking.
     // Suppress the nominal braking force once stationary, so a held brake does not leave a parked car diving.
     double actualAcceleration=(v.speed-oldSpeed)/dt;
     double targetPitch=std::clamp(actualAcceleration*.58,-3.,3.);
     v.pitchVelocity+=(100.*(targetPitch-v.pitch)-17.*v.pitchVelocity)*dt;
     v.pitch=std::clamp(v.pitch+v.pitchVelocity*dt,-3.,3.);
-    v.distance+=(oldSpeed+v.speed)*.5*dt;
+
     if(v.timeTo100<0 && oldSpeed<100./3.6 && v.speed>=100./3.6)v.timeTo100=v.elapsed;
     const double targetLateral=v.steering*LateralSpeedLimit(v.speed)*(1.+.12*(1.-v.throttle)*(1.-v.brake)+.28*v.brake);
     const double physicalG=std::sqrt(std::max(.12,c.grip*c.grip-std::pow(std::clamp(v.acceleration/9.81,-c.grip,c.grip),2)));
     // Preserve evasive steering under braking rather than exhausting the lateral budget.
-    const double availableG=std::max(physicalG,c.grip*.85*std::clamp((assist-1.)/.30,0.,1.));
+    const double spinGrip=1.-.30*std::clamp((v.slipRatio-.15)/.6,0.,1.);
+    const double availableG=spinGrip*std::max(physicalG,c.grip*.85*std::clamp((assist-1.)/.30,0.,1.));
     const double maxLateralAcceleration=SteeringResponsiveness*assist*availableG*9.81;
     const double response=SteeringResponsiveness*(std::abs(in.steer)<.01?22./(1+v.speed/100.):assist*std::max(5.,c.steerResponse*1.35/(1+v.speed/75.)));
     const double desiredAcceleration=(targetLateral-v.lateralSpeed)*response;
@@ -172,4 +214,11 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     if(std::abs(v.lateral)>6.05){v.lateral=std::clamp(v.lateral,-6.05,6.05);v.lateralSpeed=0;v.speed=std::max(0.,v.speed-1.5*dt);}
     v.yaw=std::atan2(v.lateralSpeed,std::max(4.,v.speed));
 }
+// Keep the complete drivetrain/tyre coupling at game-tick resolution during
+// larger prediction steps too, rather than updating engine/clutch only at 20Hz.
+inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
+ int count=std::max(1,(int)std::ceil(dt*120.));double h=dt/count;
+ for(int i=0;i<count;i++)StepTick(v,c,in,h);
+}
+
 }

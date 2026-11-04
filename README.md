@@ -566,3 +566,30 @@ scenery occlusion, glow, blur-toggle and widescreen checks also apply.
 The base R34 uses a six-speed gearbox and AWD launch traction; the earlier cars
 retain five gears. `--r34` selects it for play or smoke tests. Existing garage
 saves retain their four cars' paint, decals and limiter settings when adding it.
+
+## Wheelspin and traction assist
+
+Driven wheels now have their own rotation speed and inertia. Too much torque
+pushes the tyres beyond peak slip and reduces useful grip; engine RPM can flare
+without equivalent road acceleration. Clutch engagement and axle load transfer
+are smoothed. RWD, FWD and AWD use their respective driven-axle loads. Non-driven
+wheels keep rolling at road speed; only the driven axle uses the slipping frames.
+No extra car sprites were rendered.
+
+Press **Y** or use **TRACTION ASSIST** in the garage to compare TCS on/off. It
+is saved per car. Current period-car configurations start with it off; this is
+an optional game assist, not a claim that every selected trim had factory TCS.
+AWD remains separate from TCS. TCS cuts delivered torque to hold useful slip;
+it does not add grip or power. The HUD shows TC while intervening and SPIN for
+excess slip. Hold **Shift+W** for gentler throttle when launching without TCS.
+
+Only sustained excess driven-wheel slip emits smoke: small low-opacity puffs
+at the tyre contact patches, fading in under a second. Smoke stays in world
+space, freezes on pause and clears on reset/car changes. The rival uses the same
+physics and can feather its throttle as a driver rather than receiving hidden TCS.
+
+The previous 4.9-second R34 calibration was measured before this tyre model.
+It now measures about 5.08 s to 60 mph with TCS off; the floored Ferrari is about
+6.35 s, TCS-assisted about 5.35 s and a scripted feathered Ferrari about 5.17 s.
+Driver technique is now part of the result. See docs/TRACTION.md for scope and
+current limitations, and docs/PERFORMANCE.md for historical/current measurements.

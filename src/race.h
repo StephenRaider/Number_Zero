@@ -48,7 +48,7 @@ class RivalDriver {
   for(int tick=0;tick<52;tick++){
    double t=tick*step;
    if(t>.7&&std::abs(v.lateral-LaneCentres[first])<.40&&std::abs(v.lateralSpeed)<1.4){lane=next;second=next!=first;}
-   Input input{1,0,Steering(v,lane)};
+   Input input{DriverTractionThrottle(v,1),0,Steering(v,lane)};
    if(style==1||(style==2&&t>=.5)){
     double nearest=1e6,lead=v.speed;
     for(const auto &a:seen){double x=a.station+a.speed*t-v.distance,y=a.lateral+a.lateralSpeed*std::min(t,.6);
@@ -86,7 +86,10 @@ public:
   closingSpeed=v.speed-lead;bool blocked=nearestFront<32+std::max(0.,closingSpeed)*1.4||(preparingGap&&nearestFront<1e5);
   Plan best;int bestLane=targetLane;bool adjacentSafe=false;rejectedPlans=0;laneScores.fill(-1e9);
   for(int delta=-1;delta<=1;delta++){
-   int first=targetLane+delta;if(first<0||first>3||(!settled&&delta!=0))continue;
+   int first=targetLane+delta;if(first<0||first>3)continue;
+   // A newly visible blocker can invalidate an in-progress merge. Permit a
+   // physically predicted abort/return rather than committing to its bumper.
+   if(!settled&&delta!=0&&!blocked)continue;
    // No unsolicited lane hunting on empty road. Only local obstacles justify a pass.
    if(delta!=0&&!blocked&&!preparingGap)continue;
    for(int next=std::max(0,first-1);next<=std::min(3,first+1);next++)for(int style=0;style<3;style++){
@@ -115,9 +118,9 @@ struct RaceSession {
  Vehicle opponent;RivalDriver driver;RacePhase phase=RacePhase::Countdown;RaceWinner winner=RaceWinner::None;
  double countdown=3,elapsed=0,startLine=0,opponentContactCooldown=0,playerFinish=-1,opponentFinish=-1;int opponentContacts=0;Input opponentInput{};
  static TrafficPlayer Observer(const Vehicle &v){return {v.distance,v.lateral,v.speed,4.485,1.976};}
- static void Rolling(Vehicle &v,const CarSpec &spec,double lateral,bool automatic){v=Vehicle{};v.speed=RollingSpeed;v.lateral=lateral;v.gear=1;v.automatic=automatic;v.rpm=v.speed/(2*Pi*spec.radius)*60*spec.gears[1]*spec.finalDrive;}
- void Start(Vehicle &player,const CarSpec &spec,bool automatic,bool deleted){
-  Rolling(player,spec,-1.75,automatic);player.speedLimiterDeleted=deleted;Rolling(opponent,Cars[2],1.75,true);driver.Reset(2);
+ static void Rolling(Vehicle &v,const CarSpec &spec,double lateral,bool automatic){v=Vehicle{};v.speed=RollingSpeed;v.lateral=lateral;v.gear=1;v.automatic=automatic;v.tcsEnabled=spec.factoryTcs;v.rpm=v.speed/(2*Pi*spec.radius)*60*spec.gears[1]*spec.finalDrive;}
+ void Start(Vehicle &player,const CarSpec &spec,bool automatic,bool deleted,bool tcs=false){
+  Rolling(player,spec,-1.75,automatic);player.speedLimiterDeleted=deleted;player.tcsEnabled=tcs;Rolling(opponent,Cars[2],1.75,true);driver.Reset(2);
   phase=RacePhase::Countdown;winner=RaceWinner::None;countdown=3;elapsed=startLine=opponentContactCooldown=0;playerFinish=opponentFinish=-1;opponentContacts=0;opponentInput={};
  }
  double PlayerProgress(const Vehicle &v)const{return phase==RacePhase::Countdown?0.:std::clamp(v.distance-startLine,0.,RaceDistance);}

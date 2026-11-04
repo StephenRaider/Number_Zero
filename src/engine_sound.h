@@ -22,7 +22,7 @@ inline EngineControls UnpackEngineControls(std::uint64_t bits){
 }
 inline EngineControls DrivingSound(const Vehicle &v,int car,bool driving,bool paused,bool muted){
  // A shift/factory speed cut removes engine load even if the pedal remains held.
- return {(float)v.rpm,(float)((v.shiftTime>0||v.limiter)?0.:v.throttle),car,driving&&!paused,muted};
+ return {(float)v.rpm,(float)((v.shiftTime>0||v.limiter)?0.:v.throttle*(1-v.tcsCut)),car,driving&&!paused,muted};
 }
 // A broader exhaust note and restrained induction preserve the B16B cam change
 // without a narrow, increasingly loud high-RPM drone.

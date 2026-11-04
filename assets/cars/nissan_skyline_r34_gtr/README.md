@@ -31,6 +31,7 @@ material passes. No alternative wheel designs or tint selector are introduced.
 Performance is registered in src/vehicle.h; see docs/PERFORMANCE.md for sources
 and assumptions. Sound is the RB26 procedural profile in src/engine_sound.h.
 
-The assisted R34 launch is calibrated to about 4.9 s to 60 mph (4.94 measured).
-Launch RPM and driver/shift timing changed; stock power/torque, mass, grip,
-ratios and governor remain. See docs/PERFORMANCE.md for all-car comparisons.
+The earlier assisted-launch calibration measured 4.94 s to 60 mph with an ideal
+traction clamp. With the independent wheel-slip/clutch model it is about 5.08 s.
+Stock power/torque, mass, gearing and governor remain. See docs/TRACTION.md and
+docs/PERFORMANCE.md for the current model and technique-dependent comparisons.

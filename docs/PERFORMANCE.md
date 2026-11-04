@@ -244,3 +244,21 @@ Reproduce the assisted table with tools/performance_sanity.cpp, or pass
 --manual for the ideal manual trace. The vehicle regression now explicitly
 checks 60 mph (96.56064 km/h), the R34 target at both 120/240 Hz, sixth gear,
 manual advantage, AWD launch traction, limiters and all earlier cars' behavior.
+
+## Wheel-slip model supersedes the ideal-traction launch figures
+
+The 4.94-second R34 and other tables above are historical pre-slip calibration
+results. Launch performance is now technique dependent, because excessive axle
+torque spins the wheels and reduces usable grip instead of hitting a perfect
+traction clamp. With the explicit wheel inertia/clutch model, the current R34
+floored dry-road launch is about 5.08 seconds to 60 mph. This modest change is
+kept rather than adding artificial power to recover an exact earlier target.
+A dedicated test keeps it near five seconds and consistent at 120/240 Hz.
+
+Current Ferrari comparison: full throttle with TCS off about 6.35 seconds,
+optional TCS about 5.35 seconds, and a scripted driver feathering observed slip
+about 5.17 seconds. These are prototype measurements, not manufacturer claims.
+Its longitudinal tyre-grip scale is 0.94, an explicit period-road-tyre assumption.
+The other cars' full-throttle times can also change with slip/shift timing; old
+ideal-clamp results should not be used to claim current calibration accuracy.
+See TRACTION.md and run tests/traction_tests.cpp for a repeatable comparison.
