@@ -299,3 +299,11 @@ decals, each plain or in a white box with black border. **Sponsor Strip** adds
 a single independent sponsor row. A useful stack is base graphic on layer 1,
 sponsors on layer 2, number on layer 3. Number designs start at a smaller width;
 switching between number variants keeps your adjusted placement and size.
+
+
+Garage saves now include each car's paint colour, two-tone/hood settings and
+colour-picker values, plus the selected car, gearbox and existing decals.
+Previous decal-only save files remain compatible and upgrade on the next save.
+Switching cars restores each car's own finish instead of resetting its paint.
+Both cars use 2x steering response, release and lateral positioning rates while
+retaining the existing speed-dependent handling curve.

@@ -59,6 +59,17 @@ int main(){try{
   float rotatedS=forward*std::cos(yaw)-lateral*std::sin(yaw),rotatedL=forward*std::sin(yaw)+lateral*std::cos(yaw);
   Require(std::abs(nz::HeadlampBeam(forward,lateral,0)-nz::HeadlampBeam(rotatedS,rotatedL,yaw))<.0001,"Beam does not follow vehicle rotation");
  }
+ for(double kmh:{5.,15.,30.,60.,100.,160.,180.}){
+  double speed=kmh/3.6,previous=std::min(speed*.32,1.7+3./(1+std::pow(speed/21.,2)));
+  Require(std::abs(nz::LateralSpeedLimit(speed)-2*previous)<1e-12,"Steering movement speed is not doubled across speed range");
+  for(const auto &car:nz::Cars){
+   nz::Vehicle turn;turn.speed=speed;nz::Step(turn,car,{0,0,1},1./120.);
+   double expected=1-std::exp(-2*car.steerResponse/(1+speed/65.)/120.);
+   Require(std::abs(turn.steering-expected)<1e-12,"Steering input response is not doubled");
+   nz::Vehicle release;release.speed=speed;release.steering=1;nz::Step(release,car,{},1./120.);
+   Require(std::abs(release.steering-std::exp(-48./120.))<1e-12,"Steering release response is not doubled");
+  }
+ }
  for(const auto &car:nz::Cars){
   nz::Vehicle manual;manual.automatic=false;
   for(int i=0;i<120*15;i++)nz::Step(manual,car,{1,0,0},1./120.);

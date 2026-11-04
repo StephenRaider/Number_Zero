@@ -53,15 +53,16 @@ inline bool Shift(Vehicle &v,const CarSpec &c,int direction){
 }
 // Highway positioning envelope: quick at urban speeds, progressively calmer at speed.
 // Steering response is a game tuning parameter, separate from tyre grip and driven axle.
+constexpr double SteeringResponsiveness=2.;
 inline double LateralSpeedLimit(double speed){
-    return std::min(speed*.32,1.7+3.0/(1+std::pow(speed/21.,2)));
+    return SteeringResponsiveness*std::min(speed*.32,1.7+3.0/(1+std::pow(speed/21.,2)));
 }
 inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     in.throttle=std::clamp(in.throttle,0.0,1.0);in.brake=std::clamp(in.brake,0.0,1.0);in.steer=std::clamp(in.steer,-1.0,1.0);
     const double mass=c.mass+75.; // One driver; catalogue curb mass already includes normal fluids.
     v.elapsed+=dt;v.shiftTime=std::max(0.,v.shiftTime-dt);v.shiftCooldown=std::max(0.,v.shiftCooldown-dt);
     v.throttle=Approach(v.throttle,in.brake>.05?0.:in.throttle,12.,dt);
-    v.brake=Approach(v.brake,in.brake,18.,dt);v.steering=Approach(v.steering,in.steer,std::abs(in.steer)<.01?24.:c.steerResponse/(1+v.speed/65.),dt);
+    v.brake=Approach(v.brake,in.brake,18.,dt);v.steering=Approach(v.steering,in.steer,SteeringResponsiveness*(std::abs(in.steer)<.01?24.:c.steerResponse/(1+v.speed/65.)),dt);
     const double wheelRpm=v.speed/(2*Pi*c.radius)*60;
     double coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
     if(v.automatic && v.shiftTime<=0 && v.shiftCooldown<=0){
@@ -100,8 +101,8 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     if(v.timeTo100<0 && oldSpeed<100./3.6 && v.speed>=100./3.6)v.timeTo100=v.elapsed;
     const double targetLateral=v.steering*LateralSpeedLimit(v.speed);
     const double availableG=std::sqrt(std::max(.12,c.grip*c.grip-std::pow(std::clamp(v.acceleration/9.81,-c.grip,c.grip),2)));
-    const double maxLateralAcceleration=availableG*9.81;
-    const double response=std::abs(in.steer)<.01?22./(1+v.speed/100.):std::max(5.,c.steerResponse*1.35/(1+v.speed/75.));
+    const double maxLateralAcceleration=SteeringResponsiveness*availableG*9.81;
+    const double response=SteeringResponsiveness*(std::abs(in.steer)<.01?22./(1+v.speed/100.):std::max(5.,c.steerResponse*1.35/(1+v.speed/75.)));
     const double desiredAcceleration=(targetLateral-v.lateralSpeed)*response;
     v.lateralSpeed+=std::clamp(desiredAcceleration,-maxLateralAcceleration,maxLateralAcceleration)*dt;
     if(v.speed<.1)v.lateralSpeed=0;

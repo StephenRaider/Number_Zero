@@ -28,7 +28,18 @@ static bool Pressed(int key){return key>=0&&key<(int)framePress.size()&&framePre
 struct Maps { std::array<std::vector<Color>,6> pixels; };
 struct PoseArt { Maps body;std::array<Maps,4> pitch;std::array<Maps,9> wheels; };
 struct CarArt { std::array<std::array<PoseArt,3>,2> views; };
-struct Selection { std::array<std::array<nz::DecalPlacement,3>,2> decals{}; int car=0;Color paint{229,226,207,255};bool twoTone=true,blackHood=false,manual=false;float hue=35.f,saturation=.12f,value=.90f; };
+struct PaintSettings {
+ Color paint;bool twoTone,blackHood;float hue,saturation,value;
+ bool operator==(const PaintSettings &b)const{return ColorToInt(paint)==ColorToInt(b.paint)&&twoTone==b.twoTone&&blackHood==b.blackHood&&hue==b.hue&&saturation==b.saturation&&value==b.value;}
+};
+struct Selection {
+ std::array<std::array<nz::DecalPlacement,3>,2> decals{};
+ std::array<PaintSettings,2> finishes{{{{229,226,207,255},true,false,35,.12f,.90f},{{225,230,222,255},false,false,95,.035f,.90f}}};
+ int car=0;Color paint{229,226,207,255};bool twoTone=true,blackHood=false,manual=false;float hue=35.f,saturation=.12f,value=.90f;
+ void CapturePaint(){finishes[car]={paint,twoTone,blackHood,hue,saturation,value};}
+ void RestorePaint(){const auto &p=finishes[car];paint=p.paint;twoTone=p.twoTone;blackHood=p.blackHood;hue=p.hue;saturation=p.saturation;value=p.value;}
+ void SelectCar(int next){if(next==car)return;CapturePaint();car=next;RestorePaint();}
+};
 struct Light { Vector3 position;Vector3 colour;float power,radius; };
 struct Environment { Vector2 anchor;std::vector<Light> lights;int streetCount=0;bool garage=false,studio=false;float distance=0,lateral=0,minS=0,maxS=0;bool heads=true,tails=true,brake=false;float yaw=0,indicatorLeft=0,indicatorRight=0; };
 static Color RGBA(int r,int g,int b,int a=255){return Color{(unsigned char)r,(unsigned char)g,(unsigned char)b,(unsigned char)a};}
@@ -263,7 +274,7 @@ static void Garage(Selection &s,Vector2 mouse,bool &start,bool &quit,bool &heads
   Rectangle r{378.f,91.f+i*49,240,42};Box(r,s.car==i?RGBA(36,58,65):Panel);
   Label(i==0?"SILVIA S13 K'S":"CIVIC TYPE R EK9",389,(int)r.y+8,12,s.car==i?Mint:Paper);
   Label(TextFormat("%.0f PS   %s   %.0f kg",nz::Cars[i].peakPS,nz::Cars[i].drive,nz::Cars[i].mass),389,(int)r.y+26,9,Muted);
-  if(CheckCollisionPointRec(mouse,r)&&IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){s.car=i;s.paint=i==0?RGBA(229,226,207):RGBA(225,230,222);s.twoTone=i==0;}
+  if(CheckCollisionPointRec(mouse,r)&&IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){s.SelectCar(i);}
  }
  Label("BODY PAINT",381,200,10,Muted);
  const Color colours[]={RGBA(229,226,207),RGBA(188,39,46),RGBA(36,79,139),RGBA(37,87,76),RGBA(28,31,36),RGBA(174,181,184),RGBA(223,177,41),RGBA(129,88,140)};
@@ -397,6 +408,15 @@ int main(int argc,char **argv){
   Selection stored=selected;auto &d=stored.decals[1-selected.car][2];d.design=decals.Find("15_minimal_triple_stripe");d.forward=-.231234567f;d.height=.81234567f;d.width=3.11234567f;d.angle=-17.5f;d.tint=0xf45577ff;
   auto path=root/"build/qa/decal-save-test.cfg";SaveDecalSettings(path,stored,decals);Selection restored;LoadDecalSettings(path,restored,decals);
   if(restored.decals!=stored.decals)throw std::runtime_error("Decal placement save/reload failed");
+  stored.CapturePaint();if(restored.finishes!=stored.finishes||restored.car!=stored.car||restored.manual!=stored.manual)throw std::runtime_error("Garage paint save/reload failed");
+  Selection colours=selected;colours.paint=RGBA(17,73,129);colours.twoTone=false;colours.blackHood=true;colours.hue=211.234567f;colours.saturation=.81234567f;colours.value=.61234567f;
+  colours.SelectCar(1-colours.car);colours.paint=RGBA(191,37,66);colours.twoTone=true;colours.blackHood=false;colours.hue=7.7654321f;colours.saturation=.41234567f;colours.value=.91234567f;colours.manual=true;colours.CapturePaint();
+  auto paintPath=root/"build/qa/garage-paint-test.cfg";SaveDecalSettings(paintPath,colours,decals);Selection loaded;LoadDecalSettings(paintPath,loaded,decals);
+  if(loaded.finishes!=colours.finishes||loaded.car!=colours.car||!loaded.manual||ColorToInt(loaded.paint)!=ColorToInt(colours.paint))throw std::runtime_error("Two-car paint restart roundtrip failed");
+  loaded.SelectCar(1-loaded.car);if(ColorToInt(loaded.paint)!=ColorToInt(colours.finishes[loaded.car].paint)||!loaded.blackHood)throw std::runtime_error("Switching cars lost saved paint");
+  auto legacyPath=root/"build/qa/decal-legacy-test.cfg";{std::ofstream legacy(legacyPath);legacy.precision(std::numeric_limits<float>::max_digits10);legacy<<"NZ_DECALS_1\n";for(int c=0;c<2;c++)for(int l=0;l<3;l++){const auto &d=stored.decals[c][l];legacy<<c<<' '<<l<<' '<<(d.design>=0?decals.entries[d.design].id:"none")<<' '<<d.forward<<' '<<d.height<<' '<<d.width<<' '<<d.angle<<' '<<d.tint<<'\n';}}
+  Selection legacy;LoadDecalSettings(legacyPath,legacy,decals);if(legacy.decals!=stored.decals)throw std::runtime_error("Legacy decals were lost during migration");
+  std::puts("GARAGE SAVE PROBE: both paint colours, hood/two-tone/HSV, car switching, gearbox, decals and legacy migration pass");
  }
  int indicator=0;float sceneClock=0;double accumulator=0;int frame=0;float bestSpeed=0;const char *qaName=smokeCar?"civic":"silvia";
  while(!WindowShouldClose()&&!quit){

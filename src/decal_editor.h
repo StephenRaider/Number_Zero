@@ -1,18 +1,31 @@
 #pragma once
 #include <limits>
-static void SaveDecalSettings(const fs::path &path,const Selection &s,const DecalLibrary &lib){
- std::ofstream out(path);out.precision(std::numeric_limits<float>::max_digits10);out<<"NZ_DECALS_1\n";
+static void SaveDecalSettings(const fs::path &path,const Selection &selection,const DecalLibrary &lib){
+ Selection s=selection;s.CapturePaint();
+ std::ofstream out(path);out.precision(std::numeric_limits<float>::max_digits10);out<<"NZ_GARAGE_2\n"<<s.car<<' '<<s.manual<<'\n';
+ for(int car=0;car<2;car++){const auto &p=s.finishes[car];out<<car<<' '<<(unsigned)ColorToInt(p.paint)<<' '<<p.twoTone<<' '<<p.blackHood<<' '<<p.hue<<' '<<p.saturation<<' '<<p.value<<'\n';}
  for(int car=0;car<2;car++)for(int layer=0;layer<3;layer++){
   const auto &d=s.decals[car][layer];out<<car<<' '<<layer<<' '<<(d.design>=0?lib.entries[d.design].id:"none")<<' '<<d.forward<<' '<<d.height<<' '<<d.width<<' '<<d.angle<<' '<<d.tint<<'\n';
  }
 }
 static void LoadDecalSettings(const fs::path &path,Selection &s,const DecalLibrary &lib){
- std::ifstream in(path);std::string tag;if(!(in>>tag)||tag!="NZ_DECALS_1")return;
+ std::ifstream in(path);std::string tag;if(!(in>>tag)||(tag!="NZ_DECALS_1"&&tag!="NZ_GARAGE_2"))return;
+ Selection loaded=s;
+ if(tag=="NZ_GARAGE_2"){
+  int selected;bool manual;if(!(in>>selected>>manual)||selected<0||selected>1)return;loaded.car=selected;loaded.manual=manual;
+  for(int row=0;row<2;row++){
+   int car;unsigned colour;bool twoTone,hood;float hue,saturation,value;
+   if(!(in>>car>>colour>>twoTone>>hood>>hue>>saturation>>value)||car!=row||!std::isfinite(hue)||!std::isfinite(saturation)||!std::isfinite(value))return;
+   loaded.finishes[car]={GetColor(colour),twoTone,hood,std::clamp(hue,0.f,360.f),std::clamp(saturation,0.f,1.f),std::clamp(value,0.f,1.f)};
+  }
+  loaded.RestorePaint();
+ }
  int car,layer;std::string id;nz::DecalPlacement d;
  while(in>>car>>layer>>id>>d.forward>>d.height>>d.width>>d.angle>>d.tint){
   if(car<0||car>1||layer<0||layer>2||!std::isfinite(d.forward)||!std::isfinite(d.height)||!std::isfinite(d.width)||!std::isfinite(d.angle))continue;
-  d.design=lib.Find(id);nz::ClampDecal(d);s.decals[car][layer]=d;
+  d.design=lib.Find(id);nz::ClampDecal(d);loaded.decals[car][layer]=d;
  }
+ s=loaded;
 }
 static void StudioBackdrop(){
  Vector2 off{(Width-640)*.5f,(Height-360)*.5f};
