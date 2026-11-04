@@ -481,3 +481,10 @@ records factory specification sources and prototype/visual approximations.
 Build tests now exercise all four vehicle and audio profiles, including audio
 control publication of the fourth car. The car-ID snapshot explicitly guards
 its current four-car capacity against silent aliasing when the roster grows.
+
+Supra tone revision: retain phase-locked lower exhaust orders up to redline, reduce
+bright induction/mechanical hiss, broaden low-mid pipe resonances and introduce
+small pulse-strength variation. Regression checks now require a lower-order
+exhaust energy floor at 3000/5000/6500rpm, in addition to clipping, lift-off and
+RPM stability checks. This remains procedural audio; energy checks cannot certify
+that a synthesized profile sounds like a recording of the real engine.

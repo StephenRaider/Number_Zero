@@ -22,6 +22,16 @@ static double BassFraction(float rpm){
  }
  return bass/total;
 }
+// Proxy for lower exhaust orders; tonal authenticity still needs listening.
+static double ExhaustBodyFraction(int car,float rpm){
+ nz::EngineSound sound;std::vector<float> block(441);double total=0,body=0;
+ float a=1-std::exp(-2*(float)nz::Pi*250/nz::AudioRate),dc=1-std::exp(-2*(float)nz::Pi*25/nz::AudioRate),first=0,second=0,low=0;
+ for(int chunk=0;chunk<200;chunk++){
+  sound.Render(block.data(),(unsigned)block.size(),{rpm,1,car,true,false});
+  for(float v:block){first+=(v-first)*a;second+=(first-second)*a;low+=(second-low)*dc;if(chunk>=100){body+=(second-low)*(second-low);total+=v*v;}}
+ }
+ return body/total;
+}
 static double LowRpmVariation(carsynth::Profile profile,float rpm){
  carsynth::Engine engine(profile);float smallest=1e9f,largest=0;
  for(int i=0;i<6*nz::AudioRate;i++){
@@ -66,6 +76,11 @@ int main(){try{
   sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,car,false,false});Require(std::abs(buffer.back())<1e-10,"Pause does not settle to silence");
   sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,(car+1)%(int)nz::Cars.size(),true,false});Valid(buffer);Require(Energy(buffer)>.000001,"Switching cars is silent");
   std::printf("PASS %s: 18s drivetrain audio, peak %.3f, RMS %.3f; mute/pause/resume/car switch\n",nz::Cars[car].id,peak,std::sqrt(rms/drive.size()));
+ }
+ for(float rpm:{3000.f,5000.f,6500.f}){
+  double body=ExhaustBodyFraction(3,rpm);
+  std::printf("PASS Supra exhaust body at %.0frpm: %.2f\n",rpm,body);
+  Require(body>.28,"Supra loses its lower exhaust orders and turns into a thin firing-frequency whine");
  }
  for(float rpm:{3000.f,5000.f,6500.f}){
   double fraction=BassFraction(rpm);Require(fraction>.30,"Ferrari lost its low exhaust body at high RPM");

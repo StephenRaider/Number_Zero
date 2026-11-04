@@ -33,10 +33,11 @@ inline carsynth::Profile TestarossaProfile(){
 }
 inline carsynth::Profile SupraProfile(){
  auto p=carsynth::profileS13();p.name="Toyota Supra SZ 2JZ-GE inline-six";p.centerExhaust=true;p.cylinders=6;p.idleRpm=750;p.limiterRpm=6800;p.vtec=false;p.turbo=false;
- p.pulseMs=2.3f;p.jitter=.035f;p.idleLump=.035f;p.lowRpmTexture=.8f;p.bodyGain=.85f;p.bankBodyGain=0;
- p.lowpassClosed=650;p.lowpassOpen=3200;p.muffleHz=2800;p.intakeHz=900;p.intakeQ=.85f;p.intakeGain=.06f;p.mechGain=.004f;p.outGain=.55f;
- const float hz[]={140,280,700,1800},q[]={1.f,1.1f,1.2f,.8f},g[]={.8f,.7f,.20f,.05f};
- for(int i=0;i<4;i++){p.firingGain[i]=1.f;p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=g[i];}return p;
+ p.pulseMs=2.7f;p.jitter=.055f;p.idleLump=.025f;p.lowRpmTexture=.95f;p.bodyGain=1.35f;p.bankBodyGain=.34f;
+ p.lowpassClosed=480;p.lowpassOpen=1800;p.muffleHz=1600;p.intakeHz=650;p.intakeQ=.8f;p.intakeGain=.025f;p.mechGain=.0015f;p.outGain=.62f;
+ const float hz[]={95,190,420,1000},q[]={.8f,.95f,1.1f,.8f},g[]={1.2f,.95f,.25f,.035f};
+ const float accent[]={1.f,.95f,1.03f,.97f};
+ for(int i=0;i<4;i++){p.firingGain[i]=accent[i];p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=g[i];}return p;
 }
 class EngineSound {
  std::array<carsynth::Engine,4> engines{carsynth::Engine(carsynth::profileS13(),AudioRate),carsynth::Engine(carsynth::profileEK9(),AudioRate),carsynth::Engine(TestarossaProfile(),AudioRate),carsynth::Engine(SupraProfile(),AudioRate)};
