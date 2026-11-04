@@ -488,3 +488,12 @@ small pulse-strength variation. Regression checks now require a lower-order
 exhaust energy floor at 3000/5000/6500rpm, in addition to clipping, lift-off and
 RPM stability checks. This remains procedural audio; energy checks cannot certify
 that a synthesized profile sounds like a recording of the real engine.
+
+## Versioned car pipeline
+
+Reusable asset tooling and the onboarding/sound process are now maintained in
+[tools/car_pipeline](tools/car_pipeline/README.md). The portable runner provides
+render, verify and sound-check commands with explicit external workspace paths.
+Raw models, Blender scenes, caches, diagnostics and HTML experiments still stay
+outside this game checkout. This versioned code folder is the deliberate exception
+to the earlier experiment-only pipeline layout.
