@@ -10,15 +10,15 @@ constexpr int AudioRate=44100;
 struct EngineControls {float rpm=850,throttle=0;int car=0;bool active=false,muted=false;};
 // Publish one coherent snapshot; the audio thread never reads the mutable vehicle.
 inline std::uint64_t PackEngineControls(EngineControls c){
- static_assert(Cars.size()<=4,"Expand audio car-ID bits before adding a fifth car");
+ static_assert(Cars.size()<=8,"Expand audio car-ID bits before adding a ninth car");
  c.rpm=std::clamp(c.rpm,0.f,12000.f);c.throttle=std::clamp(c.throttle,0.f,1.f);
  std::uint32_t rpmBits;std::memcpy(&rpmBits,&c.rpm,sizeof(rpmBits));
  return rpmBits | (std::uint64_t(std::lround(c.throttle*65535.f))<<32)
-  | (std::uint64_t(std::clamp(c.car,0,(int)Cars.size()-1))<<48) | (std::uint64_t(c.active)<<50) | (std::uint64_t(c.muted)<<51);
+  | (std::uint64_t(std::clamp(c.car,0,(int)Cars.size()-1))<<48) | (std::uint64_t(c.active)<<51) | (std::uint64_t(c.muted)<<52);
 }
 inline EngineControls UnpackEngineControls(std::uint64_t bits){
  EngineControls c;std::uint32_t rpmBits=(std::uint32_t)bits;std::memcpy(&c.rpm,&rpmBits,sizeof(c.rpm));
- c.throttle=float((bits>>32)&65535)/65535.f;c.car=int((bits>>48)&3);c.active=(bits>>50)&1;c.muted=(bits>>51)&1;return c;
+ c.throttle=float((bits>>32)&65535)/65535.f;c.car=int((bits>>48)&7);c.active=(bits>>51)&1;c.muted=(bits>>52)&1;return c;
 }
 inline EngineControls DrivingSound(const Vehicle &v,int car,bool driving,bool paused,bool muted){
  // A shift/factory speed cut removes engine load even if the pedal remains held.
@@ -48,8 +48,15 @@ inline carsynth::Profile SupraProfile(){
  const float accent[]={1.f,.95f,1.03f,.97f};
  for(int i=0;i<4;i++){p.firingGain[i]=accent[i];p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=g[i];}return p;
 }
+inline carsynth::Profile R34Profile(){
+ auto p=SupraProfile();p.name="Nissan Skyline GT-R RB26DETT twin-turbo six";p.idleRpm=950;p.limiterRpm=8000;p.turbo=true;
+ p.pulseMs=2.25f;p.bodyGain=1.55f;p.bankBodyGain=.36f;p.lowpassOpen=2000;p.muffleHz=1850;p.intakeHz=720;p.intakeQ=.85f;p.intakeGain=.022f;p.outGain=.60f;
+ p.spoolStartRpm=2000;p.spoolFullRpm=4300;p.whistleGain=.004f;p.bovGain=.12f;p.flutterGain=.035f;
+ const float hz[]={105,220,480,1150},q[]={.9f,1.05f,1.0f,.8f},g[]={1.15f,.95f,.24f,.035f};
+ for(int i=0;i<4;i++){p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=g[i];}return p;
+}
 class EngineSound {
- std::array<carsynth::Engine,4> engines{carsynth::Engine(carsynth::profileS13(),AudioRate),carsynth::Engine(CivicProfile(),AudioRate),carsynth::Engine(TestarossaProfile(),AudioRate),carsynth::Engine(SupraProfile(),AudioRate)};
+ std::array<carsynth::Engine,Cars.size()> engines{carsynth::Engine(carsynth::profileS13(),AudioRate),carsynth::Engine(CivicProfile(),AudioRate),carsynth::Engine(TestarossaProfile(),AudioRate),carsynth::Engine(SupraProfile(),AudioRate),carsynth::Engine(R34Profile(),AudioRate)};
  int currentCar=0;float gain=0;
 public:
  // Single audio-thread owner. No allocation, locks, filesystem or Raylib calls here.

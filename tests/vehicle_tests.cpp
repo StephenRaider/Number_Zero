@@ -101,6 +101,19 @@ int main(){try{
   Require(first.gear==0&&first.rpm<=car.redline&&coupled<car.redline*1.01,"Speed limiter delete also removed engine rev protection");
   std::printf("Limiter delete %s: stock %.1f / deleted %.1f km/h, rev limiter retained\n",car.id,stock.speed*3.6,deleted.speed*3.6);
  }
+ // R34 has six usable ratios and AWD traction without changing legacy cars.
+ {
+  const auto &gtr=nz::Cars[4];Require(gtr.gearCount==6&&gtr.allWheelDrive,"R34 is missing its six-speed/AWD configuration");
+  nz::Vehicle manual;manual.automatic=false;manual.gear=4;manual.speed=150/3.6;
+  Require(nz::Shift(manual,gtr,1)&&manual.gear==5,"R34 cannot select sixth gear");
+  manual.shiftTime=manual.shiftCooldown=0;Require(!nz::Shift(manual,gtr,1),"R34 shifts beyond sixth");
+  nz::Vehicle automatic;automatic.gear=4;automatic.speedLimiterDeleted=true;automatic.speed=7900/(gtr.gears[4]*gtr.finalDrive)/60*(2*nz::Pi*gtr.radius);automatic.throttle=1;
+  for(int i=0;i<80;i++)nz::Step(automatic,gtr,{1,0,0},1./120.);
+  Require(automatic.gear==5,"R34 automatic fails to select sixth");
+  auto rearOnly=gtr;rearOnly.allWheelDrive=false;nz::Vehicle awd,rwd;
+  for(int i=0;i<240;i++){nz::Step(awd,gtr,{1,0,0},1./120.);nz::Step(rwd,rearOnly,{1,0,0},1./120.);}
+  Require(awd.speed>rwd.speed,"R34 AWD does not use both axles for launch traction");
+ }
  for(const auto &car:nz::Cars){
   // Request power while still well above the former 2600rpm downshift threshold.
   nz::Vehicle kick;kick.gear=4;kick.throttle=1;kick.rpm=3500;
@@ -129,7 +142,7 @@ int main(){try{
   manual.shiftTime=manual.shiftCooldown=0;manual.speed=140./3.6;manual.gear=2;
   Require(!nz::Shift(manual,car,-1)&&manual.gear==2,"Over-rev downshift accepted");
   manual.speed=15./3.6;Require(nz::Shift(manual,car,-1)&&manual.gear==1,"Safe downshift rejected");
-  manual.shiftTime=manual.shiftCooldown=0;manual.gear=4;Require(!nz::Shift(manual,car,1),"Upshift past fifth accepted");
+  manual.shiftTime=manual.shiftCooldown=0;manual.gear=car.gearCount-1;Require(!nz::Shift(manual,car,1),"Upshift past top gear accepted");
   manual.gear=0;Require(!nz::Shift(manual,car,-1),"Downshift below first accepted");
   nz::Vehicle suspension;
   for(int i=0;i<60;i++)nz::Step(suspension,car,{1,0,0},1./120.);
@@ -143,7 +156,7 @@ int main(){try{
   nz::Vehicle rest;for(int i=0;i<1200;i++)nz::Step(rest,car,{},1./120.);
   Require(rest.speed==0 && rest.lateral==1.75,"Car moved without input");
   nz::Vehicle v;for(int i=0;i<120*70;i++)nz::Step(v,car,{1,0,0},1./120.);
-  Require(v.timeTo100>(car.speedLimitKmh>0?5.5:4.5) && v.timeTo100<10.5,"Unreasonable 0-100 acceleration");
+  Require(v.timeTo100>(car.allWheelDrive?4.7:car.speedLimitKmh>0?5.5:4.5) && v.timeTo100<10.5,"Unreasonable 0-100 acceleration");
   double topSpeed=v.speed*3.6;
   if(car.speedLimitKmh>0)Require(topSpeed>178&&topSpeed<181,"Stock limiter failed");else Require(topSpeed>275&&topSpeed<305&&!v.limiter,"Testarossa incorrectly speed-limited or top-speed tuning invalid");
   Require(v.gear>=3 && v.shifts>=3,"Automatic shifting failed");

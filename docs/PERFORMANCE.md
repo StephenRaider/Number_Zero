@@ -98,3 +98,36 @@ The earlier S13 response disadvantage was a prototype tuning choice, not a
 validated factory comparison. The revised base response is 9.5 for the S13 and
 9.0 for the EK9, a small preference for prompt S13 input. RWD does not establish
 superior handling by itself; real comparative handling needs measured data.
+
+## Base Skyline GT-R R34 (BNR34)
+
+The fifth playable car is the base Japanese-market GT-R, not a V-spec/Nur or a
+modified engine. It uses the advertised 280 PS at 6800 RPM, 392 Nm at 4400 RPM,
+1540 kg curb mass plus the shared 75 kg driver, 2.665 m wheelbase, 245/40R18
+nominal tyre radius (0.3266 m), six Getrag ratios
+3.827/2.360/1.685/1.312/1.000/0.793 and a 3.545 final drive. Idle is modelled at
+950 RPM, shifts at 7800 and redline at 8000. The 180 km/h JDM governor is enabled
+until the garage limiter-delete option is selected; rev protection remains.
+
+Sources: [Nissan's GT-R specifications](https://global.nissannews.com/en/releases/skyline-and-skyline-gt-r-undergo-minor-model-change)
+support the shared RB26DETT, dimensions, tyres and six-speed ratios. That press
+release's specification table is for the 1560 kg V-spec II; the base car's
+1540 kg mass is from the [1999 base GT-R catalogue](https://www.goo-net.com/catalog/NISSAN/SKYLINE/1501420/).
+The earlier JGTC competition-car heritage page is not used for stock tuning.
+
+The torque curve between rated points, 0.83 drivetrain efficiency, 0.70 m2 CdA,
+weight distribution and steering/grip parameters are modelling assumptions.
+AWD uses both axles' traction budget rather than the single driven axle limit;
+it does not simulate ATTESA's hydraulic control/torque split or HICAS. Steering
+uses the same speed-sensitive highway assists as the rest of the roster. AUTO
+is the game's shifting assist, not a claim that the stock GT-R had an automatic.
+
+Current simulation: 0-100 km/h 5.48 s, 100-0 34.9 m in 2.48 s with the shared
+game braking boost, governed maximum about 180 km/h. In the existing 90-second
+limiter-delete test it reaches 253.6 km/h. These are simulation results, not
+factory measurements. Older cars retain their five-speed gearbox limits.
+
+RB26 audio uses a six-cylinder turbo profile, with restrained whistle/noise,
+low-order exhaust body and continuous lift-off. It is procedural rather than a
+recording. Audio tests cover fifth-car atomic IDs, load/coast, headroom, low-RPM
+variation and high-RPM exhaust body; player listening remains the timbre check.

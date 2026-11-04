@@ -20,6 +20,11 @@
       "id": "toyota_supra_a80_sz",
       "name": "Toyota Supra A80 SZ",
       "manifest": "toyota_supra_a80_sz/manifest.json"
+    },
+    {
+      "id": "nissan_skyline_r34_gtr",
+      "name": "Nissan Skyline GT-R R34",
+      "manifest": "nissan_skyline_r34_gtr/manifest.json"
     }
   ]
 }

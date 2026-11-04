@@ -12,11 +12,11 @@ struct CarSpec {
     double mass,peakPS,peakNm,wheelbase,radius,finalDrive,efficiency,cdArea;
     double idle,launchRpm,shiftRpm,redline,frontWeight,grip,brakeG,steerResponse;
     bool frontDrive,turbo;
-    std::array<double,5> gears;
+    std::array<double,6> gears;
     std::vector<TorquePoint> torque;
-    double speedLimitKmh=180.;bool popupHeadlights=false;
+    double speedLimitKmh=180.;bool popupHeadlights=false;int gearCount=5;bool allWheelDrive=false;
 };
-inline const std::array<CarSpec,4> Cars={{
+inline const std::array<CarSpec,5> Cars={{
     {"nissan_silvia_s13","NISSAN SILVIA S13 K'S","SR20DET  /  2.0 TURBO","RWD",
      1150,205,275,2.475,.3135,4.083,.85,.64,850,3400,7050,7500,.53,.95,.93,9.5,false,true,
      {3.321,1.902,1.308,1.000,.759},
@@ -35,6 +35,12 @@ inline const std::array<CarSpec,4> Cars={{
      1410,225,284.4,2.550,.3157,4.083,.86,.62,750,2800,6500,6800,.51,.97,.96,9.2,false,false,
      {3.285,1.894,1.275,1.000,.783},
      {{750,110},{1500,185},{2500,225},{3500,255},{4500,278},{4800,284.4},{5500,275},{6000,263.4},{6500,241},{6800,200}}}
+ ,
+    {"nissan_skyline_r34_gtr","NISSAN SKYLINE GT-R R34","RB26DETT  /  2.6 TWIN TURBO","AWD",
+     1540,280,392,2.665,.3266,3.545,.83,.70,950,3800,7800,8000,.56,1.02,.98,9.3,false,true,
+     {3.827,2.360,1.685,1.312,1.000,.793},
+     {{950,95},{1500,125},{2500,220},{3500,350},{4400,392},{5000,375},{6000,325},{6800,289},{7500,245},{8000,205}},180.,false,6,true}
+
 }};
 inline double TorqueAt(const CarSpec &c,double rpm){
     if(rpm<=c.torque.front().rpm)return c.torque.front().nm;
@@ -57,7 +63,7 @@ inline double Approach(double value,double target,double rate,double dt){
 inline bool Shift(Vehicle &v,const CarSpec &c,int direction){
     if(direction==0||v.shiftTime>0||v.shiftCooldown>0)return false;
     int next=v.gear+(direction>0?1:-1);
-    if(next<0||next>4)return false;
+    if(next<0||next>=c.gearCount)return false;
     double targetRpm=v.speed/(2*Pi*c.radius)*60*c.gears[next]*c.finalDrive;
     if(direction<0&&targetRpm>c.redline*.985)return false;
     v.gear=next;++v.shifts;v.shiftTime=direction>0?.28:.22;v.shiftCooldown=.38;return true;
@@ -66,7 +72,7 @@ inline bool Shift(Vehicle &v,const CarSpec &c,int direction){
 // universal low-RPM threshold. A conservative margin leaves manual timing useful.
 inline int AutomaticGear(const Vehicle &v,const CarSpec &c,double wheelRpm){
     double rpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
-    if(rpm>c.shiftRpm&&v.gear<4&&v.throttle>.2)return v.gear+1;
+    if(rpm>c.shiftRpm&&v.gear+1<c.gearCount&&v.throttle>.2)return v.gear+1;
     if(v.gear==0)return 0;
     if(v.throttle>.45&&v.brake<.05&&!(c.speedLimitKmh>0&&!v.speedLimiterDeleted&&v.speed*3.6>c.speedLimitKmh-1.)){
         int best=v.gear;double torque=TorqueAt(c,std::max(c.idle,rpm))*c.gears[v.gear],bestTorque=torque;
@@ -134,8 +140,8 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     v.limiter=governed&&v.speed*3.6>c.speedLimitKmh-.5;
     if(governed)force*=std::clamp((c.speedLimitKmh+.5-v.speed*3.6)/1.0,0.,1.0);
     const double transfer=std::clamp(v.acceleration*.50/(9.81*c.wheelbase),-.18,.18);
-    const double drivenWeight=c.frontDrive?c.frontWeight-transfer:1-c.frontWeight+transfer;
-    force=std::min(force,c.grip*mass*9.81*std::clamp(drivenWeight,.25,.80));
+    const double drivenWeight=c.allWheelDrive?.92:c.frontDrive?c.frontWeight-transfer:1-c.frontWeight+transfer;
+    force=std::min(force,c.grip*mass*9.81*std::clamp(drivenWeight,.25,c.allWheelDrive?1.:.80));
     const double aero=.5*1.225*c.cdArea*v.speed*v.speed;
     const double rolling=v.speed>.005?.012*mass*9.81:0.;
     const double engineBrake=(1-v.throttle)*std::min(v.speed/6.,1.)*(170.+v.rpm*.035);

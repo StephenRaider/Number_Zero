@@ -40,3 +40,7 @@ suite passed. Document listening feedback and required revisions.
 The current Supra and Ferrari are tuned baselines, not recordings. Formal approved
 reference clips and profiles for every engine family remain to be established.
 Keep listening WAVs and spectral diagnostics in the external workspace.
+
+The R34 RB26 six-cylinder twin-turbo profile also has low-order body and RMS
+checks at 3000/5500/7500 RPM, plus the common low-RPM/load/coast tests. Fifth-car
+IDs use three bits in the atomic audio snapshot; active/mute bits follow them.

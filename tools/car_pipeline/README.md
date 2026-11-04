@@ -28,7 +28,7 @@ python tools/car_pipeline/run.py sound-check --workspace "D:/Raylib Projects/Iso
 
 `sound-check` uses the sibling w64devkit compiler if present; otherwise pass
 `--compiler <path-to-g++>` or put g++ on PATH. It compiles the current game audio
-tests, runs all four profiles and writes diagnostic WAVs in the external workspace.
+tests, runs all five profiles and writes diagnostic WAVs in the external workspace.
 `--car traffic` renders/verifies the existing five traffic recipes; rendering needs
 the supplied GLBs in `--source-dir`.
 
@@ -67,3 +67,8 @@ Use `--car silvia`, `civic`, `testarossa` or `supra` for one car. Normal game-as
 export also regenerates and registers the masks automatically. See
 [RIM_MASKS.md](RIM_MASKS.md) for the material assignments, blur rule, runtime
 contract and verification. A wheel-selection menu is not part of this export.
+
+The fifth playable car, R34 GT-R, was imported as an already-rendered user pack.
+Its source recipe/logs remain in the external workspace. Validate its shipped
+maps with `python tests/r34_assets_test.py`; this wrapper's raw-render recipes
+and `rim-masks --car all` currently target the original four prepared cars.

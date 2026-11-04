@@ -1,7 +1,7 @@
 # Number Zero
 
 A native Raylib highway-driving prototype with isometric pixel cars and dynamic
-lighting. Choose a Silvia S13, Civic EK9, Testarossa or Supra SZ and its paint,
+lighting. Choose a Silvia S13, Civic EK9, Testarossa, Supra SZ or Skyline GT-R R34 and its paint,
 then drive or race along a straight four-lane highway at night.
 
 ## Play on this machine
@@ -39,7 +39,7 @@ Press **F11** to toggle borderless fullscreen.
 
 ## Implemented
 
-- Garage with four cars, paint selection, layered decals and optional two-tone/black hood.
+- Garage with five cars, paint selection, layered decals and optional two-tone/black hood.
 - Scrolling straight highway, lane markings, barriers and street lamps.
 - GPU normal-map lighting, highlights, depth-aware self/ground shadows,
   headlight beams, tail-light spill and brake-light emission.
@@ -515,9 +515,9 @@ car starts with silver paint and its stock governor.
 
 `--supra` selects it for ordinary play or any smoke mode. The runtime car README
 records factory specification sources and prototype/visual approximations.
-Build tests now exercise all four vehicle and audio profiles, including audio
-control publication of the fourth car. The car-ID snapshot explicitly guards
-its current four-car capacity against silent aliasing when the roster grows.
+Build tests exercise all five vehicle and audio profiles. The audio snapshot
+now reserves three car-ID bits, keeping the fifth car separate from active/mute
+flags and guarding against aliasing as the roster grows.
 
 Supra tone revision: retain phase-locked lower exhaust orders up to redline, reduce
 bright induction/mechanical hiss, broaden low-mid pipe resonances and introduce
@@ -562,3 +562,7 @@ The traffic smoke test checks opaque geometry beyond the horizon and compares
 identical player/traffic shadow volumes on the GPU: 1944 shadowed pixels, zero
 mismatches in the synthetic two-light scene. Existing depth/foreground compositing,
 scenery occlusion, glow, blur-toggle and widescreen checks also apply.
+
+The base R34 uses a six-speed gearbox and AWD launch traction; the earlier cars
+retain five gears. `--r34` selects it for play or smoke tests. Existing garage
+saves retain their four cars' paint, decals and limiter settings when adding it.
