@@ -2,7 +2,8 @@ from pathlib import Path
 from PIL import Image,ImageDraw
 import numpy as np,json,hashlib,time
 import sys as _path_sys; _path_sys.path.insert(0,str(Path(__file__).resolve().parent))
-from settings import WORKSPACE as r, CODE, GAME, SOURCES;g=GAME/'assets/cars/toyota_supra_a80_sz';start=time.perf_counter();m=json.loads((g/'manifest.json').read_text());assert len(m['files'])==522
+from settings import WORKSPACE as r, CODE, GAME, SOURCES;g=GAME/'assets/cars/toyota_supra_a80_sz';start=time.perf_counter();m=json.loads((g/'manifest.json').read_text());assert len(m['files'])==576
+assert sum(name.endswith('_rim_mask.png') for name in m['files'])==54
 for name,digest in m['files'].items():
  p=g/name;assert hashlib.sha256(p.read_bytes()).hexdigest()==digest,name;assert Image.open(p).size==(128,128)
 def load(prefix,k):return np.array(Image.open(g/'sprites'/f'{prefix}_{k}.png'))
@@ -33,4 +34,4 @@ for column,(view,pose) in enumerate((v,p) for v in ['front','back'] for p in ['l
   alb=base.copy();mask=load(label+'_body','mask');paint=mask[...,:3].max(-1)>127;alb[paint,:3]=np.clip(alb[paint,:3]*np.array(colour)/[219,229,237],0,255)
   bd=load(label+'_body','pack').astype(int);bodydepth=bd[...,0]*256+bd[...,1];take=(wheel[...,3]>127)&((alb[...,3]<128)|(wheeldepth>bodydepth));alb[take]=wheel[take]
   sheet.alpha_composite(Image.fromarray(alb).resize((256,256),Image.Resampling.NEAREST),(column*256,row*256))
-sheet.convert('RGB').save(r/'output/supra-review.png');print('PASS SUPRA 522 hashes/canvases, 30 body poses, paint/hood/glass/plates, lamps, depth and silhouette margins',flush=True)
+sheet.convert('RGB').save(r/'output/supra-review.png');print('PASS SUPRA 576 hashes/canvases, 54 rim masks, 30 body poses, paint/hood/glass/plates, lamps, depth and silhouette margins',flush=True)

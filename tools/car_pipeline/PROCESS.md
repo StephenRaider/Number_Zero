@@ -39,3 +39,11 @@ renders, recipe/config registration and data-driven garage/audio integration.
 These are planned work, not existing wrapper features. An arbitrary new model
 still needs a reviewed recipe; copying the Supra recipe without inspection is
 not an approved shortcut.
+
+## Rim tint coverage gate
+
+Playable exports include all 54 rim masks per car. Follow [RIM_MASKS.md](RIM_MASKS.md):
+use explicit material IDs, categorical supersample votes, protected-material tie
+rejection and coverage-weighted speed blur. Verify every pose/frame and inspect
+native/enlarged recolour previews. This replaces the need to render each colour
+or wheel-design combination; it does not add a wheel-selection menu.

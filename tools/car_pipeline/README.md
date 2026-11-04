@@ -52,3 +52,18 @@ cache or automatic material recognition is claimed here.
 
 Read [PROCESS.md](PROCESS.md) for the workflow and acceptance gates, and
 [ENGINE_SOUND.md](ENGINE_SOUND.md) for sound standards and current test coverage.
+
+## Rim colour masks
+
+All four playable cars now export rim-only tint coverage for each of the six
+view/steering poses and nine wheel animation states (54 masks per car).
+Generate/publish/verify them from existing material renders without Blender:
+
+```powershell
+python tools/car_pipeline/run.py rim-masks --car all --workspace "D:/Raylib Projects/Isometric pixel car racer"
+```
+
+Use `--car silvia`, `civic`, `testarossa` or `supra` for one car. Normal game-asset
+export also regenerates and registers the masks automatically. See
+[RIM_MASKS.md](RIM_MASKS.md) for the material assignments, blur rule, runtime
+contract and verification. A wheel-selection menu is not part of this export.

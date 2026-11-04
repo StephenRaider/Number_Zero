@@ -32,6 +32,7 @@ if args.traffic:
     shutil.copyfile(source/'catalog.json',target/'assets/traffic/catalog.json')
     print('EXPORTED TRAFFIC',len(catalog['cars']),'models,',count,'verified PNGs; player cars unchanged')
     raise SystemExit(0)
+from rim_masks import generate as generate_rim_masks, CONTRACT as RIM_CONTRACT, CARS as RIM_CARS
 KINDS=['albedo','normal','pack','pack2','emit','mask']
 CARS=[('silvia','nissan_silvia_s13','Nissan Silvia S13'),('civic','honda_civic_ek9','Honda Civic Type R EK9'),('testarossa','ferrari_testarossa','Ferrari Testarossa'),('supra','toyota_supra_a80_sz','Toyota Supra A80 SZ')]
 catalog=json.loads((target/'assets/cars/catalog.json').read_text()) if args.car and (target/'assets/cars/catalog.json').exists() else {'schema_version':1,'cars':[]}
@@ -40,6 +41,7 @@ total_files=0;total_bytes=0
 for source_key,car_id,title in CARS:
     source=ROOT/'output'/(source_key+'-modular');dest=target/'assets/cars'/car_id
     if not (source/'assets.json').exists():raise SystemExit(f'Rendered assets missing: {source}')
+    generate_rim_masks(source,source_key)
     dataset=json.loads((source/'assets.json').read_text())
     previous=json.loads((dest/'manifest.json').read_text()) if (dest/'manifest.json').exists() else {}
     checksums={}
@@ -58,7 +60,7 @@ for source_key,car_id,title in CARS:
     poses={}
     for label in sorted(dataset['data']):
         body={kind:publish(f'sprites/{label}_body_{kind}.png') for kind in KINDS}
-        frames=[{kind:publish(f'sprites/{label}_wheels_f{fi}_{kind}.png') for kind in KINDS} for fi in range(len(dataset['animation'][label]))]
+        frames=[dict({kind:publish(f'sprites/{label}_wheels_f{fi}_{kind}.png') for kind in KINDS},rim_mask=publish(f'sprites/{label}_wheels_f{fi}_rim_mask.png')) for fi in range(len(dataset['animation'][label]))]
         masks={name:publish(f'masks/{label}_{name}.png') for name in ['paint-primary','paint-secondary','hood']}
         poses[label]={'body':body,'paint_masks':masks,'stock_wheels':{'frames':frames,'spin_frames':8,'blur_frame':8}}
     meta=dict(dataset['meta']);meta.pop('source_model',None)
@@ -74,7 +76,8 @@ for source_key,car_id,title in CARS:
                 body_pitch[label][sample]={kind:publish(f'sprites/{label}_body_pitch_{sample}_{kind}.png',origin,f'sprites/{label}_body_{kind}.png') for kind in KINDS}
     manifest={'schema_version':1,'id':car_id,'name':title,'canvas_px':[128,128],
               'ride_height_px':[0,1,2],'meta':'meta.json','wheel_placement':'wheels.json',
-              'wheel_asset_status':'Prototype stock wheels, currently rendered per car; shared standard-size wheel library is planned.',
+              'wheel_asset_status':'Car-specific stock wheel shapes/animation with separate rim-only tint masks; wheel-design selection UI is not implemented.',
+              'rim_tint':dict(RIM_CONTRACT,materials=RIM_CARS[source_key][1]),
               'poses':poses,'files':dict(sorted(checksums.items()))}
     if args.include_pitch:manifest['body_pitch']={'angles_deg':[-3,-1.5,0,1.5,3],'pivot_m':[0,0,.45],'samples':body_pitch,'wheels':'Reuse existing independent wheel frames.'}
     (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')

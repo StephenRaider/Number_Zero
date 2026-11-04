@@ -80,3 +80,14 @@ sets receive material-aware packing and the established surface cleanup. White
 plates, grey glazing and separate bonnet/paint/indicator channels are retained.
 Source Blend files, source inspection and intermediate passes stay outside this
 repository in the experiment workspace.
+
+## Rim-only colour coverage
+
+Each playable car has 54 additional grayscale 128x128 masks, one for every
+view/steering/wheel-frame combination. Each stock_wheels.frames entry in the
+manifest exposes rim_mask; rim_tint defines its semantics. They select only
+rim materials, preserving tyres, brakes, separate badges/bolts and transparent
+gaps. Values 0/255 mean preserve/tint; speed-blur masks also use intermediate
+coverage. Sample as linear data with point filtering. Existing wheel maps and
+body pitch exports are unchanged. Runtime colour selection/UI is future work.
+See ../tools/car_pipeline/RIM_MASKS.md for generation and review.

@@ -7,8 +7,8 @@ GAME=HERE.parents[1]
 
 def main():
  p=argparse.ArgumentParser(description=__doc__)
- p.add_argument('action',choices=['render','verify','sound-check'])
- p.add_argument('--car',choices=['supra','traffic'],default='supra')
+ p.add_argument('action',choices=['render','verify','sound-check','rim-masks'])
+ p.add_argument('--car',choices=['supra','traffic','silvia','civic','testarossa','all'],default='supra')
  p.add_argument('--workspace',required=True,type=Path,help='External experiment/work directory; never the game checkout')
  p.add_argument('--source-dir',type=Path,help='Directory containing user-supplied source models')
  p.add_argument('--blender',type=Path,help='Blender 5.2 executable, required for rendering')
@@ -17,6 +17,8 @@ def main():
  a=p.parse_args();work=a.workspace.expanduser().resolve();sources=(a.source_dir or work/'sources').expanduser().resolve()
  if work==GAME or GAME in work.parents:p.error('--workspace must be outside the game checkout')
  if sources==GAME or GAME in sources.parents:p.error('--source-dir must be outside the game checkout')
+ if a.action in ['render','verify'] and a.car not in ['supra','traffic']:p.error('Full render/verify recipes currently support supra or traffic; rim-masks supports all playable cars')
+ if a.action=='rim-masks' and a.car=='traffic':p.error('Rim tint masks target playable cars')
  code=HERE/'pipeline';steps=[]
  def script(name,*args):return [sys.executable,str(code/name),*map(str,args)]
  def stage(name,cmd):steps.append((name,cmd))
@@ -29,6 +31,7 @@ def main():
   exe=work/'output/car-pipeline-checks'/('audio_tests.exe' if os.name=='nt' else 'audio_tests')
   stage('compile-audio-checks',[str(compiler),'-std=c++17','-O2','-Wall','-Wextra','-I'+str(GAME/'src'),str(GAME/'tests/audio_tests.cpp'),'-o',str(exe)])
   stage('audio-checks',[str(exe)])
+ elif a.action=='rim-masks':stage('rim-masks',script('rim_masks.py','--workspace',work,'--game',GAME,'--car',a.car,'--publish','--verify'))
  elif a.action=='verify':stage('verify',script('verify_supra.py' if a.car=='supra' else 'verify_traffic_assets.py'))
  else:
   blender=a.blender or Path(shutil.which('blender') or '')

@@ -13,7 +13,7 @@
   ],
   "meta": "meta.json",
   "wheel_placement": "wheels.json",
-  "wheel_asset_status": "Prototype stock wheels, currently rendered per car; shared standard-size wheel library is planned.",
+  "wheel_asset_status": "Car-specific stock wheel shapes/animation with separate rim-only tint masks; wheel-design selection UI is not implemented.",
   "poses": {
     "back_left": {
       "body": {
@@ -37,7 +37,8 @@
             "pack": "sprites/back_left_wheels_f0_pack.png",
             "pack2": "sprites/back_left_wheels_f0_pack2.png",
             "emit": "sprites/back_left_wheels_f0_emit.png",
-            "mask": "sprites/back_left_wheels_f0_mask.png"
+            "mask": "sprites/back_left_wheels_f0_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f0_rim_mask.png"
           },
           {
             "albedo": "sprites/back_left_wheels_f1_albedo.png",
@@ -45,7 +46,8 @@
             "pack": "sprites/back_left_wheels_f1_pack.png",
             "pack2": "sprites/back_left_wheels_f1_pack2.png",
             "emit": "sprites/back_left_wheels_f1_emit.png",
-            "mask": "sprites/back_left_wheels_f1_mask.png"
+            "mask": "sprites/back_left_wheels_f1_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f1_rim_mask.png"
           },
           {
             "albedo": "sprites/back_left_wheels_f2_albedo.png",
@@ -53,7 +55,8 @@
             "pack": "sprites/back_left_wheels_f2_pack.png",
             "pack2": "sprites/back_left_wheels_f2_pack2.png",
             "emit": "sprites/back_left_wheels_f2_emit.png",
-            "mask": "sprites/back_left_wheels_f2_mask.png"
+            "mask": "sprites/back_left_wheels_f2_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f2_rim_mask.png"
           },
           {
             "albedo": "sprites/back_left_wheels_f3_albedo.png",
@@ -61,7 +64,8 @@
             "pack": "sprites/back_left_wheels_f3_pack.png",
             "pack2": "sprites/back_left_wheels_f3_pack2.png",
             "emit": "sprites/back_left_wheels_f3_emit.png",
-            "mask": "sprites/back_left_wheels_f3_mask.png"
+            "mask": "sprites/back_left_wheels_f3_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f3_rim_mask.png"
           },
           {
             "albedo": "sprites/back_left_wheels_f4_albedo.png",
@@ -69,7 +73,8 @@
             "pack": "sprites/back_left_wheels_f4_pack.png",
             "pack2": "sprites/back_left_wheels_f4_pack2.png",
             "emit": "sprites/back_left_wheels_f4_emit.png",
-            "mask": "sprites/back_left_wheels_f4_mask.png"
+            "mask": "sprites/back_left_wheels_f4_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f4_rim_mask.png"
           },
           {
             "albedo": "sprites/back_left_wheels_f5_albedo.png",
@@ -77,7 +82,8 @@
             "pack": "sprites/back_left_wheels_f5_pack.png",
             "pack2": "sprites/back_left_wheels_f5_pack2.png",
             "emit": "sprites/back_left_wheels_f5_emit.png",
-            "mask": "sprites/back_left_wheels_f5_mask.png"
+            "mask": "sprites/back_left_wheels_f5_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f5_rim_mask.png"
           },
           {
             "albedo": "sprites/back_left_wheels_f6_albedo.png",
@@ -85,7 +91,8 @@
             "pack": "sprites/back_left_wheels_f6_pack.png",
             "pack2": "sprites/back_left_wheels_f6_pack2.png",
             "emit": "sprites/back_left_wheels_f6_emit.png",
-            "mask": "sprites/back_left_wheels_f6_mask.png"
+            "mask": "sprites/back_left_wheels_f6_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f6_rim_mask.png"
           },
           {
             "albedo": "sprites/back_left_wheels_f7_albedo.png",
@@ -93,7 +100,8 @@
             "pack": "sprites/back_left_wheels_f7_pack.png",
             "pack2": "sprites/back_left_wheels_f7_pack2.png",
             "emit": "sprites/back_left_wheels_f7_emit.png",
-            "mask": "sprites/back_left_wheels_f7_mask.png"
+            "mask": "sprites/back_left_wheels_f7_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f7_rim_mask.png"
           },
           {
             "albedo": "sprites/back_left_wheels_f8_albedo.png",
@@ -101,7 +109,8 @@
             "pack": "sprites/back_left_wheels_f8_pack.png",
             "pack2": "sprites/back_left_wheels_f8_pack2.png",
             "emit": "sprites/back_left_wheels_f8_emit.png",
-            "mask": "sprites/back_left_wheels_f8_mask.png"
+            "mask": "sprites/back_left_wheels_f8_mask.png",
+            "rim_mask": "sprites/back_left_wheels_f8_rim_mask.png"
           }
         ],
         "spin_frames": 8,
@@ -130,7 +139,8 @@
             "pack": "sprites/back_right_wheels_f0_pack.png",
             "pack2": "sprites/back_right_wheels_f0_pack2.png",
             "emit": "sprites/back_right_wheels_f0_emit.png",
-            "mask": "sprites/back_right_wheels_f0_mask.png"
+            "mask": "sprites/back_right_wheels_f0_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f0_rim_mask.png"
           },
           {
             "albedo": "sprites/back_right_wheels_f1_albedo.png",
@@ -138,7 +148,8 @@
             "pack": "sprites/back_right_wheels_f1_pack.png",
             "pack2": "sprites/back_right_wheels_f1_pack2.png",
             "emit": "sprites/back_right_wheels_f1_emit.png",
-            "mask": "sprites/back_right_wheels_f1_mask.png"
+            "mask": "sprites/back_right_wheels_f1_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f1_rim_mask.png"
           },
           {
             "albedo": "sprites/back_right_wheels_f2_albedo.png",
@@ -146,7 +157,8 @@
             "pack": "sprites/back_right_wheels_f2_pack.png",
             "pack2": "sprites/back_right_wheels_f2_pack2.png",
             "emit": "sprites/back_right_wheels_f2_emit.png",
-            "mask": "sprites/back_right_wheels_f2_mask.png"
+            "mask": "sprites/back_right_wheels_f2_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f2_rim_mask.png"
           },
           {
             "albedo": "sprites/back_right_wheels_f3_albedo.png",
@@ -154,7 +166,8 @@
             "pack": "sprites/back_right_wheels_f3_pack.png",
             "pack2": "sprites/back_right_wheels_f3_pack2.png",
             "emit": "sprites/back_right_wheels_f3_emit.png",
-            "mask": "sprites/back_right_wheels_f3_mask.png"
+            "mask": "sprites/back_right_wheels_f3_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f3_rim_mask.png"
           },
           {
             "albedo": "sprites/back_right_wheels_f4_albedo.png",
@@ -162,7 +175,8 @@
             "pack": "sprites/back_right_wheels_f4_pack.png",
             "pack2": "sprites/back_right_wheels_f4_pack2.png",
             "emit": "sprites/back_right_wheels_f4_emit.png",
-            "mask": "sprites/back_right_wheels_f4_mask.png"
+            "mask": "sprites/back_right_wheels_f4_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f4_rim_mask.png"
           },
           {
             "albedo": "sprites/back_right_wheels_f5_albedo.png",
@@ -170,7 +184,8 @@
             "pack": "sprites/back_right_wheels_f5_pack.png",
             "pack2": "sprites/back_right_wheels_f5_pack2.png",
             "emit": "sprites/back_right_wheels_f5_emit.png",
-            "mask": "sprites/back_right_wheels_f5_mask.png"
+            "mask": "sprites/back_right_wheels_f5_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f5_rim_mask.png"
           },
           {
             "albedo": "sprites/back_right_wheels_f6_albedo.png",
@@ -178,7 +193,8 @@
             "pack": "sprites/back_right_wheels_f6_pack.png",
             "pack2": "sprites/back_right_wheels_f6_pack2.png",
             "emit": "sprites/back_right_wheels_f6_emit.png",
-            "mask": "sprites/back_right_wheels_f6_mask.png"
+            "mask": "sprites/back_right_wheels_f6_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f6_rim_mask.png"
           },
           {
             "albedo": "sprites/back_right_wheels_f7_albedo.png",
@@ -186,7 +202,8 @@
             "pack": "sprites/back_right_wheels_f7_pack.png",
             "pack2": "sprites/back_right_wheels_f7_pack2.png",
             "emit": "sprites/back_right_wheels_f7_emit.png",
-            "mask": "sprites/back_right_wheels_f7_mask.png"
+            "mask": "sprites/back_right_wheels_f7_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f7_rim_mask.png"
           },
           {
             "albedo": "sprites/back_right_wheels_f8_albedo.png",
@@ -194,7 +211,8 @@
             "pack": "sprites/back_right_wheels_f8_pack.png",
             "pack2": "sprites/back_right_wheels_f8_pack2.png",
             "emit": "sprites/back_right_wheels_f8_emit.png",
-            "mask": "sprites/back_right_wheels_f8_mask.png"
+            "mask": "sprites/back_right_wheels_f8_mask.png",
+            "rim_mask": "sprites/back_right_wheels_f8_rim_mask.png"
           }
         ],
         "spin_frames": 8,
@@ -223,7 +241,8 @@
             "pack": "sprites/back_straight_wheels_f0_pack.png",
             "pack2": "sprites/back_straight_wheels_f0_pack2.png",
             "emit": "sprites/back_straight_wheels_f0_emit.png",
-            "mask": "sprites/back_straight_wheels_f0_mask.png"
+            "mask": "sprites/back_straight_wheels_f0_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f0_rim_mask.png"
           },
           {
             "albedo": "sprites/back_straight_wheels_f1_albedo.png",
@@ -231,7 +250,8 @@
             "pack": "sprites/back_straight_wheels_f1_pack.png",
             "pack2": "sprites/back_straight_wheels_f1_pack2.png",
             "emit": "sprites/back_straight_wheels_f1_emit.png",
-            "mask": "sprites/back_straight_wheels_f1_mask.png"
+            "mask": "sprites/back_straight_wheels_f1_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f1_rim_mask.png"
           },
           {
             "albedo": "sprites/back_straight_wheels_f2_albedo.png",
@@ -239,7 +259,8 @@
             "pack": "sprites/back_straight_wheels_f2_pack.png",
             "pack2": "sprites/back_straight_wheels_f2_pack2.png",
             "emit": "sprites/back_straight_wheels_f2_emit.png",
-            "mask": "sprites/back_straight_wheels_f2_mask.png"
+            "mask": "sprites/back_straight_wheels_f2_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f2_rim_mask.png"
           },
           {
             "albedo": "sprites/back_straight_wheels_f3_albedo.png",
@@ -247,7 +268,8 @@
             "pack": "sprites/back_straight_wheels_f3_pack.png",
             "pack2": "sprites/back_straight_wheels_f3_pack2.png",
             "emit": "sprites/back_straight_wheels_f3_emit.png",
-            "mask": "sprites/back_straight_wheels_f3_mask.png"
+            "mask": "sprites/back_straight_wheels_f3_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f3_rim_mask.png"
           },
           {
             "albedo": "sprites/back_straight_wheels_f4_albedo.png",
@@ -255,7 +277,8 @@
             "pack": "sprites/back_straight_wheels_f4_pack.png",
             "pack2": "sprites/back_straight_wheels_f4_pack2.png",
             "emit": "sprites/back_straight_wheels_f4_emit.png",
-            "mask": "sprites/back_straight_wheels_f4_mask.png"
+            "mask": "sprites/back_straight_wheels_f4_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f4_rim_mask.png"
           },
           {
             "albedo": "sprites/back_straight_wheels_f5_albedo.png",
@@ -263,7 +286,8 @@
             "pack": "sprites/back_straight_wheels_f5_pack.png",
             "pack2": "sprites/back_straight_wheels_f5_pack2.png",
             "emit": "sprites/back_straight_wheels_f5_emit.png",
-            "mask": "sprites/back_straight_wheels_f5_mask.png"
+            "mask": "sprites/back_straight_wheels_f5_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f5_rim_mask.png"
           },
           {
             "albedo": "sprites/back_straight_wheels_f6_albedo.png",
@@ -271,7 +295,8 @@
             "pack": "sprites/back_straight_wheels_f6_pack.png",
             "pack2": "sprites/back_straight_wheels_f6_pack2.png",
             "emit": "sprites/back_straight_wheels_f6_emit.png",
-            "mask": "sprites/back_straight_wheels_f6_mask.png"
+            "mask": "sprites/back_straight_wheels_f6_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f6_rim_mask.png"
           },
           {
             "albedo": "sprites/back_straight_wheels_f7_albedo.png",
@@ -279,7 +304,8 @@
             "pack": "sprites/back_straight_wheels_f7_pack.png",
             "pack2": "sprites/back_straight_wheels_f7_pack2.png",
             "emit": "sprites/back_straight_wheels_f7_emit.png",
-            "mask": "sprites/back_straight_wheels_f7_mask.png"
+            "mask": "sprites/back_straight_wheels_f7_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f7_rim_mask.png"
           },
           {
             "albedo": "sprites/back_straight_wheels_f8_albedo.png",
@@ -287,7 +313,8 @@
             "pack": "sprites/back_straight_wheels_f8_pack.png",
             "pack2": "sprites/back_straight_wheels_f8_pack2.png",
             "emit": "sprites/back_straight_wheels_f8_emit.png",
-            "mask": "sprites/back_straight_wheels_f8_mask.png"
+            "mask": "sprites/back_straight_wheels_f8_mask.png",
+            "rim_mask": "sprites/back_straight_wheels_f8_rim_mask.png"
           }
         ],
         "spin_frames": 8,
@@ -316,7 +343,8 @@
             "pack": "sprites/front_left_wheels_f0_pack.png",
             "pack2": "sprites/front_left_wheels_f0_pack2.png",
             "emit": "sprites/front_left_wheels_f0_emit.png",
-            "mask": "sprites/front_left_wheels_f0_mask.png"
+            "mask": "sprites/front_left_wheels_f0_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f0_rim_mask.png"
           },
           {
             "albedo": "sprites/front_left_wheels_f1_albedo.png",
@@ -324,7 +352,8 @@
             "pack": "sprites/front_left_wheels_f1_pack.png",
             "pack2": "sprites/front_left_wheels_f1_pack2.png",
             "emit": "sprites/front_left_wheels_f1_emit.png",
-            "mask": "sprites/front_left_wheels_f1_mask.png"
+            "mask": "sprites/front_left_wheels_f1_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f1_rim_mask.png"
           },
           {
             "albedo": "sprites/front_left_wheels_f2_albedo.png",
@@ -332,7 +361,8 @@
             "pack": "sprites/front_left_wheels_f2_pack.png",
             "pack2": "sprites/front_left_wheels_f2_pack2.png",
             "emit": "sprites/front_left_wheels_f2_emit.png",
-            "mask": "sprites/front_left_wheels_f2_mask.png"
+            "mask": "sprites/front_left_wheels_f2_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f2_rim_mask.png"
           },
           {
             "albedo": "sprites/front_left_wheels_f3_albedo.png",
@@ -340,7 +370,8 @@
             "pack": "sprites/front_left_wheels_f3_pack.png",
             "pack2": "sprites/front_left_wheels_f3_pack2.png",
             "emit": "sprites/front_left_wheels_f3_emit.png",
-            "mask": "sprites/front_left_wheels_f3_mask.png"
+            "mask": "sprites/front_left_wheels_f3_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f3_rim_mask.png"
           },
           {
             "albedo": "sprites/front_left_wheels_f4_albedo.png",
@@ -348,7 +379,8 @@
             "pack": "sprites/front_left_wheels_f4_pack.png",
             "pack2": "sprites/front_left_wheels_f4_pack2.png",
             "emit": "sprites/front_left_wheels_f4_emit.png",
-            "mask": "sprites/front_left_wheels_f4_mask.png"
+            "mask": "sprites/front_left_wheels_f4_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f4_rim_mask.png"
           },
           {
             "albedo": "sprites/front_left_wheels_f5_albedo.png",
@@ -356,7 +388,8 @@
             "pack": "sprites/front_left_wheels_f5_pack.png",
             "pack2": "sprites/front_left_wheels_f5_pack2.png",
             "emit": "sprites/front_left_wheels_f5_emit.png",
-            "mask": "sprites/front_left_wheels_f5_mask.png"
+            "mask": "sprites/front_left_wheels_f5_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f5_rim_mask.png"
           },
           {
             "albedo": "sprites/front_left_wheels_f6_albedo.png",
@@ -364,7 +397,8 @@
             "pack": "sprites/front_left_wheels_f6_pack.png",
             "pack2": "sprites/front_left_wheels_f6_pack2.png",
             "emit": "sprites/front_left_wheels_f6_emit.png",
-            "mask": "sprites/front_left_wheels_f6_mask.png"
+            "mask": "sprites/front_left_wheels_f6_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f6_rim_mask.png"
           },
           {
             "albedo": "sprites/front_left_wheels_f7_albedo.png",
@@ -372,7 +406,8 @@
             "pack": "sprites/front_left_wheels_f7_pack.png",
             "pack2": "sprites/front_left_wheels_f7_pack2.png",
             "emit": "sprites/front_left_wheels_f7_emit.png",
-            "mask": "sprites/front_left_wheels_f7_mask.png"
+            "mask": "sprites/front_left_wheels_f7_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f7_rim_mask.png"
           },
           {
             "albedo": "sprites/front_left_wheels_f8_albedo.png",
@@ -380,7 +415,8 @@
             "pack": "sprites/front_left_wheels_f8_pack.png",
             "pack2": "sprites/front_left_wheels_f8_pack2.png",
             "emit": "sprites/front_left_wheels_f8_emit.png",
-            "mask": "sprites/front_left_wheels_f8_mask.png"
+            "mask": "sprites/front_left_wheels_f8_mask.png",
+            "rim_mask": "sprites/front_left_wheels_f8_rim_mask.png"
           }
         ],
         "spin_frames": 8,
@@ -409,7 +445,8 @@
             "pack": "sprites/front_right_wheels_f0_pack.png",
             "pack2": "sprites/front_right_wheels_f0_pack2.png",
             "emit": "sprites/front_right_wheels_f0_emit.png",
-            "mask": "sprites/front_right_wheels_f0_mask.png"
+            "mask": "sprites/front_right_wheels_f0_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f0_rim_mask.png"
           },
           {
             "albedo": "sprites/front_right_wheels_f1_albedo.png",
@@ -417,7 +454,8 @@
             "pack": "sprites/front_right_wheels_f1_pack.png",
             "pack2": "sprites/front_right_wheels_f1_pack2.png",
             "emit": "sprites/front_right_wheels_f1_emit.png",
-            "mask": "sprites/front_right_wheels_f1_mask.png"
+            "mask": "sprites/front_right_wheels_f1_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f1_rim_mask.png"
           },
           {
             "albedo": "sprites/front_right_wheels_f2_albedo.png",
@@ -425,7 +463,8 @@
             "pack": "sprites/front_right_wheels_f2_pack.png",
             "pack2": "sprites/front_right_wheels_f2_pack2.png",
             "emit": "sprites/front_right_wheels_f2_emit.png",
-            "mask": "sprites/front_right_wheels_f2_mask.png"
+            "mask": "sprites/front_right_wheels_f2_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f2_rim_mask.png"
           },
           {
             "albedo": "sprites/front_right_wheels_f3_albedo.png",
@@ -433,7 +472,8 @@
             "pack": "sprites/front_right_wheels_f3_pack.png",
             "pack2": "sprites/front_right_wheels_f3_pack2.png",
             "emit": "sprites/front_right_wheels_f3_emit.png",
-            "mask": "sprites/front_right_wheels_f3_mask.png"
+            "mask": "sprites/front_right_wheels_f3_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f3_rim_mask.png"
           },
           {
             "albedo": "sprites/front_right_wheels_f4_albedo.png",
@@ -441,7 +481,8 @@
             "pack": "sprites/front_right_wheels_f4_pack.png",
             "pack2": "sprites/front_right_wheels_f4_pack2.png",
             "emit": "sprites/front_right_wheels_f4_emit.png",
-            "mask": "sprites/front_right_wheels_f4_mask.png"
+            "mask": "sprites/front_right_wheels_f4_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f4_rim_mask.png"
           },
           {
             "albedo": "sprites/front_right_wheels_f5_albedo.png",
@@ -449,7 +490,8 @@
             "pack": "sprites/front_right_wheels_f5_pack.png",
             "pack2": "sprites/front_right_wheels_f5_pack2.png",
             "emit": "sprites/front_right_wheels_f5_emit.png",
-            "mask": "sprites/front_right_wheels_f5_mask.png"
+            "mask": "sprites/front_right_wheels_f5_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f5_rim_mask.png"
           },
           {
             "albedo": "sprites/front_right_wheels_f6_albedo.png",
@@ -457,7 +499,8 @@
             "pack": "sprites/front_right_wheels_f6_pack.png",
             "pack2": "sprites/front_right_wheels_f6_pack2.png",
             "emit": "sprites/front_right_wheels_f6_emit.png",
-            "mask": "sprites/front_right_wheels_f6_mask.png"
+            "mask": "sprites/front_right_wheels_f6_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f6_rim_mask.png"
           },
           {
             "albedo": "sprites/front_right_wheels_f7_albedo.png",
@@ -465,7 +508,8 @@
             "pack": "sprites/front_right_wheels_f7_pack.png",
             "pack2": "sprites/front_right_wheels_f7_pack2.png",
             "emit": "sprites/front_right_wheels_f7_emit.png",
-            "mask": "sprites/front_right_wheels_f7_mask.png"
+            "mask": "sprites/front_right_wheels_f7_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f7_rim_mask.png"
           },
           {
             "albedo": "sprites/front_right_wheels_f8_albedo.png",
@@ -473,7 +517,8 @@
             "pack": "sprites/front_right_wheels_f8_pack.png",
             "pack2": "sprites/front_right_wheels_f8_pack2.png",
             "emit": "sprites/front_right_wheels_f8_emit.png",
-            "mask": "sprites/front_right_wheels_f8_mask.png"
+            "mask": "sprites/front_right_wheels_f8_mask.png",
+            "rim_mask": "sprites/front_right_wheels_f8_rim_mask.png"
           }
         ],
         "spin_frames": 8,
@@ -502,7 +547,8 @@
             "pack": "sprites/front_straight_wheels_f0_pack.png",
             "pack2": "sprites/front_straight_wheels_f0_pack2.png",
             "emit": "sprites/front_straight_wheels_f0_emit.png",
-            "mask": "sprites/front_straight_wheels_f0_mask.png"
+            "mask": "sprites/front_straight_wheels_f0_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f0_rim_mask.png"
           },
           {
             "albedo": "sprites/front_straight_wheels_f1_albedo.png",
@@ -510,7 +556,8 @@
             "pack": "sprites/front_straight_wheels_f1_pack.png",
             "pack2": "sprites/front_straight_wheels_f1_pack2.png",
             "emit": "sprites/front_straight_wheels_f1_emit.png",
-            "mask": "sprites/front_straight_wheels_f1_mask.png"
+            "mask": "sprites/front_straight_wheels_f1_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f1_rim_mask.png"
           },
           {
             "albedo": "sprites/front_straight_wheels_f2_albedo.png",
@@ -518,7 +565,8 @@
             "pack": "sprites/front_straight_wheels_f2_pack.png",
             "pack2": "sprites/front_straight_wheels_f2_pack2.png",
             "emit": "sprites/front_straight_wheels_f2_emit.png",
-            "mask": "sprites/front_straight_wheels_f2_mask.png"
+            "mask": "sprites/front_straight_wheels_f2_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f2_rim_mask.png"
           },
           {
             "albedo": "sprites/front_straight_wheels_f3_albedo.png",
@@ -526,7 +574,8 @@
             "pack": "sprites/front_straight_wheels_f3_pack.png",
             "pack2": "sprites/front_straight_wheels_f3_pack2.png",
             "emit": "sprites/front_straight_wheels_f3_emit.png",
-            "mask": "sprites/front_straight_wheels_f3_mask.png"
+            "mask": "sprites/front_straight_wheels_f3_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f3_rim_mask.png"
           },
           {
             "albedo": "sprites/front_straight_wheels_f4_albedo.png",
@@ -534,7 +583,8 @@
             "pack": "sprites/front_straight_wheels_f4_pack.png",
             "pack2": "sprites/front_straight_wheels_f4_pack2.png",
             "emit": "sprites/front_straight_wheels_f4_emit.png",
-            "mask": "sprites/front_straight_wheels_f4_mask.png"
+            "mask": "sprites/front_straight_wheels_f4_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f4_rim_mask.png"
           },
           {
             "albedo": "sprites/front_straight_wheels_f5_albedo.png",
@@ -542,7 +592,8 @@
             "pack": "sprites/front_straight_wheels_f5_pack.png",
             "pack2": "sprites/front_straight_wheels_f5_pack2.png",
             "emit": "sprites/front_straight_wheels_f5_emit.png",
-            "mask": "sprites/front_straight_wheels_f5_mask.png"
+            "mask": "sprites/front_straight_wheels_f5_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f5_rim_mask.png"
           },
           {
             "albedo": "sprites/front_straight_wheels_f6_albedo.png",
@@ -550,7 +601,8 @@
             "pack": "sprites/front_straight_wheels_f6_pack.png",
             "pack2": "sprites/front_straight_wheels_f6_pack2.png",
             "emit": "sprites/front_straight_wheels_f6_emit.png",
-            "mask": "sprites/front_straight_wheels_f6_mask.png"
+            "mask": "sprites/front_straight_wheels_f6_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f6_rim_mask.png"
           },
           {
             "albedo": "sprites/front_straight_wheels_f7_albedo.png",
@@ -558,7 +610,8 @@
             "pack": "sprites/front_straight_wheels_f7_pack.png",
             "pack2": "sprites/front_straight_wheels_f7_pack2.png",
             "emit": "sprites/front_straight_wheels_f7_emit.png",
-            "mask": "sprites/front_straight_wheels_f7_mask.png"
+            "mask": "sprites/front_straight_wheels_f7_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f7_rim_mask.png"
           },
           {
             "albedo": "sprites/front_straight_wheels_f8_albedo.png",
@@ -566,7 +619,8 @@
             "pack": "sprites/front_straight_wheels_f8_pack.png",
             "pack2": "sprites/front_straight_wheels_f8_pack2.png",
             "emit": "sprites/front_straight_wheels_f8_emit.png",
-            "mask": "sprites/front_straight_wheels_f8_mask.png"
+            "mask": "sprites/front_straight_wheels_f8_mask.png",
+            "rim_mask": "sprites/front_straight_wheels_f8_rim_mask.png"
           }
         ],
         "spin_frames": 8,
@@ -1276,7 +1330,61 @@
     "sprites/back_right_body_closed_pitch_p2_pack.png": "21a3c8a4f886fa70be1d306c9e6a2c1611ad70917976849f5b9a42ebb3dddf22",
     "sprites/back_right_body_closed_pitch_p2_pack2.png": "8e505bba1e0d87edb3c5247d6b5a4cbc4d2cd08bbf46465891628edada3e3957",
     "sprites/back_right_body_closed_pitch_p2_emit.png": "9de3806749c2229af03ac63b8ca20f8a0b99114885ca1c352db3c1735191121b",
-    "sprites/back_right_body_closed_pitch_p2_mask.png": "c43f19c8198292428769c68fb200e38072fc1a3f7707ae2fb04762901710ca0f"
+    "sprites/back_right_body_closed_pitch_p2_mask.png": "c43f19c8198292428769c68fb200e38072fc1a3f7707ae2fb04762901710ca0f",
+    "sprites/back_left_wheels_f0_rim_mask.png": "3c22b6e1f396c58817902742e51d84b157ff8800cc92ef425440f2f1cd201f06",
+    "sprites/back_left_wheels_f1_rim_mask.png": "ec57ba04bb6b5c6955824b2874925582a97dc1895cb4158ffad5c4ea0fde515c",
+    "sprites/back_left_wheels_f2_rim_mask.png": "3143e10428d6d957a1727490bd5530a8b0bbe29bceda572b545540ff4f624f4a",
+    "sprites/back_left_wheels_f3_rim_mask.png": "2c36f14770708d50f396b4a3a0c338d7e8e66064a2f7d12cec98e3f3894eb1f2",
+    "sprites/back_left_wheels_f4_rim_mask.png": "0720c66965724ff67b62319c27bb7ab7f23c8d02352bae5886cc862be0a9c863",
+    "sprites/back_left_wheels_f5_rim_mask.png": "25348863d871f85555f9538996973f5fff07fd09f42cdf37504474238ab823a1",
+    "sprites/back_left_wheels_f6_rim_mask.png": "56f534582414eaaa45bfd95b228570aac1b64bfe668e693b9f217402ef8a9019",
+    "sprites/back_left_wheels_f7_rim_mask.png": "79961b7109f00c723aa62ff8cae46cb7012e11b71519fbaf1ab159dae7fa32aa",
+    "sprites/back_left_wheels_f8_rim_mask.png": "7cd6e2005bbaf59a7d38c3d0ea9a5e4bc6f70de766b853554762a736a71e3496",
+    "sprites/back_right_wheels_f0_rim_mask.png": "360766ab0aa6d5eda7eb7ca43d7c410135be324894e8794ed1147ce884db2ec8",
+    "sprites/back_right_wheels_f1_rim_mask.png": "14feca08f1fdd04fac2be474557f88b49a4b2e5e22969333078a9d60260561d3",
+    "sprites/back_right_wheels_f2_rim_mask.png": "3bbae4a2e83e267cb210f3b44989c1ebf9bca204b33b484ad4091997c9269663",
+    "sprites/back_right_wheels_f3_rim_mask.png": "d19384cded05f60c855ea44afb8c39e8a371acbc8610773156a597968c45cc84",
+    "sprites/back_right_wheels_f4_rim_mask.png": "6eb082a45d090b3d6730a81872d440ef7beb815e5aac2753a5b2a5f203ef961a",
+    "sprites/back_right_wheels_f5_rim_mask.png": "b1a93f9d3bf5f58bd0324d2ff945b9a15fa0821dbf964d6c236bf94b9b5214c3",
+    "sprites/back_right_wheels_f6_rim_mask.png": "3426fce2a99024edb5216b3677019158187026a8168c3531923025f2f6f3c43d",
+    "sprites/back_right_wheels_f7_rim_mask.png": "995a410170eb870dd65ebb0c356a1264578158b6e5c7251d9dcf852f6eedf43a",
+    "sprites/back_right_wheels_f8_rim_mask.png": "30197d2f5ec23af5617cf99d61d53210ceb62cd01741b5693f24618bf1fb88c0",
+    "sprites/back_straight_wheels_f0_rim_mask.png": "24ec75694e46d75ffadba1bd04e35504d7baf2f14182ca2665261c8ca949357b",
+    "sprites/back_straight_wheels_f1_rim_mask.png": "b7d66e9597cce4ba74cc49c7d9787db3de92f16664f390bfa9a52e42c8d5ab46",
+    "sprites/back_straight_wheels_f2_rim_mask.png": "a7abd40f7ff52ea7220086bfd3a4666a9b1cbb44e6597921e6f66725de47a8d8",
+    "sprites/back_straight_wheels_f3_rim_mask.png": "7bc50931aacb7fa0f2a3cfdb8a1088bfff1e09eaa2eb41c6ce4a22ae03a08287",
+    "sprites/back_straight_wheels_f4_rim_mask.png": "0d94544863537387c548710f72ebd64d0ec03f8dd7bf9321e14a45d6514dcde6",
+    "sprites/back_straight_wheels_f5_rim_mask.png": "dea801142d392ada043e3360ff5287fac00c3df1274d90fc2c540a32cbd46c38",
+    "sprites/back_straight_wheels_f6_rim_mask.png": "30c2fb525ffec2deda18d137d9015c718a7bd937ba9b369141523c3eb3deb3a3",
+    "sprites/back_straight_wheels_f7_rim_mask.png": "cb44d8fcd811769e62a8b642623322db2bd26d3f6e453661cf3cb0ac8164c4f1",
+    "sprites/back_straight_wheels_f8_rim_mask.png": "36a9f9da8e36dda3f5cb24ad1947a07e8ae079d4cef93742099af8a64a0a9d02",
+    "sprites/front_left_wheels_f0_rim_mask.png": "ed11d9d6d7b680550f10bd97cd1ed5ba495f3f769a44abc3532ba666bcaeab22",
+    "sprites/front_left_wheels_f1_rim_mask.png": "4f05304f3bf5458fa5ff9cfa335839448ba36f159a215ffb335d73aab8801317",
+    "sprites/front_left_wheels_f2_rim_mask.png": "cfb5e5deda16fcc1c85976cede1248923e36adb956bc2d3ae3e1cee295b4f33f",
+    "sprites/front_left_wheels_f3_rim_mask.png": "6296350de79f866a29778f9bc07c2f571b4739e4b47c12c39ae761f2f97c45b0",
+    "sprites/front_left_wheels_f4_rim_mask.png": "9acf721e3799b2b4e90811500bcfbbc8aa972fcc013f7f09de1f932503b3d628",
+    "sprites/front_left_wheels_f5_rim_mask.png": "8047ae02523ae57a007e8b22a3b0b2156fe9fee7c8a35b70915ba326942a5102",
+    "sprites/front_left_wheels_f6_rim_mask.png": "26b1a8665caa03de312fbafa008adcc0415761e824d0f5c83306ab314b2fd05a",
+    "sprites/front_left_wheels_f7_rim_mask.png": "73e72f94305d76a0e4e9b8a5911561580aa9ea08be56cfd12ce3d6a50170488e",
+    "sprites/front_left_wheels_f8_rim_mask.png": "a98513d65888b159c760adbcd343bf6dc3450da8c92925404675df1fc1c51aac",
+    "sprites/front_right_wheels_f0_rim_mask.png": "ae1791becbc8de4c8d3d4debcb255b77c2c93b6447f15eb1506afaa3ef4b7a4d",
+    "sprites/front_right_wheels_f1_rim_mask.png": "25b1cb2b671d51babac1093b726ac26dac3c673cf5ca784bb53578ad23637bd4",
+    "sprites/front_right_wheels_f2_rim_mask.png": "2233fe2c6c397fb6d41647d44418c19448975e303b66d286731d30de9cb19615",
+    "sprites/front_right_wheels_f3_rim_mask.png": "34f2d080d0750ce30a9388c2bf65abd9da9beff06bbdfca5c2bfc4387657a548",
+    "sprites/front_right_wheels_f4_rim_mask.png": "8e5b612847f5a1c32da971729771e90ff4b210b6d3510d0f70a0d2a99d32fec6",
+    "sprites/front_right_wheels_f5_rim_mask.png": "d9bd6e7ac48b8f061160ec1a168afcc58ee8286d3b17afcc8faf7cad751dc1ac",
+    "sprites/front_right_wheels_f6_rim_mask.png": "60b496227923658174ecafdece07b78b3a2b640d71b59744888c0a7361b03cdb",
+    "sprites/front_right_wheels_f7_rim_mask.png": "684a8c2dba6a0ccbb6fdeffa06c7341319fd4e281658ace22ef7f42ad81152ec",
+    "sprites/front_right_wheels_f8_rim_mask.png": "bc10bbd9cbe59c19dd2d2cd921749072502d373ea32dd5b64058398f8aaff392",
+    "sprites/front_straight_wheels_f0_rim_mask.png": "7b0acee56eeb20f05014423753ad814792adde0e8e74f826af35fd8f6b16103a",
+    "sprites/front_straight_wheels_f1_rim_mask.png": "77322023e869580aa2645142b1bcc749f068f5edd03db9192bc0ec92fbd13a01",
+    "sprites/front_straight_wheels_f2_rim_mask.png": "1f17b2dfaab80a833d6d14005adff7147f4fd1f314971f4b0af8121f14bcb730",
+    "sprites/front_straight_wheels_f3_rim_mask.png": "ce8cbedc062c5f5e3afd2330614aede0c68dfcb0e52b77fd122147524a601042",
+    "sprites/front_straight_wheels_f4_rim_mask.png": "90f901da8939b8ef20cf45c2813d571d19828e1f1405e5a4c123a64a8975446b",
+    "sprites/front_straight_wheels_f5_rim_mask.png": "bc3f2d13932a952ba2a87b464a3c78b3d3e2530df5d9b960b3cddfa20363901b",
+    "sprites/front_straight_wheels_f6_rim_mask.png": "280d97bb3f2e16b4bfafc54c354bd6417df6c67ce2c63a71cc5c73bf91ba1b5e",
+    "sprites/front_straight_wheels_f7_rim_mask.png": "2af487c11f4b92f9787f280a0dee1a8432540f31dcbf0d7112701226394e7b45",
+    "sprites/front_straight_wheels_f8_rim_mask.png": "35acecaf78520be7e63417413ef21fea7b187fddf5a398b33f4cd0e590d1bd0f"
   },
   "body_pitch": {
     "angles_deg": [
@@ -1299,5 +1407,20 @@
     "control": "H/headlight toggle, independent of steering and suspension."
   },
   "cleanup": "Dominant-material depth/normals, crease-aware surface filtering, supported paint-speckle cleanup; masks/emission/silhouettes unchanged.",
-  "tail_emission": "Only rear_light geometry emits red; rear engine-cover detail is non-emissive."
+  "tail_emission": "Only rear_light geometry emits red; rear engine-cover detail is non-emissive.",
+  "rim_tint": {
+    "version": 1,
+    "channel": "L",
+    "range": [
+      0,
+      255
+    ],
+    "meaning": "0 preserve stock pixel; 255 tint rim; intermediate values blend tint coverage.",
+    "sampling": "point; linear data, never sRGB",
+    "protected": "Tyres, brakes, calipers, separate badges/bolts and transparent gaps.",
+    "blur": "Coverage-weighted average of the eight categorical spin masks.",
+    "materials": [
+      "rims"
+    ]
+  }
 }
