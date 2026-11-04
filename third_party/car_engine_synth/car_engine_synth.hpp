@@ -18,7 +18,8 @@ struct Profile {
     const char* name;
     // --- engine speed range (rpm)
     float idleRpm, limiterRpm;
-    // --- combustion pulses (4 cylinders, firing order 1-3-4-2, one pulse per cylinder per cycle)
+    // --- combustion pulses (four gain accents repeat across the selected cylinder count)
+    int cylinders=4;
     float firingGain[4];   // relative strength of each cylinder's pulse (unequal = rough/raspy)
     float pulseMs;         // blowdown pulse length; shorter = crisper/brighter
     float jitter;          // random per-pulse strength variation (0..0.3)
@@ -135,10 +136,10 @@ public:
             vtecKick_ *= std::exp(-dt / 0.12f);
         }
 
-        // ---- crank phase: one 4-stroke cycle = 2 crank revs; 4 firings per cycle
+        // ---- crank phase: one 4-stroke cycle = 2 crank revs; one pulse per cylinder
         phase_ += (rpmS_ / 120.0f) * dt;
         if (phase_ >= 1.0) phase_ -= 1.0;
-        const int idx = std::min(3, (int)(phase_ * 4.0));
+        const int idx = std::min(p_.cylinders-1, (int)(phase_ * p_.cylinders));
         // Retain an RPM-driven exhaust/mechanical bed when the wheels drive the engine.
         // Throttle still controls load colour, intake, VTEC and turbo independently.
         float presence = std::clamp((rpmS_ - p_.idleRpm) / 2000.0f, 0.0f, 1.0f);
@@ -148,7 +149,7 @@ public:
         if (idx != lastIdx_) {
             lastIdx_ = idx;
             const bool overrun = thr_ < 0.06f && rpmS_ > 1500;   // closed throttle: only air pumping
-            float amp = p_.firingGain[idx] * (1.0f + p_.jitter * noise()) * load;
+            float amp = p_.firingGain[idx%4] * (1.0f + p_.jitter * noise()) * load;
             // Do not attenuate the RPM bed again on overrun; load already shapes it.
             if (cut) amp *= 0.06f;
             const float len = p_.pulseMs * (1.0f - 0.35f * p_.vtecBright * vtecMix_ * (p_.vtec ? 1.0f : 0.0f));
@@ -193,7 +194,7 @@ public:
 
         // ---- intake roar: noise through a band-pass, breathing at firing rate, louder with load and revs
         const float n = noise();
-        const float breath = 0.55f + 0.45f * std::sin(kTwoPi * (float)phase_ * 4.0f);
+        const float breath = 0.55f + 0.45f * std::sin(kTwoPi * (float)phase_ * p_.cylinders);
         const float ig = p_.intakeGain * (1.0f + p_.vtecIntakeBoost * vtecMix_ + 1.2f * vtecKick_ * (p_.vtec ? 1 : 0));
         const float ih = p_.intakeHz * (1.0f + 0.35f * vtecMix_ + 0.6f * rev);
         const float gI = std::tan(3.14159265f * std::min(ih, 0.45f * sr_) / sr_), rI = 1.0f / p_.intakeQ;

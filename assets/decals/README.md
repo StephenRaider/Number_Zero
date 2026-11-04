@@ -17,8 +17,10 @@ top to bottom. Honeycomb has a solid vertical left edge and diagonal right fade.
 Independent additions:
 - `20_sponsor_overlay`: sponsors around the perimeter with a clear centre.
 - `21_sponsor_strip`: a single bold sponsor row.
-- Numbers 07, 35 and 86, each plain single-ink and boxed black-on-white with
+- Abstract race marks A, B and C, each plain single-ink and boxed black-on-white with
   a thick black border. Boxed variants keep their black/white colours.
 
 Suggested stack: base graphic on layer 1, sponsor strip on layer 2, number on
 layer 3. The top layer draws last. All can move/scale/rotate independently.
+
+Race mark glyphs intentionally use broken loops and offset strokes rather than readable digits. Original numeric IDs remain stable for save compatibility.

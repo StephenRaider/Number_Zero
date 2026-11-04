@@ -10,6 +10,11 @@
       "id": "honda_civic_ek9",
       "name": "Honda Civic Type R EK9",
       "manifest": "honda_civic_ek9/manifest.json"
+    },
+    {
+      "id": "ferrari_testarossa",
+      "name": "Ferrari Testarossa",
+      "manifest": "ferrari_testarossa/manifest.json"
     }
   ]
 }

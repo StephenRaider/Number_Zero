@@ -69,3 +69,14 @@ use shared physical forward/height/width/angle coordinates. CPU composition
 samples transparent ink in premultiplied form and blends it into body albedo;
 normal/depth/finish/emission/coverage bytes remain unchanged. See the game README
 for editor controls and the rear-body symmetry assumption.
+
+
+## Testarossa body variants
+
+`ferrari_testarossa/manifest.json` indexes 702 runtime maps including independent
+wheel frames and 30 raised plus 30 retracted popup body views. Source animation
+was baked at its raised/closed endpoints, then stripped before rendering. Both
+sets receive material-aware packing and the established surface cleanup. White
+plates, grey glazing and separate bonnet/paint/indicator channels are retained.
+Source Blend files, source inspection and intermediate passes stay outside this
+repository in the experiment workspace.

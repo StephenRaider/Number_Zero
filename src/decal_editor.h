@@ -2,18 +2,19 @@
 #include <limits>
 static void SaveDecalSettings(const fs::path &path,const Selection &selection,const DecalLibrary &lib){
  Selection s=selection;s.CapturePaint();
- std::ofstream out(path);out.precision(std::numeric_limits<float>::max_digits10);out<<"NZ_GARAGE_2\n"<<s.car<<' '<<s.manual<<'\n';
- for(int car=0;car<2;car++){const auto &p=s.finishes[car];out<<car<<' '<<(unsigned)ColorToInt(p.paint)<<' '<<p.twoTone<<' '<<p.blackHood<<' '<<p.hue<<' '<<p.saturation<<' '<<p.value<<'\n';}
- for(int car=0;car<2;car++)for(int layer=0;layer<3;layer++){
+ std::ofstream out(path);out.precision(std::numeric_limits<float>::max_digits10);out<<"NZ_GARAGE_3\n"<<nz::Cars.size()<<'\n'<<s.car<<' '<<s.manual<<'\n';
+ for(int car=0;car<(int)nz::Cars.size();car++){const auto &p=s.finishes[car];out<<car<<' '<<(unsigned)ColorToInt(p.paint)<<' '<<p.twoTone<<' '<<p.blackHood<<' '<<p.hue<<' '<<p.saturation<<' '<<p.value<<'\n';}
+ for(int car=0;car<(int)nz::Cars.size();car++)for(int layer=0;layer<3;layer++){
   const auto &d=s.decals[car][layer];out<<car<<' '<<layer<<' '<<(d.design>=0?lib.entries[d.design].id:"none")<<' '<<d.forward<<' '<<d.height<<' '<<d.width<<' '<<d.angle<<' '<<d.tint<<'\n';
  }
 }
 static void LoadDecalSettings(const fs::path &path,Selection &s,const DecalLibrary &lib){
- std::ifstream in(path);std::string tag;if(!(in>>tag)||(tag!="NZ_DECALS_1"&&tag!="NZ_GARAGE_2"))return;
+ std::ifstream in(path);std::string tag;if(!(in>>tag)||(tag!="NZ_DECALS_1"&&tag!="NZ_GARAGE_2"&&tag!="NZ_GARAGE_3"))return;
  Selection loaded=s;
- if(tag=="NZ_GARAGE_2"){
-  int selected;bool manual;if(!(in>>selected>>manual)||selected<0||selected>1)return;loaded.car=selected;loaded.manual=manual;
-  for(int row=0;row<2;row++){
+ if(tag=="NZ_GARAGE_2"||tag=="NZ_GARAGE_3"){
+  int savedCars=2;if(tag=="NZ_GARAGE_3"&&(!(in>>savedCars)||savedCars<1||savedCars>(int)nz::Cars.size()))return;
+  int selected;bool manual;if(!(in>>selected>>manual)||selected<0||selected>=(int)nz::Cars.size())return;loaded.car=selected;loaded.manual=manual;
+  for(int row=0;row<savedCars;row++){
    int car;unsigned colour;bool twoTone,hood;float hue,saturation,value;
    if(!(in>>car>>colour>>twoTone>>hood>>hue>>saturation>>value)||car!=row||!std::isfinite(hue)||!std::isfinite(saturation)||!std::isfinite(value))return;
    loaded.finishes[car]={GetColor(colour),twoTone,hood,std::clamp(hue,0.f,360.f),std::clamp(saturation,0.f,1.f),std::clamp(value,0.f,1.f)};
@@ -22,7 +23,7 @@ static void LoadDecalSettings(const fs::path &path,Selection &s,const DecalLibra
  }
  int car,layer;std::string id;nz::DecalPlacement d;
  while(in>>car>>layer>>id>>d.forward>>d.height>>d.width>>d.angle>>d.tint){
-  if(car<0||car>1||layer<0||layer>2||!std::isfinite(d.forward)||!std::isfinite(d.height)||!std::isfinite(d.width)||!std::isfinite(d.angle))continue;
+  if(car<0||car>=(int)nz::Cars.size()||layer<0||layer>2||!std::isfinite(d.forward)||!std::isfinite(d.height)||!std::isfinite(d.width)||!std::isfinite(d.angle))continue;
   d.design=lib.Find(id);nz::ClampDecal(d);loaded.decals[car][layer]=d;
  }
  s=loaded;
@@ -35,7 +36,7 @@ static void StudioBackdrop(){
  DrawRectangle((int)(98+off.x),(int)(91+off.y),176,1,RGBA(238,242,248,110));
 }
 static bool DecalEditor(Selection &s,const DecalLibrary &lib,int &view,int &layer,Vector2 mouse,float dt){
- DrawRectangle(0,0,640,57,RGBA(13,21,30,245));Label("DECAL STUDIO",24,15,22);Label(s.car?"CIVIC EK9 / RIGHT SIDE":"SILVIA S13 / RIGHT SIDE",25,42,9,Mint);
+ DrawRectangle(0,0,640,57,RGBA(13,21,30,245));Label("DECAL STUDIO",24,15,22);Label(TextFormat("%s / RIGHT SIDE",nz::Cars[s.car].name),25,42,9,Mint);
  if(Button({25,67,94,20},"FRONT VIEW",mouse,view==0))view=0;
  if(Button({125,67,94,20},"REAR VIEW",mouse,view==1))view=1;
  Label("FIXED SOFTBOX / LIGHT BARS",25,275,9,Paper);Label("Drag on car, or use arrows to move",25,294,9,Paper);Label("One position follows every driving pose",25,310,8,Muted);

@@ -307,3 +307,29 @@ Previous decal-only save files remain compatible and upgrade on the next save.
 Switching cars restores each car's own finish instead of resetting its paint.
 Both cars use 2x steering response, release and lateral positioning rates while
 retaining the existing speed-dependent handling curve.
+
+
+## Ferrari Testarossa
+
+The garage now includes the 1984-style Testarossa alongside the S13 and EK9.
+It supports saved paint/hood/decal settings, independent wheels, steering and
+all suspension views. H (or the garage light button) selects raised or retracted
+pop-up headlight geometry as well as switching headlamp emission and beams.
+Both popup states have all 30 body poses and reuse the same stock wheel frames.
+
+The stock-style European setup uses a 4.9-litre flat-12 (390 PS / 490 Nm), rear
+drive, five ratios and an engine rev limit. It has **no road-speed limiter**;
+the current simplified drivetrain settles near 287 km/h through power and drag.
+The S13 and EK9 retain their separate 180 km/h caps. Engine sound uses a distinct
+12-pulse procedural profile; it is an approximation, not a recorded engine.
+
+Reference: [Ferrari Testarossa, Museo Nicolis](https://www.museonicolis.com/en/ferrari-1991-testarossa/)
+lists roughly 290 km/h. Weight/gearbox/torque values are stock-period estimates;
+the game simulation is not a calibrated vehicle dynamics model.
+
+`--testarossa` selects the car (also works with graphics/audio smoke flags).
+`--decal-smoke-test --testarossa` checks all popup poses and save migration.
+Save version 3 includes a car count and preserves older two-car saves.
+
+The formerly readable number decals now use invented broken-loop race marks
+(A/B/C), with plain and boxed versions. Their stable IDs preserve old placements.

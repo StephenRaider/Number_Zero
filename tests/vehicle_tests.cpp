@@ -93,8 +93,9 @@ int main(){try{
   nz::Vehicle rest;for(int i=0;i<1200;i++)nz::Step(rest,car,{},1./120.);
   Require(rest.speed==0 && rest.lateral==1.75,"Car moved without input");
   nz::Vehicle v;for(int i=0;i<120*70;i++)nz::Step(v,car,{1,0,0},1./120.);
-  Require(v.timeTo100>5.5 && v.timeTo100<10.5,"Unreasonable 0-100 acceleration");
-  Require(v.speed*3.6>178 && v.speed*3.6<181,"Stock limiter failed");
+  Require(v.timeTo100>(car.speedLimitKmh>0?5.5:4.5) && v.timeTo100<10.5,"Unreasonable 0-100 acceleration");
+  double topSpeed=v.speed*3.6;
+  if(car.speedLimitKmh>0)Require(topSpeed>178&&topSpeed<181,"Stock limiter failed");else Require(topSpeed>275&&topSpeed<305&&!v.limiter,"Testarossa incorrectly speed-limited or top-speed tuning invalid");
   Require(v.gear>=3 && v.shifts>=3,"Automatic shifting failed");
   v.speed=100./3.6;v.lateralSpeed=0;double start=v.distance,seconds=0;
   while(v.speed>.01 && seconds<10){nz::Step(v,car,{0,1,0},1./120.);seconds+=1./120.;}
@@ -120,7 +121,7 @@ int main(){try{
   nz::Vehicle x,y;for(int i=0;i<1200;i++)nz::Step(x,car,{1,0,0},1./120.);
   for(int i=0;i<2400;i++)nz::Step(y,car,{1,0,0},1./240.);
   Require(std::abs(x.speed-y.speed)<.2,"Physics timestep dependence too high");
-  std::printf("PASS %s: 0-100 %.2fs, 100-0 %.1fm in %.2fs, stock max %.1fkm/h\n",car.name,v.timeTo100,v.distance-start,seconds,180.0);
+  std::printf("PASS %s: 0-100 %.2fs, 100-0 %.1fm in %.2fs, stock max %.1fkm/h\n",car.name,v.timeTo100,v.distance-start,seconds,topSpeed);
  }
  std::puts("PASS: idle, throttle, gears, limiter, braking, continuous steering, road bounds timestep stability, speed-sensitive steering, release, northeast projection and persistent lamps, common lookahead, paired rotating beams, manual shifts and suspension pitch");return 0;
  }catch(const std::exception &e){std::fprintf(stderr,"FAIL: %s\n",e.what());return 1;}}

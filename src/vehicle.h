@@ -14,8 +14,9 @@ struct CarSpec {
     bool frontDrive,turbo;
     std::array<double,5> gears;
     std::vector<TorquePoint> torque;
+    double speedLimitKmh=180.;bool popupHeadlights=false;
 };
-inline const std::array<CarSpec,2> Cars={{
+inline const std::array<CarSpec,3> Cars={{
     {"nissan_silvia_s13","NISSAN SILVIA S13 K'S","SR20DET  /  2.0 TURBO","RWD",
      1150,205,275,2.475,.3135,4.083,.85,.64,850,3400,7050,7500,.53,.95,.93,9.5,false,true,
      {3.321,1.902,1.308,1.000,.759},
@@ -24,6 +25,11 @@ inline const std::array<CarSpec,2> Cars={{
      1070,185,160,2.620,.29775,4.400,.87,.62,1000,5800,8450,8600,.62,1.00,.98,9.0,true,false,
      {3.230,2.105,1.458,1.107,.848},
      {{1000,80},{2000,104},{3000,118},{4500,128},{5500,136},{6000,145},{7000,155},{7500,160},{8000,159},{8200,158.4},{8500,150},{8600,140}}}
+ ,
+    {"ferrari_testarossa","FERRARI TESTAROSSA","F113  /  4.9 FLAT-12","RWD",
+     1630,390,490,2.550,.328,3.210,.88,.72,1000,3200,6500,6800,.40,.98,.95,9.3,false,false,
+     {3.139,2.104,1.526,1.167,.875},
+     {{1000,230},{2000,330},{3000,420},{4000,475},{4500,490},{5000,478},{5500,465},{6000,450},{6300,435},{6500,410},{6800,370}},0.,true}
 }};
 inline double TorqueAt(const CarSpec &c,double rpm){
     if(rpm<=c.torque.front().rpm)return c.torque.front().nm;
@@ -79,8 +85,8 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     if(c.turbo)force*=.70+.30*v.boost;
     if(v.shiftTime>0)force=0.;
     if(coupledRpm>c.redline)force=0.;
-    v.limiter=v.speed*3.6>179.5;
-    force*=std::clamp((180.5-v.speed*3.6)/1.0,0.,1.0);
+    v.limiter=c.speedLimitKmh>0&&v.speed*3.6>c.speedLimitKmh-.5;
+    if(c.speedLimitKmh>0)force*=std::clamp((c.speedLimitKmh+.5-v.speed*3.6)/1.0,0.,1.0);
     const double transfer=std::clamp(v.acceleration*.50/(9.81*c.wheelbase),-.18,.18);
     const double drivenWeight=c.frontDrive?c.frontWeight-transfer:1-c.frontWeight+transfer;
     force=std::min(force,c.grip*mass*9.81*std::clamp(drivenWeight,.25,.80));

@@ -1,0 +1,33 @@
+{
+  "elevation_deg": 30.0,
+  "azimuth_front": -45.0,
+  "azimuth_back": 135.0,
+  "anchor_world": [
+    0,
+    0,
+    0
+  ],
+  "depth": {
+    "range_m": 5.2
+  },
+  "sizes": {
+    "128": {
+      "canvas": 128,
+      "px_per_metre": 26.0,
+      "tile_axis_px": [
+        18.3848,
+        9.1924
+      ],
+      "anchor_px": [
+        64.0,
+        79.0
+      ]
+    }
+  },
+  "car": "testarossa",
+  "frames": 8,
+  "window_srgb": "#42454b",
+  "plates": "plain white",
+  "length_m": 4.485,
+  "detailed_lamps": true
+}

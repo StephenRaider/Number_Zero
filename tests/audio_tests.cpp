@@ -16,7 +16,7 @@ static double SteadyRms(int car,float rpm,float throttle){
 }
 int main(){try{
  std::filesystem::create_directories("build/qa");
- for(int car=0;car<2;car++){
+ for(int car=0;car<(int)nz::Cars.size();car++){
   double idle=SteadyRms(car,(float)nz::Cars[car].idle,0);
   for(float rpm:{3000.f,5000.f,7000.f}){
    double loaded=SteadyRms(car,rpm,1),coast=SteadyRms(car,rpm,0),ratio=coast/loaded;
@@ -42,13 +42,13 @@ int main(){try{
    Valid(buffer);for(float s:buffer){rms+=s*s;peak=std::max(peak,std::abs(s));}drive.insert(drive.end(),buffer.begin(),buffer.end());
   }
   Require(peak>.02f&&rms/drive.size()>.000001,"Drive audio is silent");
-  Require(carsynth::writeWavMono(car?"build/qa/civic_engine_drive.wav":"build/qa/silvia_engine_drive.wav",drive,nz::AudioRate),"Diagnostic WAV export failed");
+  Require(carsynth::writeWavMono(car==2?"build/qa/testarossa_engine_drive.wav":car==1?"build/qa/civic_engine_drive.wav":"build/qa/silvia_engine_drive.wav",drive,nz::AudioRate),"Diagnostic WAV export failed");
   buffer.resize(nz::AudioRate/4);
   sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,car,true,true});Valid(buffer);
   Require(std::abs(buffer.back())<1e-10,"Mute does not settle to silence");
   sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,car,true,false});Require(Energy(buffer)>.000001,"Unmute remains silent");
   sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,car,false,false});Require(std::abs(buffer.back())<1e-10,"Pause does not settle to silence");
-  sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,1-car,true,false});Valid(buffer);Require(Energy(buffer)>.000001,"Switching cars is silent");
+  sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,(car+1)%(int)nz::Cars.size(),true,false});Valid(buffer);Require(Energy(buffer)>.000001,"Switching cars is silent");
   std::printf("PASS %s: 18s drivetrain audio, peak %.3f, RMS %.3f; mute/pause/resume/car switch\n",nz::Cars[car].id,peak,std::sqrt(rms/drive.size()));
  }
  // Observable cam state: loaded high RPM engages; lift disengages with smoothing.
