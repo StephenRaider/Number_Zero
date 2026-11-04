@@ -20,6 +20,7 @@ struct Profile {
     float idleRpm, limiterRpm;
     // --- combustion pulses (four gain accents repeat across the selected cylinder count)
     int cylinders=4;
+    float bankBodyGain=0; // Optional lower crank/bank exhaust orders, phase-locked to engine RPM.
     float firingGain[4];   // relative strength of each cylinder's pulse (unequal = rough/raspy)
     float pulseMs;         // blowdown pulse length; shorter = crisper/brighter
     float jitter;          // random per-pulse strength variation (0..0.3)
@@ -209,6 +210,23 @@ public:
         hp_ += (n - hp_) * 0.25f;
         sig += (n - hp_) * p_.mechGain * rev * rev * (0.3f + 0.7f * thr_);
 
+        // A large multi-bank exhaust needs lower orders as well as the combined
+        // firing frequency. Keep this inside the existing load/saturation/muffle
+        // chain, so it follows shifts, revs, lift-off and mute instead of droning.
+        if (p_.bankBodyGain > 0) {
+            // Remove the overlapping pulse train's DC offset before adding low orders.
+            // Otherwise high-RPM exhaust pressure drives the saturator flat.
+            bankDc_ += (sig-bankDc_)*(1-std::exp(-kTwoPi*18.0f*dt));
+            sig -= bankDc_;
+            const float crank = kTwoPi * (float)phase_ * 2.0f;
+            const float orders = .78f*std::sin(crank) + .78f*std::sin(2*crank+.19f)
+                               + .45f*std::sin(3*crank+.53f) + .12f*std::sin(6*crank);
+            bankNoise_ += (n-bankNoise_)*(1-std::exp(-kTwoPi*320.0f*dt));
+            const float weight = (.36f+.64f*presence)*(.48f+.52f*thr_)*(cut?.15f:1.0f);
+            sig += p_.bankBodyGain * weight * (orders + .12f*bankNoise_);
+        }
+
+
         // ---- overrun pop: low thump + crack, decaying
         float popSig = 0;
         if (pop_ > 0.001f) {
@@ -312,7 +330,7 @@ private:
     float env1_ = 0, env2_ = 0, tauFast_ = 0.001f;
     float fz1_[4] = {}, fz2_[4] = {}, fa1_[4] = {}, fa2_[4] = {}, fa3_[4] = {};
     float xs_ = 0, m1_ = 0, m2_ = 0, m3_ = 0, t1_ = 0, lp1_ = 0, lp2_ = 0, bd1_ = 0, bd2_ = 0, iz1_ = 0, iz2_ = 0, hp_ = 0;
-    float dcIn_ = 0, dcOut_ = 0;
+    float dcIn_ = 0, dcOut_ = 0, bankNoise_ = 0, bankDc_ = 0;
     float pop_ = 0, popHz_ = 200, popPh_ = 0;
     bool vtecOn_ = false;
     float vtecMix_ = 0, vtecKick_ = 0;

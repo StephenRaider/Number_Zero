@@ -14,6 +14,14 @@ static double SteadyRms(int car,float rpm,float throttle){
  }
  return std::sqrt(energy/100);
 }
+static double BassFraction(float rpm){
+ nz::EngineSound sound;std::vector<float> block(441);double total=0,bass=0;float a=1-std::exp(-2*(float)nz::Pi*300/nz::AudioRate),dc=1-std::exp(-2*(float)nz::Pi*25/nz::AudioRate),first=0,second=0,low=0;
+ for(int chunk=0;chunk<200;chunk++){
+  sound.Render(block.data(),(unsigned)block.size(),{rpm,1,2,true,false});
+  for(float sample:block){first+=(sample-first)*a;second+=(first-second)*a;low+=(second-low)*dc;if(chunk>=100){bass+=(second-low)*(second-low);total+=sample*sample;}}
+ }
+ return bass/total;
+}
 int main(){try{
  std::filesystem::create_directories("build/qa");
  for(int car=0;car<(int)nz::Cars.size();car++){
@@ -50,6 +58,10 @@ int main(){try{
   sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,car,false,false});Require(std::abs(buffer.back())<1e-10,"Pause does not settle to silence");
   sound.Render(buffer.data(),(unsigned)buffer.size(),{5000,1,(car+1)%(int)nz::Cars.size(),true,false});Valid(buffer);Require(Energy(buffer)>.000001,"Switching cars is silent");
   std::printf("PASS %s: 18s drivetrain audio, peak %.3f, RMS %.3f; mute/pause/resume/car switch\n",nz::Cars[car].id,peak,std::sqrt(rms/drive.size()));
+ }
+ for(float rpm:{3000.f,5000.f,6500.f}){
+  double fraction=BassFraction(rpm);Require(fraction>.30,"Ferrari lost its low exhaust body at high RPM");
+  std::printf("PASS Ferrari low-body energy at %.0frpm: %.2f\n",rpm,fraction);
  }
  // Observable cam state: loaded high RPM engages; lift disengages with smoothing.
  carsynth::Engine civic(carsynth::profileEK9());

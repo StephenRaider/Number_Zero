@@ -25,8 +25,10 @@ inline EngineControls DrivingSound(const Vehicle &v,int car,bool driving,bool pa
 }
 inline carsynth::Profile TestarossaProfile(){
  auto p=carsynth::profileEK9();p.name="Ferrari Testarossa F113 flat-12";p.cylinders=12;p.idleRpm=1000;p.limiterRpm=6800;p.vtec=false;p.turbo=false;
- p.pulseMs=.62f;p.jitter=.025f;p.idleLump=.005f;p.bodyGain=.72f;p.lowpassClosed=1200;p.lowpassOpen=4200;p.muffleHz=3700;p.intakeHz=1300;p.intakeGain=.035f;p.mechGain=.004f;p.outGain=.65f;
- const float hz[]={160,380,1050,2800};for(int i=0;i<4;i++){p.firingGain[i]=1.f;p.formantHz[i]=hz[i];}return p;
+ p.pulseMs=1.55f;p.jitter=.045f;p.idleLump=.008f;p.bodyGain=2.1f;p.bankBodyGain=.70f;
+ p.lowpassClosed=580;p.lowpassOpen=1800;p.muffleHz=1750;p.intakeHz=520;p.intakeQ=.8f;p.intakeGain=.025f;p.mechGain=.001f;p.outGain=.90f;
+ const float hz[]={90,180,430,1100},q[]={.95f,1.15f,1.35f,.9f},g[]={1.6f,1.4f,.45f,.08f},accent[]={1.f,.97f,1.03f,.99f};
+ for(int i=0;i<4;i++){p.firingGain[i]=accent[i];p.formantHz[i]=hz[i];p.formantQ[i]=q[i];p.formantGain[i]=g[i];}return p;
 }
 class EngineSound {
  std::array<carsynth::Engine,3> engines{carsynth::Engine(carsynth::profileS13(),AudioRate),carsynth::Engine(carsynth::profileEK9(),AudioRate),carsynth::Engine(TestarossaProfile(),AudioRate)};

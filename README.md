@@ -333,3 +333,9 @@ Save version 3 includes a car count and preserves older two-car saves.
 
 The formerly readable number decals now use invented broken-loop race marks
 (A/B/C), with plain and boxed versions. Their stable IDs preserve old placements.
+
+
+The Testarossa's exhaust mixes lower crank/bank harmonics with its twelve-cylinder
+firing pulses for a fuller bass/midrange note. Broader, lower exhaust resonances
+and softer high-frequency filtering reduce the thin buzz. The bass follows actual
+RPM, load and shifts and stays audible on lift-off; it is not a constant loop.
