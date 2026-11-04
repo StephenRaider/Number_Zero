@@ -10,7 +10,7 @@ inline ViewportLayout MakeViewport(int windowWidth,int windowHeight){
  return {(windowWidth+scale-1)/scale,(windowHeight+scale-1)/scale,scale};
 }
 constexpr float CameraK=.70710678118f,CameraSin=.5f,CameraCos=.86602540378f;
-constexpr float VisibleAhead=38.f,VisibleBehind=6.f,VisibleHalfWidth=8.5f;
+constexpr float VisibleAhead=42.5f,VisibleBehind=1.5f,VisibleHalfWidth=8.5f;
 struct DrivingView {float pixelsPerMetre,x,y;};
 inline DrivingView FitDrivingView(int width,int height){
  float span=VisibleAhead+VisibleBehind+2*VisibleHalfWidth;

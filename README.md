@@ -347,3 +347,5 @@ the low-speed range. This affects the audio engine only; drivetrain performance
 and displayed RPM remain governed by the vehicle simulation.
 Tail trails ignore centre lamps/engine-bay details and use the outer rear lamps,
 including the exact sprite placement offset at the current render scale.
+
+The driving camera is shifted 4.5 m farther ahead of the car (about one car length), keeping the same zoom. The shared visibility corridor is 42.5 m ahead / 1.5 m behind on every display.
