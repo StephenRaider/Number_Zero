@@ -63,12 +63,32 @@ int main(){try{
   double speed=kmh/3.6,previous=std::min(speed*.32,1.7+3./(1+std::pow(speed/21.,2)));
   Require(std::abs(nz::LateralSpeedLimit(speed)-2*previous)<1e-12,"Steering movement speed is not doubled across speed range");
   for(const auto &car:nz::Cars){
-   nz::Vehicle turn;turn.speed=speed;nz::Step(turn,car,{0,0,1},1./120.);
+   nz::Vehicle turn;turn.speed=speed;turn.throttle=1;nz::Step(turn,car,{1,0,1},1./120.);
    double expected=1-std::exp(-2*car.steerResponse/(1+speed/65.)/120.);
    Require(std::abs(turn.steering-expected)<1e-12,"Steering input response is not doubled");
    nz::Vehicle release;release.speed=speed;release.steering=1;nz::Step(release,car,{},1./120.);
    Require(std::abs(release.steering-std::exp(-48./120.))<1e-12,"Steering release response is not doubled");
   }
+ }
+ // Evasive manoeuvres: lift-off improves response, braking improves it further.
+ for(const auto &car:nz::Cars)for(double kmh:{30.,100.,160.,250.}){
+  std::array<double,3> moved{};
+  for(int mode=0;mode<3;mode++){
+   nz::Vehicle v;v.lateral=0;v.speed=kmh/3.6;v.throttle=mode==0?1:0;
+   for(int tick=0;tick<42;tick++){v.speed=kmh/3.6;nz::Step(v,car,{mode==0?1.:0.,mode==2?1.:0.,1},1./120.);}
+   moved[mode]=v.lateral;
+  }
+  Require(moved[1]>moved[0]*1.1,"Lift-off does not improve evasive steering");
+  Require(moved[2]>moved[1]*1.1,"Braking does not improve steering more than lift-off");
+  std::printf("Evasion %s %.0fkm/h 350ms: throttle %.2fm coast %.2fm brake %.2fm\n",car.id,kmh,moved[0],moved[1],moved[2]);
+ }
+ for(const auto &car:nz::Cars){
+  nz::Vehicle stop;stop.speed=100./3.6;stop.gear=3;stop.rpm=3000;
+  for(int tick=0;tick<120*6&&stop.speed>.01;tick++)nz::Step(stop,car,{0,1,0},1./120.);
+  Require(stop.speed<.01&&stop.distance>32&&stop.distance<38,"Gameplay braking misses 100-0 target");
+  nz::Vehicle full,half;full.speed=half.speed=25;
+  for(int t=0;t<60;t++){nz::Step(full,car,{0,1,0},1./120.);nz::Step(half,car,{0,.5,0},1./120.);}
+  Require(full.speed<half.speed,"Partial pedal pressure is not progressive");
  }
  for(const auto &car:nz::Cars){
   nz::Vehicle manual;manual.automatic=false;

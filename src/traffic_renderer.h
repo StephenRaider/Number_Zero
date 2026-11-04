@@ -3,9 +3,8 @@ struct TrafficRenderer {
  struct Frame {std::array<Texture2D,5> textures{};std::vector<Color> albedo;std::vector<unsigned char> paint;};
  struct Actor {int id=0,lastType=-1,lastPose=-1,lastFrame=-1,lastPaint=-1;Texture2D albedo{};RenderTexture2D shaded{};Vector2 origin{};float depth=0,station=0;int type=0,pose=0,frame=0;bool brake=false;int indicator=0;};
  std::array<std::array<std::array<Frame,4>,3>,nz::TrafficTypes.size()> art;
- std::map<int,Actor> actors;std::vector<int> visible;int totalDrawn=0;
+ std::map<int,Actor> actors;std::vector<int> visible;int totalDrawn=0,totalWarnings=0;
  ShaderProgram composite,shadow;
- static const std::array<Color,8> &Colours(){static const std::array<Color,8> colours{{{225,228,222,255},{166,176,186,255},{44,53,66,255},{55,84,111,255},{150,42,42,255},{191,178,141,255},{211,184,76,255},{62,108,93,255}}};return colours;}
  explicit TrafficRenderer(const fs::path &assets):composite(assets/"shaders/traffic_composite.fs"),shadow(assets/"shaders/traffic_shadow.fs"){
   const char *kinds[]={"albedo","normal","pack","pack2","emit"};
   for(int type=0;type<(int)nz::TrafficTypes.size();type++)for(int pose=0;pose<3;pose++)for(int frame=0;frame<4;frame++){
@@ -29,7 +28,7 @@ struct TrafficRenderer {
    if(origin.x+size<0||origin.y+size<0||origin.x>Width||origin.y>Height)continue;
    auto &a=actors[car.id];if(a.id==0){a.id=car.id;Image blank=GenImageColor(256,256,BLANK);a.albedo=LoadTextureFromImage(blank);UnloadImage(blank);SetTextureFilter(a.albedo,TEXTURE_FILTER_POINT);a.shaded=LoadRenderTexture(256,256);SetTextureFilter(a.shaded.texture,TEXTURE_FILTER_POINT);}
    int pose=car.lateralSpeed>.15?2:car.lateralSpeed<-.15?0:1,frame=car.speed>1?(int)(car.distance/(2*nz::Pi*.31)*4)%4:0;const auto &maps=art[car.type][pose][frame];
-   if(a.lastType!=car.type||a.lastPose!=pose||a.lastFrame!=frame||a.lastPaint!=car.paint){auto pixels=maps.albedo;Color paint=Colours()[car.paint%8];for(size_t i=0;i<pixels.size();i++)if(maps.paint[i]){pixels[i].r=(unsigned char)(pixels[i].r*paint.r/255);pixels[i].g=(unsigned char)(pixels[i].g*paint.g/255);pixels[i].b=(unsigned char)(pixels[i].b*paint.b/255);}UpdateTexture(a.albedo,pixels.data());a.lastType=car.type;a.lastPose=pose;a.lastFrame=frame;a.lastPaint=car.paint;}
+   if(a.lastType!=car.type||a.lastPose!=pose||a.lastFrame!=frame||a.lastPaint!=car.paint){auto pixels=maps.albedo;const auto &finish=nz::GetTrafficPaint(car.type,car.paint);Color paint{finish.r,finish.g,finish.b,255};for(size_t i=0;i<pixels.size();i++)if(maps.paint[i]){pixels[i].r=(unsigned char)(pixels[i].r*paint.r/255);pixels[i].g=(unsigned char)(pixels[i].g*paint.g/255);pixels[i].b=(unsigned char)(pixels[i].b*paint.b/255);}UpdateTexture(a.albedo,pixels.data());a.lastType=car.type;a.lastPose=pose;a.lastFrame=frame;a.lastPaint=car.paint;}
    a.origin=origin;a.station=station;a.depth=WorldToCamera(station,(float)car.lateral,0).z;a.type=car.type;a.pose=pose;a.frame=frame;a.brake=car.braking;a.indicator=car.indicator;
    Environment lighting=env;lighting.heads=lighting.tails=true;lighting.brake=car.braking;bool flash=std::fmod(world.clock,1.15)<.53;lighting.indicatorLeft=car.indicator<0&&flash?1.f:0.f;lighting.indicatorRight=car.indicator>0&&flash?1.f:0.f;
    shader.Lights(lighting);shader.Vec2("carOrigin",origin);shader.Float("carDepth",a.depth);shader.Float("sourcePixels",256);shader.Float("depthRange",12);shader.Float("spritePixels",size);
@@ -60,6 +59,21 @@ struct TrafficRenderer {
  }
  void Glow(ShaderProgram &glow,const nz::TrafficWorld &world,const Environment &env){
   rlSetBlendFactorsSeparate(RL_ONE,RL_ONE,RL_ZERO,RL_ONE,RL_FUNC_ADD,RL_FUNC_ADD);BeginBlendMode(BLEND_CUSTOM_SEPARATE);for(int id:visible){const auto &a=actors.at(id);const auto &maps=art[a.type][a.pose][a.frame];Environment e=env;e.heads=e.tails=true;e.brake=a.brake;bool flash=std::fmod(world.clock,1.15)<.53;e.indicatorLeft=a.indicator<0&&flash?1.f:0;e.indicatorRight=a.indicator>0&&flash?1.f:0;glow.Lights(e);float fade=std::clamp((nz::VisibleAhead-a.station)/8.f,0.f,1.f);glow.Float("headlights",fade);glow.Float("taillights",fade);glow.Float("braking",a.brake?fade:0);glow.Float("indicatorLeft",e.indicatorLeft*fade);glow.Float("indicatorRight",e.indicatorRight*fade);float size=256*PixelsPerMetre/26.f;glow.Float("spritePixels",size);BeginShaderMode(glow.value);DrawTexturePro(maps.textures[4],{0,0,256,256},{a.origin.x-6,a.origin.y-6,size+12,size+12},{0,0},0,WHITE);EndShaderMode();}EndBlendMode();
+ }
+ void Warnings(const nz::TrafficWorld &world,const nz::Vehicle &player,const Environment &env){
+  std::array<const nz::TrafficCar*,4> nearest{};std::array<double,4> strength{};
+  for(const auto &car:world.cars){double alpha=nz::TrafficEntryWarning(car,{player.distance,player.lateral,player.speed},nz::VisibleAhead);if(alpha<=0)continue;
+   int lane=std::clamp((int)std::lround((car.lateral+5.25)/3.5),0,3);
+   if(!nearest[lane]||car.station<nearest[lane]->station){nearest[lane]=&car;strength[lane]=alpha;}
+  }
+  for(int lane=0;lane<4;lane++)if(nearest[lane]){
+   Vector2 p=Project(env.anchor,nz::VisibleAhead-1.5f,(float)nearest[lane]->lateral);
+   p.x=std::round(std::clamp(p.x,10.f,Width-10.f));p.y=std::round(std::clamp(p.y,14.f,Height-10.f));
+   float pulse=.84f+.16f*std::sin((float)world.clock*8.f);int alpha=(int)(255*strength[lane]);
+   DrawTriangle({p.x,p.y-12},{p.x-8,p.y+3},{p.x+8,p.y+3},RGBA(17,22,28,alpha));
+   DrawTriangle({p.x,p.y-10},{p.x-6,p.y+2},{p.x+6,p.y+2},RGBA((int)(255*pulse),(int)(199*pulse),87,alpha));
+   DrawRectangle((int)p.x-1,(int)p.y-6,2,4,RGBA(26,28,30,alpha));DrawPixel((int)p.x,(int)p.y,RGBA(26,28,30,alpha));++totalWarnings;
+  }
  }
  void ProbeDepth(){
   auto target=LoadRenderTexture(16,16);Image im=GenImageColor(16,16,RGBA(128,0,0));auto depth=LoadTextureFromImage(im);UnloadImage(im);

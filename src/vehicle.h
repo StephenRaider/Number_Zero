@@ -60,6 +60,12 @@ inline bool Shift(Vehicle &v,const CarSpec &c,int direction){
 // Highway positioning envelope: quick at urban speeds, progressively calmer at speed.
 // Steering response is a game tuning parameter, separate from tyre grip and driven axle.
 constexpr double SteeringResponsiveness=2.;
+// Deliberate highway-game assists, separate from catalogue brake/tyre values.
+constexpr double GameBrakeBoost=1.20;
+inline double SteeringAssist(double throttle,double brake){
+    brake=std::clamp(brake,0.,1.);throttle=std::clamp(throttle,0.,1.);
+    return 1.+.30*(1.-throttle)*(1.-brake)+.80*brake;
+}
 inline double LateralSpeedLimit(double speed){
     return SteeringResponsiveness*std::min(speed*.32,1.7+3.0/(1+std::pow(speed/21.,2)));
 }
@@ -68,7 +74,9 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     const double mass=c.mass+75.; // One driver; catalogue curb mass already includes normal fluids.
     v.elapsed+=dt;v.shiftTime=std::max(0.,v.shiftTime-dt);v.shiftCooldown=std::max(0.,v.shiftCooldown-dt);
     v.throttle=Approach(v.throttle,in.brake>.05?0.:in.throttle,12.,dt);
-    v.brake=Approach(v.brake,in.brake,18.,dt);v.steering=Approach(v.steering,in.steer,SteeringResponsiveness*(std::abs(in.steer)<.01?24.:c.steerResponse/(1+v.speed/65.)),dt);
+    v.brake=Approach(v.brake,in.brake,28.,dt);
+    const double assist=SteeringAssist(v.throttle,v.brake);
+    v.steering=Approach(v.steering,in.steer,SteeringResponsiveness*(std::abs(in.steer)<.01?24.:assist*c.steerResponse/(1+v.speed/65.)),dt);
     const double wheelRpm=v.speed/(2*Pi*c.radius)*60;
     double coupledRpm=wheelRpm*c.gears[v.gear]*c.finalDrive;
     if(v.automatic && v.shiftTime<=0 && v.shiftCooldown<=0){
@@ -93,7 +101,7 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     const double aero=.5*1.225*c.cdArea*v.speed*v.speed;
     const double rolling=v.speed>.005?.012*mass*9.81:0.;
     const double engineBrake=(1-v.throttle)*std::min(v.speed/6.,1.)*(170.+v.rpm*.035);
-    const double braking=v.brake*c.brakeG*mass*9.81;
+    const double braking=v.brake*c.brakeG*GameBrakeBoost*mass*9.81;
     const double oldSpeed=v.speed;
     v.acceleration=(force-aero-rolling-engineBrake-braking)/(mass*1.04); // Equivalent rotating wheel/driveline inertia.
     v.speed=std::max(0.,v.speed+v.acceleration*dt);
@@ -105,10 +113,12 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     v.pitch=std::clamp(v.pitch+v.pitchVelocity*dt,-3.,3.);
     v.distance+=(oldSpeed+v.speed)*.5*dt;
     if(v.timeTo100<0 && oldSpeed<100./3.6 && v.speed>=100./3.6)v.timeTo100=v.elapsed;
-    const double targetLateral=v.steering*LateralSpeedLimit(v.speed);
-    const double availableG=std::sqrt(std::max(.12,c.grip*c.grip-std::pow(std::clamp(v.acceleration/9.81,-c.grip,c.grip),2)));
-    const double maxLateralAcceleration=SteeringResponsiveness*availableG*9.81;
-    const double response=SteeringResponsiveness*(std::abs(in.steer)<.01?22./(1+v.speed/100.):std::max(5.,c.steerResponse*1.35/(1+v.speed/75.)));
+    const double targetLateral=v.steering*LateralSpeedLimit(v.speed)*(1.+.12*(1.-v.throttle)*(1.-v.brake)+.28*v.brake);
+    const double physicalG=std::sqrt(std::max(.12,c.grip*c.grip-std::pow(std::clamp(v.acceleration/9.81,-c.grip,c.grip),2)));
+    // Preserve evasive steering under braking rather than exhausting the lateral budget.
+    const double availableG=std::max(physicalG,c.grip*.85*std::clamp((assist-1.)/.30,0.,1.));
+    const double maxLateralAcceleration=SteeringResponsiveness*assist*availableG*9.81;
+    const double response=SteeringResponsiveness*(std::abs(in.steer)<.01?22./(1+v.speed/100.):assist*std::max(5.,c.steerResponse*1.35/(1+v.speed/75.)));
     const double desiredAcceleration=(targetLateral-v.lateralSpeed)*response;
     v.lateralSpeed+=std::clamp(desiredAcceleration,-maxLateralAcceleration,maxLateralAcceleration)*dt;
     if(v.speed<.1)v.lateralSpeed=0;

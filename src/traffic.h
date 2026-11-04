@@ -1,4 +1,6 @@
 #pragma once
+#include "vehicle.h"
+#include "traffic_colours.h"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -14,6 +16,15 @@ struct TrafficCar {
  int id=0,type=0,lane=0,targetLane=0,paint=0;double station=0,lateral=0,speed=0,cruise=0,distance=0,lateralSpeed=0;
  double decision=0,signal=0,change=-1;bool braking=false;int indicator=0;
 };
+// Predict entry into the common visibility corridor, independent of screen width.
+// Continue the marker during the sprite's initial fade-in, then fade it out.
+inline double TrafficEntryWarning(const TrafficCar &car,const TrafficPlayer &player,double visibleAhead){
+ double relative=car.station-player.station,closing=player.speed-car.speed;
+ if(closing<=.5||relative<=visibleAhead-5.)return 0.;
+ double time=(relative-visibleAhead)/closing;
+ if(time>=3.)return 0.;
+ return std::clamp((3.-time)/.6,0.,1.)*std::clamp((relative-(visibleAhead-5.))/5.,0.,1.);
+}
 class TrafficWorld {
  struct Gap {double front=1e6,rear=1e6,frontSpeed=HighwaySpeedLimit,rearSpeed=0;};
  std::uint32_t rng=12345;int nextId=1;double spawnClock=0,contactCooldown=0;
@@ -35,7 +46,7 @@ class TrafficWorld {
   if(std::abs(station-player.station)<35)return false;
   for(const auto &a:cars)if(Occupies(a,lane)&&std::abs(a.station-station)<42)return false;
   double choice=Random();int type=choice<.32?0:choice<.56?1:choice<.76?2:choice<.93?3:4;
-  TrafficCar a;a.id=nextId++;a.type=type;a.lane=a.targetLane=lane;a.station=station;a.lateral=LaneCentres[lane];a.paint=(int)(Random()*8);
+  TrafficCar a;a.id=nextId++;a.type=type;a.lane=a.targetLane=lane;a.station=station;a.lateral=LaneCentres[lane];a.paint=ChooseTrafficPaint(type,Random());
   double kmh=Random()<.18?72+Random()*16:90+Random()*10;
   if(type>=3)kmh=std::min(kmh,84+Random()*12);
   a.speed=a.cruise=kmh/3.6;a.decision=.3+Random()*3;cars.push_back(a);return true;

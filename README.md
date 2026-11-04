@@ -379,3 +379,34 @@ Traffic wheel phases are checked to leave body pixels stationary outside the fou
 wheel regions. Reviewed axle pivots and tyre aspect correction prevent orbiting
 parts and wheel-hop. Traffic shadows use front/back depth rays to each contributing
 streetlight, replacing the earlier fixed screen-space ellipses.
+
+## Evasive steering and traffic readability
+
+Lift-off raises steering response by up to 30%; braking raises it by up to 80%.
+Both blend through the pedal state. Maximum lateral movement gets smaller 12% /
+28% assists, with braking retaining a lateral acceleration floor for evasive moves.
+Steering release stays quick. This is deliberate game assistance, not a full
+combined-grip vehicle simulation.
+
+The stock brakeG coefficients are preserved; GameBrakeBoost applies 20% more
+brake force and faster pedal take-up. Repeatable 100-0 km/h probes (third gear,
+3000 initial rpm, immediate pedal command, no driver reaction delay) change from
+S13 43.18m / EK9 41.03m / Testarossa 42.73m to 35.99m / 34.19m / 35.55m.
+Baseline 70-0 mph probes were 54.39m (S13) and 53.88m (Testarossa). These were
+already shorter than period Car and Driver results: 195ft/59.44m for a related
+1990 240SX, and 210ft/64.01m for a 1985 Testarossa. Different tyres, variants and
+test conditions preclude exact equivalence. No trustworthy measured EK9 stopping
+distance was established. The new brakes are intentionally stronger for gameplay.
+Sources:
+https://www.caranddriver.com/reviews/a15141963/nissan-240sx-se-archived-test-review/
+https://www.caranddriver.com/reviews/a15142218/1985-ferrari-testarossa-archived-road-test-review/
+
+Amber exclamation triangles mark approaching traffic up to three seconds before
+its centre enters the common visibility corridor. One marker per lane fades as
+the sprite becomes visible. Receding traffic produces no entry alert. Markers
+are drawn sharply above the scene, pause with simulation time and use the same
+world lookahead for every aspect ratio.
+
+Traffic factory palettes and estimated period-based spawn distributions are
+recorded in assets/traffic/colours.md. Model-specific sales-by-colour data is not
+claimed. Bus road-tyre faces use charcoal rubber; original silver hubs remain.
