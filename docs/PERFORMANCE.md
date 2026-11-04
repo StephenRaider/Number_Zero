@@ -255,9 +255,10 @@ floored dry-road launch is about 5.08 seconds to 60 mph. This modest change is
 kept rather than adding artificial power to recover an exact earlier target.
 A dedicated test keeps it near five seconds and consistent at 120/240 Hz.
 
-Current Ferrari comparison: full throttle with TCS off about 6.35 seconds,
-optional TCS about 5.35 seconds, and a scripted driver feathering observed slip
-about 5.17 seconds. These are prototype measurements, not manufacturer claims.
+Current Ferrari comparison: full throttle unassisted about 6.35 seconds,
+game pedal assist about 5.84 seconds, and a scripted driver feathering observed
+slip about 5.17 seconds. The stock Ferrari has no factory TCS; the previous
+5.35-second universal controller was superseded by the separate assist system. These are prototype measurements, not manufacturer claims.
 Its longitudinal tyre-grip scale is 0.94, an explicit period-road-tyre assumption.
 The other cars' full-throttle times can also change with slip/shift timing; old
 ideal-clamp results should not be used to claim current calibration accuracy.

@@ -28,24 +28,55 @@ existing assisted launch RPM still approximates controlled clutch slip. Engine
 RPM tracks driven-wheel motion, so wheelspin creates a real RPM flare; it is
 not just a wheel animation effect. Coasting/braking let wheel speed recover.
 
-## TCS and driver control
+## Game assist and factory electronics are independent
 
-CarSpec.factoryTcs defines a future car's default; the present five configurations
-use false. Each player car also has an independently saved optional assist flag.
-This lets the prototype demonstrate both behaviors without inventing factory
-hardware for an old model. In particular, ATTESA-style AWD traction allocation
-is distinct from torque-cut TCS (see [Haltech's ATTESA description](https://support.haltech.com/portal/en/kb/articles/nissan-attesa-control)).
+Vehicle.tractionAssist is the universal game aid. It limits the driver's pedal
+using imperfect slip feedback (target starts reacting above 7.5%, 35/s cut,
+3/s recovery, minimum 18% pedal). It has no tyre force budget or brake control.
+It permits transient slip and is deliberately less efficient than a well-tuned
+factory controller or skilled pedal control. Garage TRACTION ASSIST or pause
+[3] toggles it. Shift+W is a separate manual 65% pedal request.
 
-With assist on, drive torque is reduced before/when slip exceeds the useful
-region. No grip or horsepower is added. tcsCut feeds the engine audio load and
-tcsActive feeds the HUD. Y toggles it while driving or in the garage; the garage
-button exposes the same state. Shift+W requests 65% throttle, allowing a keyboard
-player to launch gently. A skilled driver can outperform conservative TCS.
+Vehicle.tcsEnabled requests the installed factory electronics package.
+CarSpec.factoryTcs/factoryEsc gate it in physics, UI and save loading; a saved
+true flag or a command-line request cannot give an unequipped car the hardware.
+Only equipped cars expose the garage toggle and Y driving hotkey. TCS changes
+delivered axle torque after the pedal/engine calculation, leaving pedal state
+independent. ESC additionally reacts to path/steering disagreement and powered
+slip with a torque demand, corrective lateral damping and modest deceleration.
 
-The rival predicts and drives the same physics and uses observed slip to feather
-its pedal. Its torque cut is a driver input, not hidden TCS or a power advantage.
-It may abort a still-in-progress merge if a newly visible blocker makes the
-current path unsafe; all alternatives still pass the swept collision checks.
+The current highway model has no independent yaw or four brake actuators, so
+ESC is explicitly a stability approximation. Actual systems compare yaw and
+steering and brake individual wheels; see [Bosch ESP](https://www.bosch-mobility.com/en/solutions/braking-systems/electronic-stability-program/).
+Do not claim this implementation reproduces those actuators or an OEM ECU.
+
+ElectronicsTune selects explicit Road/Sport calibration templates. Road aims at
+4.5% slip with slower torque recovery and earlier stability intervention; Sport
+aims at 8.5%, responds and recovers faster and tolerates more lateral disturbance.
+Sport makes better progress in the launch test without granting more tyre grip
+or power. These are game calibration assumptions, not measured OEM constants.
+Assign by exact model/year/trim and documented system character; do not infer
+capability purely from price or a 'sports car' label. Future specific cars may
+need different profiles. TCS-only cars never receive ESC authority.
+
+### Current selected trims
+
+All five current configurations are treated as not fitted: S13 K's SR20DET,
+EK9 Type R, original F113 Testarossa, early JDM A80 SZ 5MT, base BNR34 GT-R.
+Do not confuse the original Ferrari with the new 849 Testarossa or transfer
+later/turbo trim equipment to the base SZ. The equipment audit references:
+
+- [Honda 1997 EK9 equipment](https://www.honda.co.jp/factbook/auto/CIVIC/19970822/cv97-012.html): helical mechanical LSD and ABS, no VSA/TCS listed.
+- [Toyota 1993 JDM release](https://global.toyota/en/detail/7868203): distinguishes SZ from turbo electronic-throttle models. [Toyota UK turbo pack](https://media.toyota.co.uk/wp-content/uploads/sites/5/pdf/Supra-Gen4-UK-launch-pack-1993.pdf) describes TRC using rear brakes, sub-throttle and ignition; that turbo equipment must not be assigned to SZ.
+- [Haltech ATTESA description](https://support.haltech.com/portal/en/kb/articles/nissan-attesa-control): front axle clutch torque allocation, distinct from a torque-cut/stability switch. Base R34 keeps the current AWD traction approximation; no ATTESA-disable option is added.
+
+No road/sport factory electronics are fabricated for the existing roster to
+showcase the implementation. Synthetic equipped specifications in tests exercise
+the controllers; these do not appear as selectable vehicles or hidden upgrades.
+
+The rival predicts and drives the same physics and feathers its own pedal using
+observed slip. Its driver input is separate from either player assistance flag.
+Its local swept collision checks and abortable merges remain unchanged.
 
 ## Rendering and smoke
 
@@ -64,13 +95,14 @@ brief slip noise, standing with no input or a clean TCS-assisted launch.
 
 ## Saves and telemetry
 
-NZ_GARAGE_5 adds a TCS flag after each car's limiter flag. Versions 1-4 still
-load their paints, decals, gearbox and limiter settings, with TCS defaults.
-Native save checks exercise on/off flags on different cars and old-save migration.
+NZ_GARAGE_6 stores separate per-car game-assist and factory-package flags after
+the limiter flag. Versions 1-4 retain cosmetics/gearbox/limiter with defaults;
+version 5's universal aid migrates to the game-assist field. Factory requests
+are sanitized against the exact car's equipment. Paint and decals are unchanged.
 
-Race CSV logs additionally include player car ID, player/rival slip and TCS
-states, player clutch/tread speed and player throttle. Thus a wheelspin loss or
-TCS intervention can be distinguished from deliberate opponent hesitation.
+Race CSV logs retain slip, factory requests, clutch, tread speed and pedal;
+append game-assist request/intervention and factory TCS/ESC intervention flags.
+Thus deliberate pedal reduction can be distinguished from wheel-torque cuts.
 
 ## Verification
 
@@ -78,14 +110,14 @@ TCS intervention can be distinguished from deliberate opponent hesitation.
 g++ -std=c++17 -O2 -Wall -Wextra -Isrc tests/traction_tests.cpp -o build/traction_tests.exe
 ./build/traction_tests.exe
 ./build/NumberZero.exe --wheelspin-smoke-test --testarossa
-./build/NumberZero.exe --wheelspin-smoke-test --testarossa --tcs
+./build/NumberZero.exe --wheelspin-smoke-test --testarossa --traction-assist
 ./build/NumberZero.exe --decal-smoke-test --testarossa
 ```
 
-The physics suite checks excess torque causing slip/RPM flare, falling grip,
-TCS recovery and its traction benefit, driver feathering, AWD advantage,
-timestep stability, coasting/braking recovery, smoke axle positions, lifetime,
-bounds, pause and reset. Native checks assert independent axle animation and
-smoke emission with TCS off, and intervention with bounded slip/no sustained
-smoke with it on. Existing braking, limiter, gearbox, sound and full-distance
-race tests remain required. Captures/logs stay in ignored build/qa.
+The physics suite checks hardware gating even with a forged true request,
+independent imperfect game assist, equipped synthetic road/sport controllers,
+TCS-only versus ESC authority, plus slip/RPM/animation, smoke and timestep checks.
+Native checks cover assist launches, axle animation, current unequipped garage UI,
+v5-to-v6 migration, cosmetics preservation and independent v6 flags. Existing
+braking, limiter, gearbox, sound and full-distance race tests remain required.
+Captures/logs stay in ignored build/qa.

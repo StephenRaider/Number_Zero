@@ -118,9 +118,9 @@ struct RaceSession {
  Vehicle opponent;RivalDriver driver;RacePhase phase=RacePhase::Countdown;RaceWinner winner=RaceWinner::None;
  double countdown=3,elapsed=0,startLine=0,opponentContactCooldown=0,playerFinish=-1,opponentFinish=-1;int opponentContacts=0;Input opponentInput{};
  static TrafficPlayer Observer(const Vehicle &v){return {v.distance,v.lateral,v.speed,4.485,1.976};}
- static void Rolling(Vehicle &v,const CarSpec &spec,double lateral,bool automatic){v=Vehicle{};v.speed=RollingSpeed;v.lateral=lateral;v.gear=1;v.automatic=automatic;v.tcsEnabled=spec.factoryTcs;v.rpm=v.speed/(2*Pi*spec.radius)*60*spec.gears[1]*spec.finalDrive;}
- void Start(Vehicle &player,const CarSpec &spec,bool automatic,bool deleted,bool tcs=false){
-  Rolling(player,spec,-1.75,automatic);player.speedLimiterDeleted=deleted;player.tcsEnabled=tcs;Rolling(opponent,Cars[2],1.75,true);driver.Reset(2);
+ static void Rolling(Vehicle &v,const CarSpec &spec,double lateral,bool automatic){v=Vehicle{};v.speed=RollingSpeed;v.lateral=lateral;v.gear=1;v.automatic=automatic;v.tcsEnabled=HasFactoryElectronics(spec);v.rpm=v.speed/(2*Pi*spec.radius)*60*spec.gears[1]*spec.finalDrive;}
+ void Start(Vehicle &player,const CarSpec &spec,bool automatic,bool deleted,bool tcs=false,bool assist=false){
+  Rolling(player,spec,-1.75,automatic);player.speedLimiterDeleted=deleted;player.tcsEnabled=tcs&&HasFactoryElectronics(spec);player.tractionAssist=assist;Rolling(opponent,Cars[2],1.75,true);driver.Reset(2);
   phase=RacePhase::Countdown;winner=RaceWinner::None;countdown=3;elapsed=startLine=opponentContactCooldown=0;playerFinish=opponentFinish=-1;opponentContacts=0;opponentInput={};
  }
  double PlayerProgress(const Vehicle &v)const{return phase==RacePhase::Countdown?0.:std::clamp(v.distance-startLine,0.,RaceDistance);}

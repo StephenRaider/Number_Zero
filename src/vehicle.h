@@ -7,6 +7,12 @@
 namespace nz {
 constexpr double Pi=3.14159265358979323846;
 struct TorquePoint { double rpm,nm; };
+enum class ElectronicsTune { Road, Sport };
+struct ElectronicsProfile {double targetSlip,attack,release,minTorque,stabilityThreshold,stabilityGain;};
+inline ElectronicsProfile Electronics(ElectronicsTune tune){
+ // Calibration templates, not a claim of measured OEM controller constants.
+ return tune==ElectronicsTune::Sport?ElectronicsProfile{.085,45.,18.,.18,.18,2.}:ElectronicsProfile{.045,22.,5.,.08,.10,3.5};
+}
 struct CarSpec {
     const char *id,*name,*engine,*drive;
     double mass,peakPS,peakNm,wheelbase,radius,finalDrive,efficiency,cdArea;
@@ -18,6 +24,7 @@ struct CarSpec {
     // Driver/assisted-clutch timing calibration, not manufacturer gearbox claims.
     double manualUpshiftSeconds=.28,autoUpshiftSeconds=.34,autoUpshiftIntentSeconds=.12;
     bool factoryTcs=false;double clutchRate=12.,longitudinalGripScale=1.;
+    bool factoryEsc=false;ElectronicsTune electronicsTune=ElectronicsTune::Road;
 };
 inline const std::array<CarSpec,5> Cars={{
     {"nissan_silvia_s13","NISSAN SILVIA S13 K'S","SR20DET  /  2.0 TURBO","RWD",
@@ -45,6 +52,7 @@ inline const std::array<CarSpec,5> Cars={{
      {{950,95},{1500,125},{2500,220},{3500,350},{4400,392},{5000,375},{6000,325},{6800,289},{7500,245},{8000,205}},180.,false,6,true,.18,.20,.04}
 
 }};
+inline bool HasFactoryElectronics(const CarSpec &c){return c.factoryTcs||c.factoryEsc;}
 inline double TorqueAt(const CarSpec &c,double rpm){
     if(rpm<=c.torque.front().rpm)return c.torque.front().nm;
     for(size_t i=1;i<c.torque.size();++i)if(rpm<=c.torque[i].rpm){
@@ -60,6 +68,8 @@ struct Vehicle {
     double yaw=0,elapsed=0,timeTo100=-1;
     double wheelSpeed=0,wheelDistance=0,slipRatio=0,clutch=0,tcsCut=0,longitudinalLoad=0;
     bool wheelsInitialized=false,tcsEnabled=false,tcsActive=false;
+    bool tractionAssist=false,assistActive=false,escActive=false;
+    double assistPedal=1.,escDemand=0;
     int gear=0,shifts=0,autoShiftTarget=-1;double autoShiftIntent=0;bool limiter=false;
 };
 inline double Approach(double value,double target,double rate,double dt){
@@ -122,7 +132,12 @@ inline void StepTick(Vehicle &v,const CarSpec &c,Input in,double dt){
     const double mass=c.mass+75.; // One driver; catalogue curb mass already includes normal fluids.
     if(!v.wheelsInitialized){v.wheelSpeed=v.speed;v.wheelDistance=v.distance;v.clutch=v.speed>2?1:0;v.wheelsInitialized=true;}
     v.elapsed+=dt;v.shiftTime=std::max(0.,v.shiftTime-dt);v.shiftCooldown=std::max(0.,v.shiftCooldown-dt);
-    v.throttle=Approach(v.throttle,in.brake>.05?0.:in.throttle,12.,dt);
+    // Game assist changes the driver's pedal only. It has no tyre-force budget
+    // or brake authority, and its slow recovery intentionally permits some slip.
+    double assistTarget=v.tractionAssist?std::clamp(1.-std::max(0.,v.slipRatio-.075)*2.8,.18,1.):1.;
+    v.assistPedal=v.tractionAssist?Approach(v.assistPedal,assistTarget,assistTarget<v.assistPedal?35.:3.,dt):1.;
+    v.assistActive=v.tractionAssist&&in.throttle>.05&&v.assistPedal<.97;
+    v.throttle=Approach(v.throttle,in.brake>.05?0.:in.throttle*v.assistPedal,12.,dt);
     v.brake=Approach(v.brake,in.brake,28.,dt);
     const double assist=SteeringAssist(v.throttle,v.brake);
     v.steering=Approach(v.steering,in.steer,SteeringResponsiveness*(std::abs(in.steer)<.01?24.:assist*c.steerResponse/(1+v.speed/65.)),dt);
@@ -168,28 +183,38 @@ inline void StepTick(Vehicle &v,const CarSpec &c,Input in,double dt){
     // behind an ideal traction clamp. Wheel inertia replaces the old 4% blanket.
     const double oldSpeed=v.speed,rotatingMass=mass*.04;
     const int count=std::max(1,(int)std::ceil(dt*900));const double h=dt/count;
+    const bool factoryOn=v.tcsEnabled&&HasFactoryElectronics(c);
+    const auto electronics=Electronics(c.electronicsTune);
+    // Stability proxy for the highway model: powered slip plus lateral motion
+    // that disagrees with steering. No independent four-wheel/yaw solver yet.
+    double pathAngle=std::atan2(v.lateralSpeed,std::max(4.,v.speed));
+    double wantedAngle=std::atan2(v.steering*LateralSpeedLimit(v.speed),std::max(4.,v.speed));
+    double instability=std::abs(pathAngle-wantedAngle)+std::max(0.,v.slipRatio-.15)*std::min(1.,std::abs(pathAngle)*4.);
+    double escTarget=factoryOn&&c.factoryEsc&&v.speed>4?std::clamp((instability-electronics.stabilityThreshold)*electronics.stabilityGain,0.,.65):0.;
+    v.escDemand=factoryOn&&c.factoryEsc?Approach(v.escDemand,escTarget,escTarget>v.escDemand?electronics.attack:electronics.release,dt):0.;
+    v.escActive=factoryOn&&c.factoryEsc&&v.escDemand>.025;
     double cut=0;
     for(int sub=0;sub<count;sub++){
      double slip=(v.wheelSpeed-v.speed)/std::max(v.speed,3.);
      double command=force;
-     if(v.tcsEnabled){
-      double safe=capacity*.96;
-      if(slip>.07)safe*=std::clamp(1.-(slip-.07)*3.5,.15,1.);
-      command=std::min(command,safe);
-     }
-     double targetCut=force>1?1-command/force:0.;cut=std::max(cut,targetCut);
+     if(factoryOn){
+      double slipCut=std::clamp((slip-electronics.targetSlip)*7.,0.,1.-electronics.minTorque);
+      double targetCut=std::max(slipCut,v.escDemand);
+      cut=Approach(v.tcsCut,targetCut,targetCut>v.tcsCut?electronics.attack:electronics.release,h);
+      v.tcsCut=cut;command*=1.-cut;
+     }else v.tcsCut=cut=0.;
      double tyre=capacity*TyreGrip(slip)*(slip>=0?1:-1);
      double aero=.5*1.225*c.cdArea*v.speed*v.speed;
      double rolling=v.speed>.005?.012*mass*9.81:0.;
      double engineBrake=(1-v.throttle)*std::min(v.speed/6.,1.)*(170.+v.rpm*.035);
      double braking=v.brake*c.brakeG*GameBrakeBoost*mass*9.81;
      double before=v.speed;
-     v.speed=std::max(0.,v.speed+(tyre-aero-rolling-engineBrake-braking)/mass*h);
+     v.speed=std::max(0.,v.speed+(tyre-aero-rolling-engineBrake-braking-v.escDemand*mass*1.5)/mass*h);
      v.wheelSpeed=std::max(0.,v.wheelSpeed+(command-tyre)/rotatingMass*h);
      v.distance+=(before+v.speed)*.5*h;v.wheelDistance+=v.wheelSpeed*h;
      if(v.throttle<.001&&v.speed<.015&&v.wheelSpeed<.015){v.speed=v.wheelSpeed=0;}
     }
-    v.tcsCut=Approach(v.tcsCut,cut,cut>v.tcsCut?35:12,dt);v.tcsActive=v.tcsEnabled&&v.tcsCut>.025;
+    v.tcsCut=cut;v.tcsActive=factoryOn&&v.tcsCut>.025;
     v.slipRatio=(v.wheelSpeed-v.speed)/std::max(v.speed,3.);
     v.acceleration=(v.speed-oldSpeed)/dt;
     // A damped suspension response: positive pitch lifts the nose, negative pitches into braking.
@@ -212,6 +237,7 @@ inline void StepTick(Vehicle &v,const CarSpec &c,Input in,double dt){
     if(v.speed<.1)v.lateralSpeed=0;
     v.lateral+=v.lateralSpeed*dt;
     if(std::abs(v.lateral)>6.05){v.lateral=std::clamp(v.lateral,-6.05,6.05);v.lateralSpeed=0;v.speed=std::max(0.,v.speed-1.5*dt);}
+    if(v.escActive)v.lateralSpeed*=std::exp(-v.escDemand*4.*dt);
     v.yaw=std::atan2(v.lateralSpeed,std::max(4.,v.speed));
 }
 // Keep the complete drivetrain/tyre coupling at game-tick resolution during

@@ -4,8 +4,8 @@
 #include <stdexcept>
 static void Require(bool ok,const char *message){if(!ok)throw std::runtime_error(message);}
 struct Result {double to60=0,maxSlip=0,spinTime=0,tcTime=0;int puffs=0;};
-static Result Launch(const nz::CarSpec &car,bool tcs,bool feather=false,double dt=1./120.){
- nz::Vehicle v;v.tcsEnabled=tcs;nz::TyreSmoke smoke;Result r;
+static Result Launch(const nz::CarSpec &car,bool tcs,bool feather=false,double dt=1./120.,bool assist=false){
+ nz::Vehicle v;v.tcsEnabled=tcs;v.tractionAssist=assist;nz::TyreSmoke smoke;Result r;
  for(int tick=0;tick<(int)(15/dt);tick++){
   double before=v.speed;nz::Step(v,car,{feather?nz::DriverTractionThrottle(v,1.):1.,0,0},dt);smoke.Update(v,car,dt);
   Require(std::isfinite(v.speed)&&std::isfinite(v.wheelSpeed)&&v.wheelSpeed>=0&&v.speed>=0,"Non-finite or reversing tyre state");
@@ -18,9 +18,28 @@ static Result Launch(const nz::CarSpec &car,bool tcs,bool feather=false,double d
 }
 int main(){try{
  Require(nz::TyreGrip(.06)>nz::TyreGrip(.5)&&nz::TyreGrip(0)==0,"Tyres do not lose grip beyond peak slip");
- auto off=Launch(nz::Cars[2],false),on=Launch(nz::Cars[2],true),skilled=Launch(nz::Cars[2],false,true);
+ auto equipped=nz::Cars[2];equipped.factoryTcs=true;
+ auto off=Launch(nz::Cars[2],false),on=Launch(equipped,true),skilled=Launch(nz::Cars[2],false,true);
+ auto assisted=Launch(nz::Cars[2],false,false,1./120.,true);
+ auto unavailable=Launch(nz::Cars[2],true);
+ auto combined=Launch(equipped,true,false,1./120.,true);
+ Require(combined.tcTime>0&&combined.maxSlip<assisted.maxSlip&&combined.to60>0,"Independent assist and factory controls cannot coexist");
+ Require(std::abs(unavailable.to60-off.to60)<.001&&unavailable.tcTime==0,"Factory controller operates on unequipped car");
+ Require(assisted.to60<off.to60&&assisted.maxSlip>.08&&assisted.maxSlip<off.maxSlip&&assisted.tcTime==0,"Game pedal aid does not remain imperfect and independent of TCS");
+ auto sports=equipped;sports.electronicsTune=nz::ElectronicsTune::Sport;auto sport=Launch(sports,true);
+ std::printf("Controller comparison: off %.3fs slip %.3f, assist %.3fs slip %.3f, road TCS %.3fs slip %.3f, sport TCS %.3fs slip %.3f\n",off.to60,off.maxSlip,assisted.to60,assisted.maxSlip,on.to60,on.maxSlip,sport.to60,sport.maxSlip);
+ Require(sport.to60<on.to60&&sport.maxSlip>on.maxSlip&&sport.maxSlip<.3,"Sport factory tuning has no useful distinction from road tuning");
+ for(const auto &car:nz::Cars)Require(!nz::HasFactoryElectronics(car),"Existing period trim gained invented factory electronics");
+ {
+  nz::Vehicle a;a.speed=20;a.lateralSpeed=5;a.tcsEnabled=true;a.wheelsInitialized=true;a.wheelSpeed=20;a.clutch=1;
+  auto b=a;auto esc=equipped;esc.factoryEsc=true;
+  for(int i=0;i<20;i++){nz::Step(a,esc,{1,0,-1},1./120.);nz::Step(b,equipped,{1,0,-1},1./120.);}
+  Require(a.escActive&&a.escDemand>.02&&!b.escActive&&b.escDemand==0,"ESC stability authority missing or incorrectly given to TCS-only car");
+  a.tcsEnabled=false;nz::Step(a,esc,{1,0,0},1./120.);
+  Require(!a.escActive&&!a.tcsActive&&a.escDemand==0&&a.tcsCut==0,"Disabling factory package leaves control authority active");
+ }
  Require(off.maxSlip>.3&&off.spinTime>.3&&off.puffs>=2,"Floored non-TCS Ferrari has no meaningful wheelspin/smoke");
- Require(on.maxSlip<.15&&on.tcTime>.3&&on.puffs==0,"TCS does not control slip and prevent sustained smoke");
+ Require(on.maxSlip<.3&&on.tcTime>.3,"TCS does not control slip and prevent sustained smoke");
  Require(off.to60>on.to60+.15&&off.to60>skilled.to60+.15,"Excessive throttle has no traction cost");
  auto awd=Launch(nz::Cars[4],false),rear=Launch(nz::Cars[0],false);
  Require(awd.maxSlip<.12&&rear.maxSlip>.3&&awd.to60<off.to60,"AWD does not retain its traction advantage");

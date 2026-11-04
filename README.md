@@ -576,12 +576,18 @@ are smoothed. RWD, FWD and AWD use their respective driven-axle loads. Non-drive
 wheels keep rolling at road speed; only the driven axle uses the slipping frames.
 No extra car sprites were rendered.
 
-Press **Y** or use **TRACTION ASSIST** in the garage to compare TCS on/off. It
-is saved per car. Current period-car configurations start with it off; this is
-an optional game assist, not a claim that every selected trim had factory TCS.
-AWD remains separate from TCS. TCS cuts delivered torque to hold useful slip;
-it does not add grip or power. The HUD shows TC while intervening and SPIN for
-excess slip. Hold **Shift+W** for gentler throttle when launching without TCS.
+**TRACTION ASSIST** is a game pedal helper available on every car from the garage
+or **Esc > [3] Traction assist**. It feathers throttle with delayed feedback, so
+some wheelspin remains. Hold **Shift+W** for manual gentler throttle.
+
+**Factory TCS/ESC** is separate: only a car with the corresponding factory
+hardware can enable it, from its garage button or **Y** during driving. Current
+five selected period trims show **NOT FITTED**. R34 AWD stays active independently;
+it is not switchable TCS/ESC. Future fitted cars select a documented road/sport
+calibration: direct torque regulation for TCS, additional stability intervention
+for ESC. The present ESC implementation is a highway-model approximation, not
+an individual-wheel braking/yaw simulation. Both settings save per car; old
+universal-aid saves migrate to traction assist. HUD: ASSIST, TC, ESC or SPIN.
 
 Only sustained excess driven-wheel slip emits smoke: small low-opacity puffs
 at the tyre contact patches, fading in under a second. Smoke stays in world
@@ -590,6 +596,6 @@ physics and can feather its throttle as a driver rather than receiving hidden TC
 
 The previous 4.9-second R34 calibration was measured before this tyre model.
 It now measures about 5.08 s to 60 mph with TCS off; the floored Ferrari is about
-6.35 s, TCS-assisted about 5.35 s and a scripted feathered Ferrari about 5.17 s.
+6.35 s, game-assist about 5.84 s and a scripted feathered Ferrari about 5.17 s.
 Driver technique is now part of the result. See docs/TRACTION.md for scope and
 current limitations, and docs/PERFORMANCE.md for historical/current measurements.
