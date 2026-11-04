@@ -1,0 +1,24 @@
+01_tide_and_clouds|Tide And Clouds|1|01_tide_and_clouds.png
+02_diagonal_drift|Diagonal Drift|1|02_diagonal_drift.png
+03_a_breaking_waves|A Breaking Waves|1|03_a_breaking_waves.png
+03_b_flying_crane|B Flying Crane|1|03_b_flying_crane.png
+03_c_rose_vine|C Rose Vine|1|03_c_rose_vine.png
+03_f_blossom_branch|F Blossom Branch|1|03_f_blossom_branch.png
+04_red_slash_racing|Red Slash Racing|0|04_red_slash_racing.png
+05_pink_lightning_tribal|Pink Lightning Tribal|1|05_pink_lightning_tribal.png
+06_silver_hooked_tribal|Silver Hooked Tribal|1|06_silver_hooked_tribal.png
+07_competition_bolt|Competition Bolt|1|07_competition_bolt.png
+08_long_blade_tribal|Long Blade Tribal|1|08_long_blade_tribal.png
+09_flowing_flame_ribbons|Flowing Flame Ribbons|1|09_flowing_flame_ribbons.png
+10_blue_current|Blue Current|1|10_blue_current.png
+11_orange_endurance|Orange Endurance|0|11_orange_endurance.png
+12_a_track_diagonals|A Track Diagonals|1|12_a_track_diagonals.png
+12_b_honeycomb_fade|B Honeycomb Fade|1|12_b_honeycomb_fade.png
+12_c_brush_glyphs|C Brush Glyphs|1|12_c_brush_glyphs.png
+13_shattered_diagonal|Shattered Diagonal|1|13_shattered_diagonal.png
+14_mint_club_racer|Mint Club Racer|0|14_mint_club_racer.png
+15_minimal_triple_stripe|Minimal Triple Stripe|1|15_minimal_triple_stripe.png
+16_heritage_tricolour|Heritage Tricolour|0|16_heritage_tricolour.png
+17_flowing_checkerboard|Flowing Checkerboard|1|17_flowing_checkerboard.png
+18_touring_sunset|Touring Sunset|0|18_touring_sunset.png
+19_midnight_club_stickers|Midnight Club Stickers|1|19_midnight_club_stickers.png

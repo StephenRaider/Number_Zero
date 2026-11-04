@@ -59,3 +59,13 @@ repairs supported low-contrast colour speckles. Non-paint details, paint masks,
 emission masks and silhouettes are preserved byte-for-byte. Wheel maps are
 unchanged. Runtime shading now happens at native resolution before area-filtered
 minification, so smaller cars do not inherit irregular dropped pixel rows.
+
+
+## Side decals
+
+`decals/catalog.txt` lists 24 runtime vector-authored decal sets (the rejected
+dragon designs are excluded). Three independently transformed layers per car
+use shared physical forward/height/width/angle coordinates. CPU composition
+samples transparent ink in premultiplied form and blends it into body albedo;
+normal/depth/finish/emission/coverage bytes remain unchanged. See the game README
+for editor controls and the rear-body symmetry assumption.

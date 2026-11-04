@@ -23,6 +23,7 @@ uniform float indicatorRight;
 uniform float headlights;
 uniform float taillights;
 uniform float braking;
+uniform float studioLight;
 float unpack16(float high,float low){return (round(high*255.0)*256.0+round(low*255.0))/65535.0;}
 float band(float x){float n=x*10.0,b=floor(n),t=smoothstep(.20,.80,fract(n));return (b+t)/10.0;}
 vec3 emission(vec2 uv){
@@ -90,6 +91,14 @@ void main(){
  float ambient=mix(hemi,.30,glass);
  vec3 environment=glass*vec3(.012,.018,.028)*(.04+.96*fresnel);
  vec3 lit=pow(base.rgb,vec3(2.2))*(vec3(ambient,.97*ambient,1.13*ambient)+diffuse)+specular+environment;
+ if(studioLight>.5){
+  // Fixed large softboxes: broad diffuse fill with long narrow bar reflections.
+  // Directional analytic strips have no moving point-source hotspots.
+  float fill=.62+.23*max(0.,normal.y)+.10*abs(normal.x);
+  float bars=exp(-pow((normal.x-.42)/.055,2.))*smoothstep(-.1,.4,normal.y)
+            +.65*exp(-pow((normal.x+.50)/.065,2.))*smoothstep(-.2,.3,normal.y);
+  lit=pow(base.rgb,vec3(2.2))*fill+vec3(.86,.93,1.)*bars*mix(.08,.60,max(paint,glass));
+ }
  lit+=emission(fragTexCoord)*1.1;
  finalColor=vec4(pow(max(lit,vec3(0)),vec3(1./2.2)),1.0);
 }

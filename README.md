@@ -264,3 +264,28 @@ with speed. The car and instruments are composited sharply. Separate prop
 colour/depth layers preserve lamp/gantry occlusion, including blurred foreground
 props. `--effects-smoke-test` captures the four toggle combinations on a frozen
 frame, plus the amber red-zone gauge, and checks the compositor on the GPU.
+
+
+## Garage decals
+
+Open **DECALS / GRAPHICS** in the garage. The editor uses fixed diffuse studio
+fill and softbox bar reflections instead of the orbiting point source.
+Switch **FRONT VIEW / REAR VIEW**, choose one of three decal layers, then browse
+24 vector-authored designs with the arrows or mouse wheel over the preview.
+Drag on the car or use arrow keys/buttons to move the decal on its side plane;
+adjust size, angle and single-ink colour. Racing designs retain their colours.
+REMOVE clears the selected layer, RESET restores its transform, DONE / SAVE
+returns to the garage. Esc also returns. Each car keeps its own three layers.
+Settings persist in local, ignored `build/customisation.cfg`.
+
+Decals are clipped to side-facing paint and composed into albedo before lighting.
+Placement is in metres on the vehicle side, recovered from the existing depth
+maps, with inverse yaw/roll/pitch transforms for all 30 body views per car.
+The mirrored rear sprites represent the right rear quarter using the existing
+body symmetry assumption; unique left/right geometry would need dedicated views.
+No bonnet/roof placement or arbitrary surface wrapping is implemented.
+
+`--decal-smoke-test` verifies all 30 poses, protected geometry/lamp/silhouette
+maps, save/reload and captures front/rear editor and driving frames. Add
+`--civic` for the EK9. Compile/run `tests/decal_tests.cpp` with the same standalone
+compiler flags as the other unit checks to verify cross-view projection maths.
