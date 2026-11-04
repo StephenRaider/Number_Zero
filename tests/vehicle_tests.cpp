@@ -114,6 +114,18 @@ int main(){try{
   for(int i=0;i<240;i++){nz::Step(awd,gtr,{1,0,0},1./120.);nz::Step(rwd,rearOnly,{1,0,0},1./120.);}
   Require(awd.speed>rwd.speed,"R34 AWD does not use both axles for launch traction");
  }
+ {
+  // 60mph is 96.56064km/h. Check the requested target explicitly rather than
+  // accidentally calibrating the separate 0-100km/h display timer.
+  double measured[2]={};int index=0;
+  for(double dt:{1./120.,1./240.}){
+   nz::Vehicle v;const auto &car=nz::Cars[4];double time=0;
+   while(v.speed<60*.44704&&time<10){double before=v.speed;nz::Step(v,car,{1,0,0},dt);if(v.speed>=60*.44704)measured[index]=time+dt*(60*.44704-before)/(v.speed-before);time+=dt;}
+   Require(measured[index]>4.85&&measured[index]<4.96,"R34 misses its approximately 4.9s 0-60mph target");++index;
+  }
+  Require(std::abs(measured[0]-measured[1])<.04,"R34 launch calibration depends too strongly on timestep");
+  std::printf("PASS R34 calibrated 0-60mph: %.3fs (120Hz), %.3fs (240Hz)\n",measured[0],measured[1]);
+ }
  for(const auto &car:nz::Cars){
   // Request power while still well above the former 2600rpm downshift threshold.
   nz::Vehicle kick;kick.gear=4;kick.throttle=1;kick.rpm=3500;
@@ -131,7 +143,7 @@ int main(){try{
   Require(cruise.gear==4,"Lift-off needlessly triggers power-band kickdown");
   nz::Vehicle hand;hand.automatic=false;hand.gear=4;hand.speed=fixedSpeed;
   Require(nz::Shift(hand,car,-1)&&hand.gear==3&&hand.shiftTime<.30,"Manual downshift loses its timing advantage");
-  hand.shiftTime=hand.shiftCooldown=0;Require(nz::Shift(hand,car,1)&&hand.shiftTime<.34,"Manual upshift loses its timing advantage");
+  hand.shiftTime=hand.shiftCooldown=0;Require(nz::Shift(hand,car,1)&&hand.shiftTime<car.autoUpshiftSeconds,"Manual upshift loses its timing advantage");
  }
  for(const auto &car:nz::Cars){
   nz::Vehicle manual;manual.automatic=false;

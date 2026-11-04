@@ -15,6 +15,8 @@ struct CarSpec {
     std::array<double,6> gears;
     std::vector<TorquePoint> torque;
     double speedLimitKmh=180.;bool popupHeadlights=false;int gearCount=5;bool allWheelDrive=false;
+    // Driver/assisted-clutch timing calibration, not manufacturer gearbox claims.
+    double manualUpshiftSeconds=.28,autoUpshiftSeconds=.34,autoUpshiftIntentSeconds=.12;
 };
 inline const std::array<CarSpec,5> Cars={{
     {"nissan_silvia_s13","NISSAN SILVIA S13 K'S","SR20DET  /  2.0 TURBO","RWD",
@@ -37,9 +39,9 @@ inline const std::array<CarSpec,5> Cars={{
      {{750,110},{1500,185},{2500,225},{3500,255},{4500,278},{4800,284.4},{5500,275},{6000,263.4},{6500,241},{6800,200}}}
  ,
     {"nissan_skyline_r34_gtr","NISSAN SKYLINE GT-R R34","RB26DETT  /  2.6 TWIN TURBO","AWD",
-     1540,280,392,2.665,.3266,3.545,.83,.70,950,3800,7800,8000,.56,1.02,.98,9.3,false,true,
+     1540,280,392,2.665,.3266,3.545,.83,.70,950,4400,7800,8000,.56,1.02,.98,9.3,false,true,
      {3.827,2.360,1.685,1.312,1.000,.793},
-     {{950,95},{1500,125},{2500,220},{3500,350},{4400,392},{5000,375},{6000,325},{6800,289},{7500,245},{8000,205}},180.,false,6,true}
+     {{950,95},{1500,125},{2500,220},{3500,350},{4400,392},{5000,375},{6000,325},{6800,289},{7500,245},{8000,205}},180.,false,6,true,.18,.20,.04}
 
 }};
 inline double TorqueAt(const CarSpec &c,double rpm){
@@ -66,7 +68,7 @@ inline bool Shift(Vehicle &v,const CarSpec &c,int direction){
     if(next<0||next>=c.gearCount)return false;
     double targetRpm=v.speed/(2*Pi*c.radius)*60*c.gears[next]*c.finalDrive;
     if(direction<0&&targetRpm>c.redline*.985)return false;
-    v.gear=next;++v.shifts;v.shiftTime=direction>0?.28:.22;v.shiftCooldown=.38;return true;
+    v.gear=next;++v.shifts;v.shiftTime=direction>0?c.manualUpshiftSeconds:.22;v.shiftCooldown=.38;return true;
 }
 // Automatic kickdown compares usable wheel torque, rather than waiting for a
 // universal low-RPM threshold. A conservative margin leaves manual timing useful.
@@ -119,9 +121,9 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
             v.autoShiftIntent+=dt;
             bool up=target>v.gear;
             // A skilled manual shift starts immediately and completes faster.
-            if(v.autoShiftIntent>=(up?.12:.20)){
+            if(v.autoShiftIntent>=(up?c.autoUpshiftIntentSeconds:.20)){
                 int skipped=std::max(0,std::abs(target-v.gear)-1);
-                v.gear=target;++v.shifts;v.shiftTime=up?.34:.30+.04*skipped;v.shiftCooldown=up?.58:.65;
+                v.gear=target;++v.shifts;v.shiftTime=up?c.autoUpshiftSeconds:.30+.04*skipped;v.shiftCooldown=up?.58:.65;
                 v.autoShiftTarget=-1;v.autoShiftIntent=0;
             }
         }

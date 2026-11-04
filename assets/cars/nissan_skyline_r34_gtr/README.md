@@ -14,10 +14,13 @@ under output/imports/r34-pack. Archive contents were inspected as input data;
 its scripts/patches were not executed or applied automatically. Only runtime
 maps and metadata were promoted here.
 
-All supplied manifest PNG hashes differed from the archive's actual PNG bytes.
-Import decoded the images, checked dimensions and map semantics, preserved the
-PNG bytes, and rebuilt the checksum index. Run python tests/r34_assets_test.py
-for hash, map, light, paint/glass/plate, depth, pose and rim-coverage checks.
+Current runtime maps were replaced from the user's corrected
+nissan_skyline_r34_gtr_assets (2).zip. All 576 supplied PNG checksums verified;
+the PNG bytes are preserved. The correction changes the decoded albedo in all
+30 body poses, restoring dark bumper/window/mirror trim. Other decoded maps
+(normals, depths, emission, paint/hood and rim masks) match the earlier pack.
+Run python tests/r34_assets_test.py for hashes, dimensions, light, paint/glass/
+plate, depth, pose and rim-coverage checks.
 
 The rim masks are supplied exports with explicit wheel_rim identity. Their
 raw material renders are not bundled, so the local rim-masks generator's existing
@@ -28,7 +31,6 @@ material passes. No alternative wheel designs or tint selector are introduced.
 Performance is registered in src/vehicle.h; see docs/PERFORMANCE.md for sources
 and assumptions. Sound is the RB26 procedural profile in src/engine_sound.h.
 
-Replacement requested: runtime PNGs plus meta.json/wheels.json were overwritten
-from nissan_skyline_r34_gtr_assets (1).zip. Its PNG bytes match the previously
-installed pack, so this replacement alone introduces no visual bumper/material
-change. The exact replacement archive SHA-256 is recorded in manifest.json.
+The assisted R34 launch is calibrated to about 4.9 s to 60 mph (4.94 measured).
+Launch RPM and driver/shift timing changed; stock power/torque, mass, grip,
+ratios and governor remain. See docs/PERFORMANCE.md for all-car comparisons.

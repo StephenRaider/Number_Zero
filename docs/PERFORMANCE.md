@@ -122,7 +122,7 @@ it does not simulate ATTESA's hydraulic control/torque split or HICAS. Steering
 uses the same speed-sensitive highway assists as the rest of the roster. AUTO
 is the game's shifting assist, not a claim that the stock GT-R had an automatic.
 
-Current simulation: 0-100 km/h 5.48 s, 100-0 34.9 m in 2.48 s with the shared
+Original import baseline: 0-100 km/h 5.48 s, 100-0 34.9 m in 2.48 s with the shared
 game braking boost, governed maximum about 180 km/h. In the existing 90-second
 limiter-delete test it reaches 253.6 km/h. These are simulation results, not
 factory measurements. Older cars retain their five-speed gearbox limits.
@@ -148,7 +148,8 @@ They support a close contest and a plausible R34 launch edge, not a guaranteed
 large margin or dominance in a rolling race. Do not compare 60 mph with 100 km/h
 as if they were the same endpoint.
 
-Measured using current stock power/torque/gearing, automatic shift assist,
+Pre-calibration snapshot (before the 4.9-second launch request), measured using
+stock power/torque/gearing, automatic shift assist,
 no traffic/steering, 120 Hz integration and interpolated speed crossings:
 
 | Test | Testarossa | R34 GT-R |
@@ -182,3 +183,64 @@ g++ -std=c++17 -O2 -Wall -Wextra -Isrc tools/performance_sanity.cpp -o build/per
 The governor is deleted in this diagnostic only so it can also report 0-200
 figures; it does not affect the sub-180 comparisons above. Times of zero mean a
 threshold was at/below starting speed or not reached within the diagnostic.
+
+## Roster audit and R34 launch calibration (5 November 2026)
+
+At the user's requested approximately 4.9-second **0-60 mph** target, the R34
+now measures **4.941 s at 120 Hz / 4.936 s at 240 Hz**. The distinct 0-100 km/h
+result is 5.218 s with interpolated crossings (5.23 s on the tick-based timer).
+Its reference engine output remains 280 PS / 392 Nm, mass remains 1540 kg,
+and neither grip, boost multiplier, torque curve, ratios nor drag was raised.
+
+The assisted launch RPM rises from 3800 to 4400, putting initial clutch slip
+near the torque peak. The R34's assisted upshift torque interruption changes
+from 0.34 to 0.20 s, and decision dwell from 0.12 to 0.04 s. Its manual upshift
+interruption is 0.18 s. These are game driver/clutch calibration parameters,
+not claims of measured Getrag shift times. Earlier cars retain their existing
+0.28 s manual / 0.34 s assisted upshift and 0.12 s assisted dwell. Gearbox ratios,
+rev protection, factory governor and the quicker-manual option are preserved.
+Quicker shifts also modestly improve rolling acceleration; this is not confined
+to a special 0-60 multiplier. R34 50-100 km/h in second falls from 3.88 to 3.74 s.
+
+All-car measurements, full throttle on level road, 75 kg driver, no rollout,
+reaction time, traffic or steering. The manual column is a scripted ideal driver
+shifting at the configured shift RPM, rather than a human reaction benchmark.
+
+| Car | 0-60 mph assisted | 0-60 mph ideal manual | 0-100 km/h assisted | Assessment |
+| --- | --- | --- | --- | --- |
+| S13 K's SR20DET | 6.32 s | 6.26 s | 6.60 s | Rated inputs match the selected catalogue; no strong reason to retune from this audit. |
+| Civic EK9 | 6.98 s | 6.87 s | 7.28 s | Conservative. Published launch results/weights vary; no retune to a single fastest claim. |
+| Testarossa | 4.85 s | 4.79 s | 5.06 s | Quick end of period results; close to C/D's measured 5.0 s to 60 mph. |
+| Supra SZ (NA) | 6.50 s | 6.47 s | 6.81 s | Configuration is the 225 PS five-speed NA car, not the much quicker Turbo. |
+| R34 GT-R | 4.94 s | 4.91 s | 5.22 s | Meets the requested approximate 4.9-second target. |
+
+The other four cars' acceleration results are unchanged. This is a sanity check
+of rated inputs and model outputs, not certification of exact factory times.
+The following primary sources anchor model/variant selection:
+
+- [1991 S13 K's catalogue, Toyota GAZOO](https://gazoo.com/catalog/maker/NISSAN/SILVIA/198805/1502068/):
+  SR20DET, 205 PS, 1150 kg. Do not substitute CA18DET/NA/US 240SX results.
+- [Honda's original EK9 factbook](https://www.honda.co.jp/factbook/auto/CIVIC/19970822/cv97-013.html):
+  B16B, 185 PS and equipment-dependent mass. The game uses the 1070 kg base.
+  [Evo's retrospective](https://www.evo.co.uk/honda/civic-type-r/208642/honda-civic-type-r-ek9-1997-2000-review-1990s-jdm-icon-makes-a-peugeot)
+  describes an aggressive 5.7-second test result with a 1040 kg specification;
+  its prose/table also mix 0-60 and 0-62 labels. That is insufficient evidence
+  to force this heavier, assisted-launch model to the same quickest number.
+- [Toyota's original A80 launch release](https://global.toyota/en/detail/7868203):
+  SZ is 225 PS / 29.0 kg-m normally aspirated, distinct from 280 PS twin-turbo RZ.
+- [C/D's original Testarossa road test](https://www.caranddriver.com/reviews/a15142218/1985-ferrari-testarossa-archived-road-test-review/):
+  5.0 seconds to 60 mph. Market/weight/test protocol differ from the Euro-power
+  reference model, so this is a plausibility anchor, not an exact fitting target.
+
+No well-matched instrumented stock S13 K's or base SZ acceleration test was
+established in this pass; their checks are lower-confidence than the Ferrari's.
+Do not promote third-party simulator estimates to measured evidence. Unrestricted
+speeds (roughly S13 241, EK9 233, SZ 247 and R34 254 km/h in the existing
+90-second runs) remain estimates requiring drag/gear/dyno validation. Japanese
+cars retain the 180 km/h stock governor. Brake distances around 35-36 m from
+100 km/h include the deliberate common game brake boost, not factory brake data.
+
+Reproduce the assisted table with tools/performance_sanity.cpp, or pass
+--manual for the ideal manual trace. The vehicle regression now explicitly
+checks 60 mph (96.56064 km/h), the R34 target at both 120/240 Hz, sixth gear,
+manual advantage, AWD launch traction, limiters and all earlier cars' behavior.

@@ -2,13 +2,16 @@
 // No traffic, steering or reaction delay; governor deleted only to measure 200.
 #include "vehicle.h"
 #include <cstdio>
-int main(){
+#include <string>
+int main(int argc,char **argv){
+ const bool manual=argc>1&&std::string(argv[1])=="--manual";
  std::puts("car,start_kmh,to30_s,to50_s,to60mph_s,to100_s,to160_s,to200_s");
  for(const auto &car:nz::Cars)for(double start:{0.,50.}){
-  nz::Vehicle v;v.speed=start/3.6;v.speedLimiterDeleted=true;
+  nz::Vehicle v;v.automatic=!manual;v.speed=start/3.6;v.speedLimiterDeleted=true;
   if(start>0){v.gear=1;v.rpm=v.speed/(2*nz::Pi*car.radius)*60*car.gears[1]*car.finalDrive;}
   double times[6]={};const double marks[]={30,50,60*1.609344,100,160,200};
   for(int tick=0;tick<120*60;tick++){
+   if(manual&&v.rpm>=car.shiftRpm&&v.gear+1<car.gearCount)nz::Shift(v,car,1);
    double before=v.speed*3.6;nz::Step(v,car,{1,0,0},1./120.);
    for(int j=0;j<6;j++)if(marks[j]>start&&times[j]==0&&v.speed*3.6>=marks[j])times[j]=(tick+(marks[j]-before)/(v.speed*3.6-before))/120.;
   }
