@@ -22,8 +22,8 @@ inline double TrafficEntryWarning(const TrafficCar &car,const TrafficPlayer &pla
  double relative=car.station-player.station,closing=player.speed-car.speed;
  if(closing<=.5||relative<=visibleAhead-5.)return 0.;
  double time=(relative-visibleAhead)/closing;
- if(time>=3.)return 0.;
- return std::clamp((3.-time)/.6,0.,1.)*std::clamp((relative-(visibleAhead-5.))/5.,0.,1.);
+ if(time>=1.)return 0.;
+ return std::clamp((1.-time)/.20,0.,1.)*std::clamp((relative-(visibleAhead-5.))/5.,0.,1.);
 }
 class TrafficWorld {
  struct Gap {double front=1e6,rear=1e6,frontSpeed=HighwaySpeedLimit,rearSpeed=0;};

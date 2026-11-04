@@ -401,7 +401,7 @@ Sources:
 https://www.caranddriver.com/reviews/a15141963/nissan-240sx-se-archived-test-review/
 https://www.caranddriver.com/reviews/a15142218/1985-ferrari-testarossa-archived-road-test-review/
 
-Amber exclamation triangles mark approaching traffic up to three seconds before
+Amber exclamation triangles mark approaching traffic up to one second before
 its centre enters the common visibility corridor. One marker per lane fades as
 the sprite becomes visible. Receding traffic produces no entry alert. Markers
 are drawn sharply above the scene, pause with simulation time and use the same

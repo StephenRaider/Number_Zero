@@ -11,8 +11,10 @@ int main(){try{
   for(size_t i=0;i<palette.size();i++)Require(std::abs(counts[i]-10000*palette[i].weight/sum)<=2,"Traffic paint weights differ from configured distribution");
  }
  Require(nz::TrafficPalettes[0].size()==2&&nz::TrafficPalettes[2].size()==2,"Assista/Comfort must not use generic colourful paints");
- nz::TrafficCar upcoming;upcoming.station=60;upcoming.speed=20;nz::TrafficPlayer observer{0,0,30};
+ nz::TrafficCar upcoming;upcoming.station=47.5;upcoming.speed=20;nz::TrafficPlayer observer{0,0,30};
  Require(nz::TrafficEntryWarning(upcoming,observer,42.5)>0,"Offscreen approaching traffic has no advance warning");
+ upcoming.station=55;Require(nz::TrafficEntryWarning(upcoming,observer,42.5)==0,"Traffic warns more than one second before entry");
+ upcoming.station=52.5;Require(nz::TrafficEntryWarning(upcoming,observer,42.5)==0,"Warning begins before its one-second boundary");
  upcoming.station=90;Require(nz::TrafficEntryWarning(upcoming,observer,42.5)==0,"Far traffic warns prematurely");
  upcoming.station=36;Require(nz::TrafficEntryWarning(upcoming,observer,42.5)==0,"Fully visible traffic keeps its entry warning");
  upcoming.station=60;upcoming.speed=35;Require(nz::TrafficEntryWarning(upcoming,observer,42.5)==0,"Receding traffic shows an entry warning");
