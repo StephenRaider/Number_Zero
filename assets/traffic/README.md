@@ -21,3 +21,7 @@ Only road-wheel vertices rotate; lamps, badges, steering wheels, spare wheels an
 bodywork remain fixed across spin frames. Rotation compensates for source tyre
 aspect ratio, keeping contact height stable. Traffic ground shadows ray-cast the
 front/back sprite depths toward the actual street lamps; there are no blob ellipses.
+
+Swift repair: wheel01 is explicitly charcoal rubber while rim_chrome remains
+silver. Small fitted rear lenses are inset to the actual narrower rear body,
+removing the protruding floating corner pieces from the earlier export.

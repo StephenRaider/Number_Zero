@@ -320,7 +320,7 @@ Both popup states have all 30 body poses and reuse the same stock wheel frames.
 The stock-style European setup uses a 4.9-litre flat-12 (390 PS / 490 Nm), rear
 drive, five ratios and an engine rev limit. It has **no road-speed limiter**;
 the current simplified drivetrain settles near 287 km/h through power and drag.
-The S13 and EK9 retain their separate 180 km/h caps. Engine sound uses a distinct
+The S13 and EK9 have separate stock 180 km/h caps, removable in the garage. Engine sound uses a distinct
 12-pulse procedural profile; it is an approximation, not a recorded engine.
 
 Reference: [Ferrari Testarossa, Museo Nicolis](https://www.museonicolis.com/en/ferrari-1991-testarossa/)
@@ -329,7 +329,7 @@ the game simulation is not a calibrated vehicle dynamics model.
 
 `--testarossa` selects the car (also works with graphics/audio smoke flags).
 `--decal-smoke-test --testarossa` checks all popup poses and save migration.
-Save version 3 includes a car count and preserves older two-car saves.
+Save version 4 includes a car count and per-car limiter-delete settings, and preserves older two-car/version-3 saves.
 
 The formerly readable number decals now use invented broken-loop race marks
 (A/B/C), with plain and boxed versions. Their stable IDs preserve old placements.
@@ -431,3 +431,22 @@ from the player. The population budget remains 28; layout history is bounded.
 The one-second entry warning and shared lookahead across aspect ratios are
 unchanged. Long multi-seed tests compare density at 100/180/280km/h and check
 quiet samples, open lanes and offscreen replenishment.
+
+## Garage speed-limiter removal
+
+The S13 and Civic each have a SPEED LIMITER: STOCK / DELETED button beside the
+gearbox control. Choices save independently per car in NZ_GARAGE_4, alongside
+existing paint and decals. Older saves load with stock governors. The Testarossa
+shows NO FACTORY SPEED LIMITER rather than offering a redundant modification.
+
+Removing the road-speed governor changes no power, ratios, engine rev limit or
+traffic rules. A 120-second flat-road test reaches about 241km/h (S13) and
+233km/h (EK9); those are simulation results, not claimed real-world specifications.
+Restart/reset and manual/automatic modes all retain the selected limiter state.
+`--limiter-delete` overrides the selected car for QA runs. Save roundtrip tests
+check independent per-car settings and legacy migration; driving tests check
+stock/deleted top speeds and retained first-gear rev protection.
+
+Swift traffic sprites have charcoal wheel rubber and smaller rear lamp inserts
+fitted within the body silhouette. All steering/spin maps were regenerated and
+verified, including both indicator sides and stationary body pixels.

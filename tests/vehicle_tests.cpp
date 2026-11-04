@@ -91,6 +91,17 @@ int main(){try{
   Require(full.speed<half.speed,"Partial pedal pressure is not progressive");
  }
  for(const auto &car:nz::Cars){
+  nz::Vehicle stock,deleted;deleted.speedLimiterDeleted=true;
+  for(int tick=0;tick<120*120;tick++){nz::Step(stock,car,{1,0,0},1./120.);nz::Step(deleted,car,{1,0,0},1./120.);}
+  if(car.speedLimitKmh>0)Require(deleted.speed*3.6>210&&deleted.speed>stock.speed+8&&!deleted.limiter,"Limiter delete fails to remove the road-speed governor");
+  else Require(std::abs(deleted.speed-stock.speed)<1e-9,"Limiter toggle changes an ungoverned car");
+  nz::Vehicle first;first.automatic=false;first.speedLimiterDeleted=true;
+  for(int tick=0;tick<120*30;tick++)nz::Step(first,car,{1,0,0},1./120.);
+  double coupled=first.speed/(2*nz::Pi*car.radius)*60*car.gears[0]*car.finalDrive;
+  Require(first.gear==0&&first.rpm<=car.redline&&coupled<car.redline*1.01,"Speed limiter delete also removed engine rev protection");
+  std::printf("Limiter delete %s: stock %.1f / deleted %.1f km/h, rev limiter retained\n",car.id,stock.speed*3.6,deleted.speed*3.6);
+ }
+ for(const auto &car:nz::Cars){
   nz::Vehicle manual;manual.automatic=false;
   for(int i=0;i<120*15;i++)nz::Step(manual,car,{1,0,0},1./120.);
   Require(manual.gear==0&&manual.rpm>car.redline*.95,"Manual gearbox shifted itself or failed to hold revs");

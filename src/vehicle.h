@@ -42,7 +42,7 @@ struct Input { double throttle=0,brake=0,steer=0; };
 struct Vehicle {
     double speed=0,distance=0,lateral=1.75,lateralSpeed=0,rpm=900;
     double throttle=0,brake=0,steering=0,boost=0,shiftTime=0,shiftCooldown=0,acceleration=0;
-    double pitch=0,pitchVelocity=0;bool automatic=true;
+    double pitch=0,pitchVelocity=0;bool automatic=true,speedLimiterDeleted=false;
     double yaw=0,elapsed=0,timeTo100=-1;
     int gear=0,shifts=0;bool limiter=false;
 };
@@ -93,8 +93,9 @@ inline void Step(Vehicle &v,const CarSpec &c,Input in,double dt){
     if(c.turbo)force*=.70+.30*v.boost;
     if(v.shiftTime>0)force=0.;
     if(coupledRpm>c.redline)force=0.;
-    v.limiter=c.speedLimitKmh>0&&v.speed*3.6>c.speedLimitKmh-.5;
-    if(c.speedLimitKmh>0)force*=std::clamp((c.speedLimitKmh+.5-v.speed*3.6)/1.0,0.,1.0);
+    const bool governed=c.speedLimitKmh>0&&!v.speedLimiterDeleted;
+    v.limiter=governed&&v.speed*3.6>c.speedLimitKmh-.5;
+    if(governed)force*=std::clamp((c.speedLimitKmh+.5-v.speed*3.6)/1.0,0.,1.0);
     const double transfer=std::clamp(v.acceleration*.50/(9.81*c.wheelbase),-.18,.18);
     const double drivenWeight=c.frontDrive?c.frontWeight-transfer:1-c.frontWeight+transfer;
     force=std::min(force,c.grip*mass*9.81*std::clamp(drivenWeight,.25,.80));
