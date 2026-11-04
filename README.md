@@ -271,7 +271,7 @@ frame, plus the amber red-zone gauge, and checks the compositor on the GPU.
 Open **DECALS / GRAPHICS** in the garage. The editor uses fixed diffuse studio
 fill and softbox bar reflections instead of the orbiting point source.
 Switch **FRONT VIEW / REAR VIEW**, choose one of three decal layers, then browse
-25 vector-authored designs with the arrows or mouse wheel over the preview.
+32 vector-authored designs with the arrows or mouse wheel over the preview.
 Drag on the car or use arrow keys/buttons to move the decal on its side plane;
 adjust size, angle and single-ink colour. Racing designs retain their colours.
 REMOVE clears the selected layer, RESET restores its transform, DONE / SAVE
@@ -292,3 +292,10 @@ compiler flags as the other unit checks to verify cross-view projection maths.
 
 **Sponsor Overlay** is a transparent frame of sponsor blocks with a clear centre.
 Choose it on layer 2 or 3 over another graphic; layers draw in order 1, 2, 3.
+
+Base decals now exclude small sponsor stickers and numbers, preserving only
+their main graphics and large wordmark. Numbers 07, 35 and 86 are separate
+decals, each plain or in a white box with black border. **Sponsor Strip** adds
+a single independent sponsor row. A useful stack is base graphic on layer 1,
+sponsors on layer 2, number on layer 3. Number designs start at a smaller width;
+switching between number variants keeps your adjusted placement and size.

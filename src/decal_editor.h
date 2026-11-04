@@ -28,8 +28,8 @@ static bool DecalEditor(Selection &s,const DecalLibrary &lib,int &view,int &laye
  Label("FIXED SOFTBOX / LIGHT BARS",25,275,9,Paper);Label("Drag on car, or use arrows to move",25,294,9,Paper);Label("One position follows every driving pose",25,310,8,Muted);
  for(int i=0;i<3;i++)if(Button({378.f+i*80,65,74,21},TextFormat("LAYER %d",i+1),mouse,layer==i))layer=i;
  auto &d=s.decals[s.car][layer];int count=(int)lib.entries.size();
- if(Button({378,96,27,20},"<",mouse))d.design=d.design<0?count-1:(d.design+count-1)%count;
- if(Button({591,96,27,20},">",mouse))d.design=(d.design+1)%count;
+ if(Button({378,96,27,20},"<",mouse))lib.Select(d,d.design<0?count-1:(d.design+count-1)%count);
+ if(Button({591,96,27,20},">",mouse))lib.Select(d,(d.design+1)%count);
  if(d.design>=0){
   const auto &art=lib.entries[d.design];Label(TextFormat("%02d / %02d",d.design+1,count),485,89,8,Muted);
   std::string name=art.name;if(name.size()>24)name=name.substr(0,23)+".";Label(name.c_str(),410,102,9,Paper);
@@ -37,7 +37,7 @@ static bool DecalEditor(Selection &s,const DecalLibrary &lib,int &view,int &laye
   float factor=std::min(224.f/art.width,39.f/art.height);float w=art.width*factor,h=art.height*factor;
   DrawTexturePro(art.preview,{0,0,(float)art.width,(float)art.height},{498-w*.5f,147.5f-h*.5f,w,h},{0,0},0,art.mono?GetColor(d.tint):WHITE);
  }else{Label("NO DECAL / choose with < or >",392,141,10,Muted);}
- float wheel=GetMouseWheelMove();if(CheckCollisionPointRec(mouse,{378,95,240,78})&&wheel)d.design=(std::max(0,d.design)+(wheel>0?1:count-1))%count;
+ float wheel=GetMouseWheelMove();if(CheckCollisionPointRec(mouse,{378,95,240,78})&&wheel)lib.Select(d,(std::max(0,d.design)+(wheel>0?1:count-1))%count);
  Label("MOVE ON SIDE PANEL",378,180,9,Muted);
  if(Button({378,194,55,19},"LEFT",mouse))d.forward-=.06f;
  if(Button({439,194,55,19},"RIGHT",mouse))d.forward+=.06f;
@@ -58,10 +58,10 @@ static bool DecalEditor(Selection &s,const DecalLibrary &lib,int &view,int &laye
  if(Button({482,245,38,19},"-",mouse))d.angle-=5;
  if(Button({526,245,38,19},"+",mouse))d.angle+=5;
  nz::ClampDecal(d);
- Label(d.design>=0&&!lib.entries[d.design].mono?"RACING COLOURS FIXED":"INK COLOUR",378,273,9,Muted);
+ Label(d.design>=0&&!lib.entries[d.design].mono?"ORIGINAL COLOURS FIXED":"INK COLOUR",378,273,9,Muted);
  const Color colours[]={Paper,RGBA(20,24,31),RGBA(235,53,76),RGBA(255,178,38),RGBA(52,158,230),RGBA(55,210,159),RGBA(190,111,224),RGBA(222,148,188)};
  for(int i=0;i<8;i++){Rectangle r{378.f+i*30,287,24,14};DrawRectangleRec(r,colours[i]);if((unsigned)ColorToInt(colours[i])==d.tint)DrawRectangleLinesEx({r.x-1,r.y-1,r.width+2,r.height+2},1,Mint);if(CheckCollisionPointRec(mouse,r)&&IsMouseButtonPressed(MOUSE_BUTTON_LEFT))d.tint=ColorToInt(colours[i]);}
  if(Button({378,313,73,19},"REMOVE",mouse))d.design=-1;
- if(Button({457,313,73,19},"RESET",mouse)){int id=d.design;d=nz::DecalPlacement{};d.design=id;}
+ if(Button({457,313,73,19},"RESET",mouse)){int id=d.design;d=nz::DecalPlacement{};lib.Select(d,id);}
  return Button({536,313,82,27},"DONE / SAVE",mouse,true)||Pressed(KEY_ESCAPE);
 }

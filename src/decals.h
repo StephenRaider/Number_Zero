@@ -16,6 +16,11 @@ struct DecalLibrary {
   }
   if(entries.empty())throw std::runtime_error("Empty decal catalog");
  }
+ bool IsNumber(int index)const{return index>=0&&index<(int)entries.size()&&entries[index].id.find("_number_")!=std::string::npos;}
+ void Select(nz::DecalPlacement &placement,int index)const{
+  if(placement.design<0||IsNumber(placement.design)!=IsNumber(index))placement.width=IsNumber(index)?.72f:2.85f;
+  placement.design=index;
+ }
  int Find(const std::string &id)const{for(int i=0;i<(int)entries.size();i++)if(entries[i].id==id)return i;return -1;}
  // Bilinear premultiplied sampling avoids dark/coloured fringes on transparent ink.
  std::array<float,4> Sample(const DecalArt &art,float u,float v,unsigned tint)const{

@@ -23,3 +23,10 @@
 18_touring_sunset|Touring Sunset|0|18_touring_sunset.png
 19_midnight_club_stickers|Midnight Club Stickers|1|19_midnight_club_stickers.png
 20_sponsor_overlay|Sponsor Overlay|1|20_sponsor_overlay.png
+21_sponsor_strip|Sponsor Strip|1|21_sponsor_strip.png
+22_number_07_plain|Number 07 Plain|1|22_number_07_plain.png
+23_number_07_boxed|Number 07 Boxed|0|23_number_07_boxed.png
+24_number_35_plain|Number 35 Plain|1|24_number_35_plain.png
+25_number_35_boxed|Number 35 Boxed|0|25_number_35_boxed.png
+26_number_86_plain|Number 86 Plain|1|26_number_86_plain.png
+27_number_86_boxed|Number 86 Boxed|0|27_number_86_boxed.png
