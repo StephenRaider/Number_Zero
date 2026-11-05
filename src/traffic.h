@@ -13,7 +13,7 @@ constexpr double HighwaySpeedLimit=100./3.6;
 constexpr std::array<double,4> LaneCentres{{-5.25,-1.75,1.75,5.25}};
 struct TrafficSpec {const char *id;double length,width;};
 inline constexpr std::array<TrafficSpec,5> TrafficTypes{{{"corolla",4.365,1.695},{"swift",3.695,1.690},{"crown",4.695,1.695},{"hiace",4.690,1.690},{"rosa",6.990,2.010}}};
-struct TrafficPlayer {double station,lateral,speed;double length=4.5,width=1.95;};
+struct TrafficPlayer {double station,lateral,speed;double length=4.5,width=1.95,lateralSpeed=0;};
 struct TrafficCar {
  int id=0,type=0,lane=0,targetLane=0,paint=0;double station=0,lateral=0,speed=0,cruise=0,distance=0,lateralSpeed=0;
  double decision=0,signal=0,change=-1;bool braking=false;int indicator=0;

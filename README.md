@@ -608,3 +608,10 @@ resistance to gentle side pressure. Hard hits still move either car. Matched-spe
 rubbing no longer applies a repeated forward-speed penalty, and road-edge contact
 keeps both racers within bounds. Traffic collision penalties are unchanged.
 See docs/CONTACT_PHYSICS.md and tests/racer_contact_tests.cpp for verification.
+
+
+The rival distinguishes alongside pressure from a forward blockage. It holds
+its available line and pace during side contact, with boxed-gap slowing reserved
+for genuine obstruction. Contact-aware prediction and decision-reason telemetry
+are described in docs/RIVAL_TUNING.md; tests/rival_pressure_tests.cpp checks the
+early-race touch-and-retreat exploit alongside normal hazard avoidance.

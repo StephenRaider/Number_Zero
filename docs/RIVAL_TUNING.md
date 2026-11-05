@@ -166,3 +166,56 @@ Racer contact now uses symmetric mass/tyre-supported impulses rather than equal
 side displacement plus per-overlap speed loss. See [CONTACT_PHYSICS.md](CONTACT_PHYSICS.md)
 for the tuning contract and controlled push checks. The diagnostic counters and
 traffic collision response remain separate from that change.
+
+## Holding pace under side pressure
+
+The later contact logs exposed a decision bug beyond collision forces. In the
+recorded R34 session with seed 3214554851, side pressure was followed by rejected
+paths and full braking around 0.5-1.3 seconds. Rival speed fell from about 51 to
+27 km/h, often with `gap_preparation=0`: emergency fallback, not deliberate boxed
+escape, was giving the player a lead. Other recorded launches showed the same
+pattern. Do not infer that the contact solver alone caused this loss of pace.
+
+The planner now distinguishes an alongside racer from a forward blocker:
+
+- Local observations identify the racer separately and include its measured
+  lateral speed; traffic stays on the existing kinematic avoidance path.
+- Racer sweeps use the same 4.50 m / 1.96 m physical contact extents as the contact
+  solver. The former 1.976 m planning width could interpret already separated
+  bodies as overlapping, rejecting every plan.
+- Alongside pressure includes the incoming side approach within the existing
+  0.6-second lateral projection window. A central/front cut-in is still a hazard.
+- During an existing/approaching side contest, steering holds an admissible
+  lateral boundary rather than steering back through the player or voluntarily
+  dropping behind it. The short rollout models supported sliding contact there;
+  it does not extrapolate unconstrained player motion through the rival's body.
+  This is a contact-aware approximation, not a prediction of the player's intent.
+- The boundary is refreshed from local observations every decision. A small
+  numerical clearance prevents exact edge touch from invalidating safe sweeps.
+  Real forward/traffic obstacles still take part in every trajectory check.
+- A side-adjacent racer is not counted as a slower car directly in front. Mere
+  rubbing cannot alone trigger boxed-gap preparation. A genuine forward blocker
+  and unavailable viable passing paths can still require slowing to make room.
+- An adjacent-lane rollout must actually reach that lane within the horizon to
+  count as an available escape, rather than score a route that only slides along
+  the blocker without completing its intended merge.
+
+No player contact penalty, opponent grip/power buff, or traffic collision change
+is introduced by this fix. Existing collision response remains symmetric.
+
+Summary telemetry appends `rival_decision` (`progress`, `side_hold`,
+`hazard_brake`, `boxed_gap`, `emergency`), `rival_side_contest` and
+`rival_forward_blocked`. These describe the last applied decision, including
+between reaction updates. Existing exact contact-event logging is unchanged.
+
+`tests/rival_pressure_tests.cpp` checks both sides, several speeds, road-edge
+pressure, observation data, real forward hazards/cut-ins, and two-second integrated
+R34/Ferrari side-pressure launches. In those isolated launches the rival has no
+traffic to brake for; it should continue accelerating without panic braking or
+gap preparation. Full-distance traffic/weaving and genuine boxed-escape checks
+in `tests/race_tests.cpp` remain required.
+
+```text
+g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -Isrc tests/rival_pressure_tests.cpp -o build/rival_pressure_tests.exe
+./build/rival_pressure_tests.exe
+```
