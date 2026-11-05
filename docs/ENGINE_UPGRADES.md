@@ -22,3 +22,21 @@ Stage 0 depends on the factory hardware and calibration. A conservatively tuned 
 Keep the discovery legible at the shop. Show what the service or parts changed, how the before-and-after power and torque compare, and what limits the next step. Treat speed limiter removal and engine output as separate effects, even when a shop service offers both.
 
 The supplied Evo concept sketches roughly **330–350 hp after the initial unlock and tune**, **380–400 hp with supporting parts**, and **450–500 hp with a larger turbo and supporting work on the original bottom end**. Keep these as reference points for the shape of the progression. Exact in-game output, measurement basis, hardware requirements and limits are tuning decisions to make per car during implementation.
+
+## Three more engine build paths
+
+These are concept builds from the supplied examples. The output bands describe the intended progression in the game. Assign exact targets by trim and market during balancing, and label engine output and wheel output separately so the shop compares like with like.
+
+### A80 Supra Turbo — 2JZ-GTE
+
+Stage 0 establishes what the factory twin-turbo setup can deliver with the unlock service. Intake and exhaust changes, fuel support and a revised calibration form the first meaningful hardware build, with a concept target of **400–450 hp**. The big decision is a single-turbo conversion. A suitable manifold, larger injectors, intercooling and engine management support the **500–600 hp** concept while retaining the original bottom end. The appeal is how far the player can develop the original engine before opening it. The current A80 SZ uses the naturally aspirated 2JZ-GE and gets its own progression. The GTE path belongs to a Turbo variant or a future swap.
+
+### R34 Skyline GT-R — RB26DETT
+
+Use Stage 0 to reveal the factory setup's headroom, then build toward **350–400 hp** with exhaust, intake and calibration work. The next branch keeps the twin-turbo character while upgrading the turbine hardware. Fuel delivery, intercooling and exhaust support a **450–500 hp** concept build. Turbo capacity and oiling under sustained high RPM are distinct constraints to represent as output climbs. This gives the GT-R a different upgrade decision from the Supra's single-turbo path.
+
+### FD RX-7 — 13B-REW
+
+Make cooling and calibration early parts of the build. Pair radiator and intercooler capacity with a freer exhaust and engine management for a **320–350 hp** concept. A single turbo and fuel upgrades form the next path, with street porting available when the build reaches internal work. The combined concept targets **400–450 hp**. At the upper end, the player's decisions revolve around heat, sealing and rotary-specific engine work. Porting is a distinct shop job because it requires opening the engine.
+
+For these three paths, treat the supplied stock-output estimates and upper limits as balancing inputs to verify by configuration. The player's build should encounter specific bottlenecks, such as turbine capacity, sustained oiling, cooling or sealing, at stages that suit the engine.
