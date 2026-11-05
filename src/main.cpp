@@ -7,6 +7,7 @@
 #include "race.h"
 #include "race_telemetry.h"
 #include "scene.h"
+#include "walkable_scene.h"
 #include "decal_projection.h"
 #include "engine_audio.h"
 #include <algorithm>
@@ -459,6 +460,10 @@ static fs::path LocateAssets(){
  throw std::runtime_error("Cannot find assets/cars/catalog.json. Run from the Number_Zero folder.");
 }
 int main(int argc,char **argv){
+ for(int i=1;i<argc;++i){
+  if(std::strcmp(argv[i],"--walkable-scenes")==0)return nz::walkable::Run(false);
+  if(std::strcmp(argv[i],"--walkable-scenes-smoke-test")==0)return nz::walkable::Run(true);
+ }
  bool assistSmoke=false,tcsSmoke=false,wheelspinSmoke=false,raceMode=false,raceSmoke=false,limiterDeleteSmoke=false,trafficSmoke=false,decalSmoke=false,smoke=false,audioSmoke=false,resizeSmoke=false,manualSmoke=false,featureSmoke=false,glowSmoke=false,garageSmoke=false,blackPaint=false,scenerySmoke=false,effectsSmoke=false;int smokeCar=0,windowWidth=1280,windowHeight=720;for(int i=1;i<argc;i++){if(std::string(argv[i])=="--traction-assist")assistSmoke=true;if(std::string(argv[i])=="--tcs")tcsSmoke=true;if(std::string(argv[i])=="--wheelspin-smoke-test"){smoke=true;wheelspinSmoke=true;featureSmoke=true;}if(std::string(argv[i])=="--race")raceMode=true;if(std::string(argv[i])=="--race-smoke-test"){smoke=true;trafficSmoke=true;raceSmoke=true;raceMode=true;}if(std::string(argv[i])=="--smoke-test")smoke=true;if(std::string(argv[i])=="--traffic-smoke-test"){smoke=true;trafficSmoke=true;}if(std::string(argv[i])=="--decal-smoke-test"){smoke=true;decalSmoke=true;}if(std::string(argv[i])=="--resize-smoke-test"){smoke=true;resizeSmoke=true;}if(std::string(argv[i])=="--audio-smoke-test"){smoke=true;audioSmoke=true;}if(std::string(argv[i])=="--effects-smoke-test"){smoke=true;effectsSmoke=true;}if(std::string(argv[i])=="--scenery-smoke-test"){smoke=true;scenerySmoke=true;}if(std::string(argv[i])=="--black")blackPaint=true;if(std::string(argv[i])=="--garage-smoke-test"){smoke=true;garageSmoke=true;}if(std::string(argv[i])=="--glow-smoke-test"){smoke=true;glowSmoke=true;}if(std::string(argv[i])=="--manual")manualSmoke=true;if(std::string(argv[i])=="--limiter-delete")limiterDeleteSmoke=true;if(std::string(argv[i])=="--feature-smoke-test"){smoke=true;featureSmoke=true;}if(std::string(argv[i])=="--civic")smokeCar=1;if(std::string(argv[i])=="--testarossa")smokeCar=2;if(std::string(argv[i])=="--supra")smokeCar=3;if(std::string(argv[i])=="--r34")smokeCar=4;if(std::string(argv[i])=="--ultrawide"){windowWidth=2560;windowHeight=1080;}if(std::string(argv[i])=="--superwide"){windowWidth=3840;windowHeight=1080;}if(std::string(argv[i])=="--tall"){windowWidth=960;windowHeight=900;}}
  SetConfigFlags(FLAG_WINDOW_RESIZABLE|FLAG_VSYNC_HINT|(smoke?FLAG_WINDOW_HIDDEN:0));InitWindow(windowWidth,windowHeight,"Number Zero | Highway Prototype");SetWindowMinSize(800,450);SetTargetFPS(60);SetExitKey(KEY_NULL);
  SetTraceLogLevel(LOG_WARNING);
